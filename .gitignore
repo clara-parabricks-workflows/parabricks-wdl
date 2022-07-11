@@ -1,0 +1,4 @@
+*.dockerfile
+*.Dockerfile
+cromwell-*
+womtool-*
