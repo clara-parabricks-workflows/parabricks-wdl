@@ -23,6 +23,6 @@ To learn more about Nvidia Clara Parabricks see [our page describing accelerated
 ## Setting up your runtime environment
 ### Install a modern Java implementation
 ### Download Cromwell and WOMTool
-### Download test data or bring your own
-### Run your first workflow
-### Accelerate your own workflow
+## Download test data or bring your own
+## Run your first workflow
+## Accelerate your own workflow
