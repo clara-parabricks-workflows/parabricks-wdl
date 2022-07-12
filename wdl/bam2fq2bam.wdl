@@ -11,12 +11,9 @@ task bam2fq {
         String pbPATH
         File pbLicenseBin
         String pbDocker = "parabricks-cloud:latest"
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-v100"
-        String gpuDriverVersion = "460.73.01"
-        Int? nThreads = 32
-        Int? gbRAM = 120
-        Int? diskGB = 0
+        Int nThreads = 32
+        Int gbRAM = 120
+        Int diskGB = 0
         Int runtimeMinutes = 600
         String hpcQueue = "gpu"
     }
@@ -25,15 +22,6 @@ task bam2fq {
     String outbase = basename(inputBAM, ".bam")
 
     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 50 else diskGB
-
-
-    ## Calculate the size of the disk(s) needed based on the input BAM/REF sizes.
-    ## Output compressed FASTQ files should be roughly the same size as the input BAM
-    ## Output BAM files should be roughly the same size as the input BAM as well.
-    Int bamSize = ceil(size(inputBAM, "GB"))
-    Int refSize = ceil(size(inputRefTarball, "GB"))
-    ## Assume triple the BAM size (1x input, 1x temp files, 1x output) + 75GB as a buffer for disk space.
-    Int diskGB = (2 * bamSize) + refSize + 75
 
     command {
         time tar xf ${inputRefTarball} && \
@@ -148,19 +136,16 @@ workflow bam2fq2bam {
         File inputRefTarball
         File pbLicenseBin
         String pbPATH
-        String? pbDocker = "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:3.7_ampere"
-        String? tmp_dir = "tmp_fq2bam"
-        Int nGPU_bam2fq = 4
+        String pbDocker = "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:3.7_ampere"
+        String tmp_dir = "tmp_fq2bam"
         Int nGPU_fq2bam = 4
         String gpuModel_fq2bam = "nvidia-tesla-v100"
-        String gpuModel_bam2fq = "nvidia-tesla-v100"
         String gpuDriverVersion_fq2bam = "460.73.01"
-        String gpuDriverVersion_bam2fq = "460.73.01"
-        Int? nThreads_bam2fq = 12
-        Int? nThreads_fq2bam = 32
-        Int? gbRAM_bam2fq = 120
-        Int? gbRAM_fq2bam = 120
-        Int? diskGB = 0
+        Int nThreads_bam2fq = 12
+        Int nThreads_fq2bam = 32
+        Int gbRAM_bam2fq = 120
+        Int gbRAM_fq2bam = 120
+        Int diskGB = 0
         Int runtimeMinutes_bam2fq = 600
         Int runtimeMinutes_fq2bam = 600
         String hpcQueue_bam2fq = "norm"
@@ -178,9 +163,6 @@ workflow bam2fq2bam {
             nThreads=nThreads_bam2fq,
             gbRAM=gbRAM_bam2fq,
             runtimeMinutes=runtimeMinutes_bam2fq,
-            nGPU=0,
-            gpuDriverVersion=gpuDriverVersion_bam2fq,
-            gpuModel=gpuDriverVersion_bam2fq,
             hpcQueue=hpcQueue_bam2fq,
             diskGB=diskGB,
             pbDocker=pbDocker
