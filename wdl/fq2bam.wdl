@@ -5,10 +5,10 @@ task fq2bam {
     input {
         File inputFASTQ_1
         File inputFASTQ_2
-        String? sampleName = "SAMPLE"
-        String? libraryName = "Illumina"
-        String? readGroupName = "SAMPLE"
-        String? platformName = "Illumina"
+        String? sampleName 
+        String? libraryName 
+        String? readGroupName 
+        String? platformName 
         File inputRefTarball
         File inputKnownSites
         File inputKnownSitesTBI
@@ -35,9 +35,12 @@ task fq2bam {
         mkdir -p ~{tmpDir} && \
         time tar xf ~{inputRefTarball} && \
         time ~{pbPATH} fq2bam \
-        --num-gpus ~{nGPU} \
         --tmp-dir ~{tmpDir} \
-        --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} "@RG\tID:~{readGroupName}\tLB:~{libraryName}\tPL:~{platformName}\tSM:~{sampleName}\tPU:~{readGroupName}" \
+        --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} \
+        ~{"--read-group-sm " + sampleName} \
+        ~{"--read-group-lb " + libraryName} \
+        ~{"--read-group-pl " + platformName} \
+        ~{"--read-group-id-prefix " + readGroupName} \
         --ref ~{ref} \
         --knownSites ~{inputKnownSites} \
         --out-bam ~{outbase}.pb.realn.bam \
@@ -72,10 +75,10 @@ workflow bam2fq {
     input {
         File inputFASTQ_1
         File inputFASTQ_2
-        String? sampleName = "SAMPLE"
-        String? libraryName = "Illumina"
-        String? readGroupName = "SAMPLE"
-        String? platformName = "Illumina"
+        String? sampleName 
+        String? libraryName
+        String? readGroupName 
+        String? platformName
         File inputRefTarball
         File inputKnownSites
         File inputKnownSitesTBI
