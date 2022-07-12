@@ -57,9 +57,6 @@ task bam2fq {
         hpcMemory : gbRAM
         hpcQueue : "~{hpcQueue}"
         hpcRuntimeMinutes : runtimeMinutes
-        # gpuType : "~{gpuModel}"
-        # gpuCount : nGPU
-        # nvidiaDriverVersion : "~{gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : 3
     }

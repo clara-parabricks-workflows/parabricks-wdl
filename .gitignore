@@ -2,3 +2,6 @@
 *.Dockerfile
 cromwell-*
 womtool-*
+*.json
+*.txt
+*.csv
