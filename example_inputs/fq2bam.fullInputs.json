@@ -1,0 +1,25 @@
+{
+  "Parabricks_FQ2BAM.pbPATH": "String",
+  "Parabricks_FQ2BAM.pbLicenseBin": "File",
+  "Parabricks_FQ2BAM.gpuModel": "String (optional, default = \"nvidia-tesla-v100\")",
+  "Parabricks_FQ2BAM.platformName": "String? (optional)",
+  "Parabricks_FQ2BAM.inputKnownSitesTBI": "File",
+  "Parabricks_FQ2BAM.nGPU": "Int (optional, default = 4)",
+  "Parabricks_FQ2BAM.gbRAM": "Int (optional, default = 120)",
+  "Parabricks_FQ2BAM.maxPreemptAttempts": "Int (optional, default = 3)",
+  "Parabricks_FQ2BAM.sampleName": "String? (optional)",
+  "Parabricks_FQ2BAM.inputRefTarball": "File",
+  "Parabricks_FQ2BAM.fq2b.gpuDriverVersion": "String (optional, default = \"460.73.01\")",
+  "Parabricks_FQ2BAM.nThreads": "Int (optional, default = 32)",
+  "Parabricks_FQ2BAM.libraryName": "String? (optional)",
+  "Parabricks_FQ2BAM.inputFASTQ_2": "File",
+  "Parabricks_FQ2BAM.readGroupName": "String? (optional)",
+  "Parabricks_FQ2BAM.runtimeMinutes": "Int (optional, default = 600)",
+  "Parabricks_FQ2BAM.fq2b.hpcQueue": "String (optional, default = \"gpu\")",
+  "Parabricks_FQ2BAM.diskGB": "Int (optional, default = 0)",
+  "Parabricks_FQ2BAM.inputKnownSites": "File",
+  "Parabricks_FQ2BAM.inputFASTQ_1": "File",
+  "Parabricks_FQ2BAM.tmpDir": "String (optional, default = \"tmp_fq2bam\")",
+  "Parabricks_FQ2BAM.pbDocker": "String (optional, default = \"parabricks-cloud:latest\")"
+}
+
