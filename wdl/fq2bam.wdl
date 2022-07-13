@@ -24,6 +24,7 @@ task fq2bam {
         Int diskGB = 0
         Int runtimeMinutes = 600
         String hpcQueue = "gpu"
+        Int maxPreemptAttempts = 3
     }
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputFASTQ_1, "GB")) + ceil(size(inputFASTQ_2, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputKnownSites, "GB")) + ceil(3.0 * size(inputFASTQ_1, "GB")) + 50 else diskGB
@@ -66,7 +67,7 @@ task fq2bam {
         gpuCount : nGPU
         nvidiaDriverVersion : "~{gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : 3
+        preemptible : maxPreemptAttempts
     }
 }
 
@@ -92,6 +93,7 @@ workflow Parabricks_FQ2BAM {
         Int gbRAM = 120
         Int diskGB = 0
         Int runtimeMinutes = 600
+        Int maxPreemptAttempts = 3
     }
 
     ## Automatically size disk if diskGB is 0.
@@ -117,7 +119,8 @@ workflow Parabricks_FQ2BAM {
             nThreads=nThreads,
             gbRAM=gbRAM,
             diskGB=diskGB,
-            runtimeMinutes=runtimeMinutes
+            runtimeMinutes=runtimeMinutes,
+            maxPreemptAttempts=maxPreemptAttempts
     }
 
     output {
