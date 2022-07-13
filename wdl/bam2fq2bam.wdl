@@ -67,12 +67,12 @@ task fq2bam {
         File pbLicenseBin
         String pbPATH
         String pbDocker = "parabricks-cloud:latest"
-        String? tmp_dir = "tmp_fq2bam"
+        String tmp_dir = "tmp_fq2bam"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
         String gpuDriverVersion = "460.73.01"
-        Int? nThreads = 32
-        Int? gbRAM = 120
+        Int nThreads = 32
+        Int gbRAM = 120
         Int diskGB = 0
         Int runtimeMinutes = 600
         String hpcQueue = "gpu"
