@@ -5,3 +5,9 @@ womtool-*
 *.json
 *.txt
 *.csv
+*.fq
+*.fastq
+*.gz
+*.bam
+*.vcf
+*.tbi
