@@ -33,6 +33,7 @@ task haplotypecaller {
         time tar xvf ~{inputRefTarball} && \
         time ~{pbPATH} haplotypecaller \
         ~{if gvcfMode then "--gvcf " else ""} \
+        ~{"--haplotypecaller-options " + '"' + haplotypecallerPassthroughOptions + '"'} \
         --in-bam ~{inputBAM} \
         --ref ~{ref} \
         --in-recal-file ~{inputRecal} \
@@ -40,7 +41,6 @@ task haplotypecaller {
         --license-file ~{pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
-
     }
 
     output {
@@ -145,8 +145,8 @@ workflow ClaraParabricks_Germline {
         String gpuModel_DeepVariant = "nvidia-tesla-v100"
         String gpuDriverVersion_DeepVariant = "460.73.01"
         Int nThreads_DeepVariant = 32
-        Int? gbRAM_DeepVariant = 120
-        Int? diskGB_DeepVariant = 0
+        Int gbRAM_DeepVariant = 120
+        Int diskGB_DeepVariant = 0
         Int runtimeMinutes_DeepVariant = 600
         String hpcQueue_DeepVariant = "gpu"
 
@@ -154,18 +154,11 @@ workflow ClaraParabricks_Germline {
         Int nGPU_HaplotypeCaller = 4
         String gpuModel_HaplotypeCaller = "nvidia-tesla-v100"
         String gpuDriverVersion_HaplotypeCaller = "460.73.01"
-        Int? nThreads_HaplotypeCaller = 32
-        Int? gbRAM_HaplotypeCaller = 120
-        Int? diskGB_HaplotypeCaller = 0
+        Int nThreads_HaplotypeCaller = 32
+        Int gbRAM_HaplotypeCaller = 120
+        Int diskGB_HaplotypeCaller = 0
         Int runtimeMinutes_HaplotypeCaller = 600
         String hpcQueue_HaplotypeCaller = "gpu"
-
-        ## Strelka Runtime Args
-        Int? nThreads_Strelka = 32
-        Int? gbRAM_Strelka = 120
-        Int? diskGB_Strelka = 0
-        Int runtimeMinutes_Strelka = 600
-        String hpcQueue_Strelka = "gpu"
     }
 
     call haplotypecaller as HaplotypeCaller{

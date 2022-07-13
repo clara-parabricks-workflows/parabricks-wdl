@@ -1,7 +1,6 @@
 # Copyright 2021 NVIDIA CORPORATION & AFFILIATES
 version 1.0
 
-
 ## Convert a BAM file into a pair of FASTQ files.
 task bam2fq {
     input {
@@ -79,7 +78,6 @@ task fq2bam {
     }
 
     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFQ_1, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 50 else diskGB
-
 
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(inputFQ_1, "_1.fastq.gz")
