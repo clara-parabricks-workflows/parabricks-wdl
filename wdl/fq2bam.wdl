@@ -70,7 +70,7 @@ task fq2bam {
     }
 }
 
-workflow bam2fq {
+workflow Parabricks_FQ2BAM {
 
     input {
         File inputFASTQ_1
@@ -85,8 +85,8 @@ workflow bam2fq {
         File pbLicenseBin
         String pbPATH
         String pbDocker = "parabricks-cloud:latest"
-        String? tmpDir = "tmp_fq2bam"
-        String? gpuModel = "nvidia-tesla-v100"
+        String tmpDir = "tmp_fq2bam"
+        String gpuModel = "nvidia-tesla-v100"
         Int nGPU = 4
         Int nThreads = 32
         Int gbRAM = 120
