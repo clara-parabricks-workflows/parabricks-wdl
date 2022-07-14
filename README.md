@@ -19,10 +19,42 @@ To learn more about Nvidia Clara Parabricks see [our page describing accelerated
  - trio_de_novo_calling: Run accelerated germline calling for a trio sample set before joint calling and filtering for putative de novo mutations.
 
 # Getting Started
+All pipelines in this repository have been validated using WOMtool and tested to run using Cromwell.
 
 ## Setting up your runtime environment
 ### Install a modern Java implementation
+The current Cromwell releases require a modern (>= v1.10) Java implementation. We have tested Cromwell through version
+80 on both Oracle Java and OpenJDK. For Ubuntu 20.04, the following command will install a sufficient Java runtime:
+
+```bash
+sudo apt install default-jdk
+```
+
 ### Download Cromwell and WOMTool
+Cromwell and WOMTool are available from [the Release page on Cromwell's GitHub](https://github.com/broadinstitute/cromwell/releases).
+
+To download Cromwell and WOMTool, the following commands should work:
+
+```bash
+## Update the version as needed
+export version=81
+wget https://github.com/broadinstitute/cromwell/releases/download/${version}/cromwell-${version}.jar
+https://github.com/broadinstitute/cromwell/releases/download/${version}/womtool-${version}.jar
+```
+
 ## Download test data or bring your own
+We recommend test data provided by Google Brain's Public Sequencing project. The HG002 FASTQ files
+can be downloaded with the following commands:
+
+```bash
+wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/hiseqx/wgs_pcr_free/30x/HG002.hiseqx.pcr-free.30x.R1.fastq.gz
+wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/hiseqx/wgs_pcr_free/30x/HG002.hiseqx.pcr-free.30x.R2.fastq.gz
+```
+
 ## Run your first workflow
+There are example JSON input slugs in the `example_inputs` directory. To run your first workflow, you can edit the minimal inputs file (`fq2bam.minimalInputs.json`). If you want
+more advanced control over inputs or need additional ones you can modify the full inputs file (`fq2bam.fullInputs.json`).
+
+Here is a valid minimal example that runs locally, assuming that your test data is inside the `parabricks-wdl` repo.
+
 ## Accelerate your own workflow
