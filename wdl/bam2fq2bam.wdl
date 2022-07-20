@@ -89,8 +89,8 @@ task fq2bam {
         --in-fq ${inputFQ_1} ${inputFQ_2} \
         --ref ${ref} \
         --knownSites ${inputKnownSitesVCF} \
-        --out-bam ${outbase}.pb.realn.bam \
-        --out-recal-file ${outbase}.BQSR-REPORT.txt \
+        --out-bam ${outbase}.pb.bam \
+        --out-recal-file ${outbase}.pb.BQSR-REPORT.txt \
         --license-file ${pbLicenseBin}
 
 
