@@ -267,9 +267,9 @@ workflow ClaraParabricks_Somatic {
         call mutect2_postpon {
             input:
                 inputVCF=pb_mutect2.outputVCF,
-                ponFile=mutect2_prepon.outputPON,
-                ponVCF=ponVCF,
-                ponTBI=ponTBI,
+                ponFile=select_first([mutect2_prepon.outputPON]),
+                ponVCF=select_first([ponVCF]),
+                ponTBI=select_first([ponTBI]),
                 pbPATH=pbPATH,
                 pbLicenseBin=pbLicenseBin,
                 pbDocker=pbDocker,
@@ -279,12 +279,15 @@ workflow ClaraParabricks_Somatic {
         }
     }
 
-    File to_compress_VCF = if doPON then 
+    File to_compress_VCF = if doPON then select_first([mutect2_postpon.outputVCF]) else pb_mutect2.outputVCF
 
-
+    call compressAndIndexVCF {
+        input:
+            inputVCF=to_compress_VCF
+    }
 
     output {
-        # File mutect2VCF = 
-        # File mutect2TBI = 
+        File outputVCF = compressAndIndexVCF.outputVCF
+        File outputTBI = compressAndIndexVCF.outputTBI
     }
 }
