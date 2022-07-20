@@ -48,9 +48,11 @@ task mutect2_call {
     input {
         File tumorBAM
         File tumorBAI
+        File? tumorBQSR
         String tumorName
         File normalBAM
         File normalBAI
+        File? normalBQSR
         String normalName
         File inputRefTarball
         String pbPATH
@@ -77,11 +79,12 @@ task mutect2_call {
 
     command {
         time tar xf ~{inputRefTarball} && \
-        time ~{pbPATH} mutect2 \
+        time ~{pbPATH} mutectcaller \
         --ref ~{ref} \
         --tumor-name ~{tumorName} \
+        ~{"--in-tumor-bqsr " + tumorBQSR} \
+        --in-tumor-bam ~{tumorBAM} \
         --normal-name ~{normalName} \
-        --in-tumor-bam ~{normalBAM} \
         --in-normal-bam ~{normalBAM} \
         ~{"--pon " + ponVCF} \
         --license-file ~{pbLicenseBin} \
@@ -192,16 +195,18 @@ workflow ClaraParabricks_Somatic {
     input {
         File tumorBAM
         File tumorBAI
+        File? tumorBQSR
         String tumorName
         File normalBAM
         File normalBAI
+        File? normalBQSR
         String normalName
         File inputRefTarball
         String pbPATH
         File pbLicenseBin
         File? ponVCF
         File? ponTBI
-        String? pbDocker
+        String pbDocker = "clara-parabricks/parabricks-cloud"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
         String gpuDriverVersion = "460.73.01"
@@ -233,40 +238,34 @@ workflow ClaraParabricks_Somatic {
                 hpcQueue=hpcQueue,
                 maxPreemptAttempts=maxPreemptAttempts
         }
-    }
-
-    File ponFile = select_first([mutect2_prepon.outputPON])
-
-    call mutect2_call as pb_mutect2 {
-        input:
-            tumorBAM=tumorBAM,
-            tumorBAI=tumorBAI,
-            tumorName=tumorName,
-            normalBAM=normalBAM,
-            normalBAI=normalBAI,
-            normalName=normalName,
-            inputRefTarball=inputRefTarball,
-            ponFile=ponFile,
-            ponVCF=ponVCF,
-            ponTBI=ponTBI,
-            pbPATH=pbPATH,
-            pbLicenseBin=pbLicenseBin,
-            pbDocker=pbDocker,
-            nGPU=nGPU,
-            gpuModel=gpuModel,
-            gpuDriverVersion=gpuDriverVersion,
-            nThreads=nThreads,
-            gbRAM=gbRAM,
-            diskGB=diskGB,
-            runtimeMinutes=runtimeMinutes,
-            hpcQueue=hpcQueue,
-            maxPreemptAttempts=maxPreemptAttempts
-    }
-
-    if (doPON){
+        call mutect2_call as pb_mutect2_pon {
+            input:
+                tumorBAM=tumorBAM,
+                tumorBAI=tumorBAI,
+                tumorName=tumorName,
+                normalBAM=normalBAM,
+                normalBAI=normalBAI,
+                normalName=normalName,
+                inputRefTarball=inputRefTarball,
+                ponFile=mutect2_prepon.outputPON,
+                ponVCF=ponVCF,
+                ponTBI=ponTBI,
+                pbPATH=pbPATH,
+                pbLicenseBin=pbLicenseBin,
+                pbDocker=pbDocker,
+                nGPU=nGPU,
+                gpuModel=gpuModel,
+                gpuDriverVersion=gpuDriverVersion,
+                nThreads=nThreads,
+                gbRAM=gbRAM,
+                diskGB=diskGB,
+                runtimeMinutes=runtimeMinutes,
+                hpcQueue=hpcQueue,
+                maxPreemptAttempts=maxPreemptAttempts
+        }
         call mutect2_postpon {
             input:
-                inputVCF=pb_mutect2.outputVCF,
+                inputVCF=pb_mutect2_pon.outputVCF,
                 ponFile=select_first([mutect2_prepon.outputPON]),
                 ponVCF=select_first([ponVCF]),
                 ponTBI=select_first([ponTBI]),
@@ -278,12 +277,37 @@ workflow ClaraParabricks_Somatic {
                 gpuDriverVersion=gpuDriverVersion,
         }
     }
+    if (!doPON){
+        call mutect2_call as pb_mutect2_withoutPON {
+            input:
+                tumorBAM=tumorBAM,
+                tumorBAI=tumorBAI,
+                tumorName=tumorName,
+                normalBAM=normalBAM,
+                normalBAI=normalBAI,
+                normalName=normalName,
+                inputRefTarball=inputRefTarball,
+                pbPATH=pbPATH,
+                pbLicenseBin=pbLicenseBin,
+                pbDocker=pbDocker,
+                nGPU=nGPU,
+                gpuModel=gpuModel,
+                gpuDriverVersion=gpuDriverVersion,
+                nThreads=nThreads,
+                gbRAM=gbRAM,
+                diskGB=diskGB,
+                runtimeMinutes=runtimeMinutes,
+                hpcQueue=hpcQueue,
+                maxPreemptAttempts=maxPreemptAttempts
+        }
+    }
 
-    File to_compress_VCF = if doPON then select_first([mutect2_postpon.outputVCF]) else pb_mutect2.outputVCF
+    File? to_compress_VCF = if doPON then select_first([mutect2_postpon.outputVCF]) else pb_mutect2_withoutPON.outputVCF
+
 
     call compressAndIndexVCF {
         input:
-            inputVCF=to_compress_VCF
+            inputVCF=select_first([to_compress_VCF])
     }
 
     output {
