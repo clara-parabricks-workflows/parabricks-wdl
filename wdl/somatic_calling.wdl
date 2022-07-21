@@ -160,7 +160,7 @@ task mutect2_postpon {
 task compressAndIndexVCF {
     input {
         File inputVCF
-        String? bgzipDocker
+        String bgzipDocker = "samtools/bcftools"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
@@ -169,14 +169,17 @@ task compressAndIndexVCF {
         Int maxPreemptAttempts = 3
     }
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.0) + 40 else diskGB
-
+    ## We need to write to stdout in our task, as bgzip will compress the file in-place on the
+    ## mounted volume and not the local disk. The issue with this is the mounted volume is not visible
+    ## when searching for outputs.
+    String localVCF = basename(inputVCF)
     command {
-        bgzip -@ ~{nThreads} ~{inputVCF} && \
-        tabix ~{inputVCF}.gz
+        bgzip -c -@ ~{nThreads} ~{inputVCF} > ~{localVCF}.gz  && \
+        tabix ~{localVCF}.gz
     }
     output {
-        File outputVCF = "~{inputVCF}.gz"
-        File outputTBI = "~{inputVCF}.gz.tbi"
+        File outputVCF = "~{localVCF}.gz"
+        File outputTBI = "~{localVCF}.gz.tbi"
     }
     runtime {
         docker : "~{bgzipDocker}"
