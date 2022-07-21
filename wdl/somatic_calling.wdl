@@ -20,13 +20,18 @@ task mutect2_prepon {
     }
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(ponVCF, "GB") * 2) + 50 else diskGB
-
-    String outbase = basename(ponVCF)
+    String localVCF = basename(ponVCF)
+    String localTBI = basename(ponTBI)
+    String outbase = basename(ponVCF, ".vcf.gz")
     command {
-        time ~{pbPATH} prepon --in-pon-file ~{ponVCF}
+        cp ~{ponVCF} ~{localVCF} && \
+        cp ~{ponTBI} ~{localTBI} && \
+        time ~{pbPATH} prepon --in-pon-file ~{localVCF}
     }
     output {
-        File outputPON = "~{outbase}.pon"
+        File outputPON = "~{localVCF}.pon"
+        File outputVCF = "~{localVCF}"
+        File outputTBI = "~{localTBI}"
     }
     runtime {
         docker : "~{pbDocker}"
@@ -251,8 +256,8 @@ workflow ClaraParabricks_Somatic {
                 normalName=normalName,
                 inputRefTarball=inputRefTarball,
                 ponFile=mutect2_prepon.outputPON,
-                ponVCF=ponVCF,
-                ponTBI=ponTBI,
+                ponVCF=mutect2_prepon.outputVCF,
+                ponTBI=mutect2_prepon.outputTBI,
                 pbPATH=pbPATH,
                 pbLicenseBin=pbLicenseBin,
                 pbDocker=pbDocker,
