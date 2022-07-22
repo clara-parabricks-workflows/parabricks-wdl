@@ -200,7 +200,7 @@ task restrictVCFToSample {
     }
     String outbase = basename(basename(inputVCF, ".gz"), ".vcf")
     
-    Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.5) + + 65 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.5) + 65 else diskGB
 
     command {
         ~{bcftoolsPath} view --threads ~{nThreads} -O z -o ~{outbase}.~{sample}.vcf.gz -s ~{sample} ~{inputVCF} && \
