@@ -161,7 +161,7 @@ workflow ClaraParabricks_Germline {
         String hpcQueue_HaplotypeCaller = "gpu"
     }
 
-    call haplotypecaller as HaplotypeCaller{
+    call haplotypecaller {
         input:
             inputBAM=inputBAM,
             inputBAI=inputBAI,
@@ -182,7 +182,7 @@ workflow ClaraParabricks_Germline {
             maxPreemptAttempts=maxPreemptAttempts
     }
 
-    call deepvariant as DeepVariant{
+    call deepvariant {
         input:
             inputBAM=inputBAM,
             inputBAI=inputBAI,
@@ -203,9 +203,9 @@ workflow ClaraParabricks_Germline {
     }
 
     output {
-        File deepvariantVCF = DeepVariant.deepvariantVCF
-        File deepvariantTBI = DeepVariant.deepvariantTBI
-        File haplotypecallerVCF = HaplotypeCaller.haplotypecallerVCF
-        File haplotypecallerTBI = HaplotypeCaller.haplotypecallerTBI
+        File deepvariantVCF = deepvariant.deepvariantVCF
+        File deepvariantTBI = deepvariant.deepvariantTBI
+        File haplotypecallerVCF = haplotypecaller.haplotypecallerVCF
+        File haplotypecallerTBI = haplotypecaller.haplotypecallerTBI
     }
 }
