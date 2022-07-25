@@ -453,7 +453,7 @@ task deNovoFilterNaive {
     }
 }
 
-workflow GermlineDNMTrio {
+workflow ClaraParabricks_TrioDeNovo {
     input {
         ## Child inputs
         File inputChildBAM
