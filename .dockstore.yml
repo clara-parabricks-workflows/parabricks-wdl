@@ -8,7 +8,6 @@ workflows:
       - name: Eric T. Dawson
         affiliation: NVIDIA
         orcid: 0000-0001-5448-1653
-workflows:
   - subclass: WDL
     primaryDescriptorPath: /wdl/bam2fq2bam.wdl
     name: clara-parabricks-bam2fq2bam
