@@ -1,0 +1,14 @@
+version 1.2
+workflows:
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/fq2bam.wdl
+    name: clara-parabricks-fq2bam
+    authors:
+      - name: Eric T. Dawson
+      - affiliation: NVIDIA
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/bam2fq2bam.wdl
+    name: clara-parabricks-bam2fq2bam
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
