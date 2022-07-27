@@ -125,4 +125,8 @@ workflow ClaraParabricks_fq2bam {
         File outputBAI = fq2bam.outputBAI
         File outputBQSR = fq2bam.outputBQSR
     }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
+    }
 }

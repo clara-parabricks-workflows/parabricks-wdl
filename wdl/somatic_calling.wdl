@@ -322,4 +322,8 @@ workflow ClaraParabricks_Somatic {
         File outputVCF = compressAndIndexVCF.outputVCF
         File outputTBI = compressAndIndexVCF.outputTBI
     }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
+    }
 }

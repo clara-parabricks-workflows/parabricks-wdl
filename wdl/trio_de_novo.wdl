@@ -838,6 +838,9 @@ workflow ClaraParabricks_TrioDeNovo {
         ## Strelka Father VCF
         File father_strelka_vcf = STRELKA_FATHER.strelkaVCF
         File father_strelka_tbi = STRELKA_FATHER.strelkaTBI
+    }
 
+    meta {
+        Author: "Nvidia Clara Parabricks"
     }
 }

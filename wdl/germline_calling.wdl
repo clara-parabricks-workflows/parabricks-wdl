@@ -208,4 +208,8 @@ workflow ClaraParabricks_Germline {
         File haplotypecallerVCF = haplotypecaller.haplotypecallerVCF
         File haplotypecallerTBI = haplotypecaller.haplotypecallerTBI
     }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
+    }
 }

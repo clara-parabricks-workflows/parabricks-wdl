@@ -65,4 +65,8 @@ workflow ClaraParabricks_IndexReference {
     output {
         File refTarball = index.refTarball
     }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
+    }
 }
