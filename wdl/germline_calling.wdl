@@ -133,8 +133,9 @@ workflow ClaraParabricks_Germline {
         File inputRefTarball
         File pbLicenseBin
         String pbPATH
-        String pbDocker = "gcr.io/clara-parabricks"
+        String pbDocker = "clara-parabricks/parabricks-cloud:4.0.0-1.alpha1"
 
+        ## Run both DeepVariant and HaplotypeCaller in gVCF mode
         Boolean gvcfMode = false
 
         ## Universal preemptible limit
@@ -151,6 +152,7 @@ workflow ClaraParabricks_Germline {
         String hpcQueue_DeepVariant = "gpu"
 
         ## HaplotypeCaller Runtime Args
+        String? haplotypecallerPassthroughOptions
         Int nGPU_HaplotypeCaller = 4
         String gpuModel_HaplotypeCaller = "nvidia-tesla-v100"
         String gpuDriverVersion_HaplotypeCaller = "460.73.01"
@@ -170,6 +172,7 @@ workflow ClaraParabricks_Germline {
             pbLicenseBin=pbLicenseBin,
             pbPATH=pbPATH,
             gvcfMode=gvcfMode,
+            haplotypecallerPassthroughOptions=haplotypecallerPassthroughOptions,
             nThreads=nThreads_HaplotypeCaller,
             nGPU=nGPU_HaplotypeCaller,
             gpuModel=gpuModel_HaplotypeCaller,

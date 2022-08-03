@@ -167,7 +167,7 @@ workflow ClaraParabricks_Somatic {
         File? ponVCF
         File? ponTBI
         File? ponFile
-        String pbDocker = "clara-parabricks/parabricks-cloud"
+        String pbDocker = "clara-parabricks/parabricks-cloud:4.0.0-1.alpha1"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
         String gpuDriverVersion = "460.73.01"
