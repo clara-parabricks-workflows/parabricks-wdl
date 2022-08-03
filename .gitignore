@@ -12,3 +12,6 @@ womtool-*
 *.vcf
 *.tbi
 .validate/
+test-data/
+test_data/
+*.wdl
