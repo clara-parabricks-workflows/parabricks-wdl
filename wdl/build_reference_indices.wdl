@@ -3,12 +3,21 @@ version 1.0
 task index {
     input {
         File inputFASTA
-        Int diskGB = 230
+        String samtoolsPATH = "samtools"
+        String bwaPATH = "bwa"
+        String indexDocker = "clara-parabricks/bwa"
+        Int nThreads = 32
+        Int gbRAM = 120
+        Int diskGB = 0
+        Int runtimeMinutes = 600
+        String hpcQueue = "gpu"
     }
     String outbase = basename(inputFASTA)
+    Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFASTA, "GB")) + 50 else diskGB
+
     command {
-        samtools faidx ~{inputFASTA} && \
-        bwa index ~{inputFASTA} && \
+        ~{samtoolsPATH} faidx ~{inputFASTA} && \
+        ~{bwaPATH} index ~{inputFASTA} && \
         tar cvf ~{outbase}.tar ~{inputFASTA}*
     }
     output {
@@ -25,22 +34,37 @@ task index {
         preemptible: 3
     }
 }
-
-workflow indexReference {
+workflow ClaraParabricks_IndexReference {
     input{
         File fastaFile
+        String samtoolsPATH = "samtools"
+        String bwaPATH = "bwa"
+        String indexDocker = "clara-parabricks/bwa"
+        Int nThreads = 32
+        Int gbRAM = 120
+        Int diskGB = 0
+        Int runtimeMinutes = 600
+        String hpcQueue = "gpu"
     }
-
-    # Int diskGB = ceil(size(fastaFile, "GB"))
-    Int diskGB = 200
 
     call index {
         input:
             inputFASTA=fastaFile,
-            diskGB=diskGB
+            samtoolsPATH=samtoolsPATH,
+            bwaPATH=bwaPATH,
+            indexDocker=indexDocker,
+            nThreads=nThreads,
+            gbRAM=gbRAM,
+            runtimeMinutes=runtimeMinutes,
+            hpcQueue=hpcQueue,
+            diskGB=diskGB,
     }
 
     output {
         File refTarball = index.refTarball
+    }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
     }
 }

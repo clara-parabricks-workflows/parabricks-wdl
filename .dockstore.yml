@@ -1,0 +1,45 @@
+version: 1.2
+
+workflows:
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/fq2bam.wdl
+    name: clara-parabricks-fq2bam
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
+        orcid: 0000-0001-5448-1653
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/bam2fq2bam.wdl
+    name: clara-parabricks-bam2fq2bam
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
+        orcid: 0000-0001-5448-1653
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/build_reference_indices.wdl
+    name: clara-parabricks-build-reference-indices
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
+        orcid: 0000-0001-5448-1653
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/germline_calling.wdl
+    name: clara-parabricks-germline-calling
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
+        orcid: 0000-0001-5448-1653
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/somatic-calling.wdl
+    name: clara-parabricks-somatic-calling
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
+        orcid: 0000-0001-5448-1653
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/trio_de_novo.wdl
+    name: clara-parabricks-trio-de-novo
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
+        orcid: 0000-0001-5448-1653

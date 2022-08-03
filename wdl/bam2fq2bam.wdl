@@ -120,7 +120,7 @@ task fq2bam {
 
 }
 
-workflow bam2fq2bam {
+workflow ClaraParabricks_bam2fq2bam {
     ## Given a BAM file,
     ## extract the reads from it and realign them to a new reference genome.
     ## Expected runtime for a 30X BAM is less than 3 hours on a 4x V100 system.
@@ -151,7 +151,7 @@ workflow bam2fq2bam {
     }
 
     ## Run the BAM -> FASTQ conversion
-    call bam2fq as b2fq {
+    call bam2fq {
         input:
             inputBAM=inputBAM,
             inputBAI=inputBAI,
@@ -167,10 +167,10 @@ workflow bam2fq2bam {
     }
 
     ## Remap the reads from the bam2fq stage to the new reference to produce a BAM file.
-    call fq2bam as fq2b {
+    call fq2bam {
         input:
-            inputFQ_1=b2fq.outputFQ_1,
-            inputFQ_2=b2fq.outputFQ_2,
+            inputFQ_1=bam2fq.outputFQ_1,
+            inputFQ_2=bam2fq.outputFQ_2,
             inputRefTarball=inputRefTarball,
             inputKnownSitesVCF=knownSitesVCF,
             inputKnownSitesTBI=knownSitesTBI,
@@ -189,10 +189,14 @@ workflow bam2fq2bam {
     }
 
     output {
-        File outputFQ_1 = b2fq.outputFQ_1
-        File outputFQ_2 = b2fq.outputFQ_2
-        File outputBAM = fq2b.outputBAM
-        File outputBAI = fq2b.outputBAI
-        File outputBQSR = fq2b.outputBQSR
+        File outputFQ_1 = bam2fq.outputFQ_1
+        File outputFQ_2 = bam2fq.outputFQ_2
+        File outputBAM = fq2bam.outputBAM
+        File outputBAI = fq2bam.outputBAI
+        File outputBQSR = fq2bam.outputBQSR
+    }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
     }
 }

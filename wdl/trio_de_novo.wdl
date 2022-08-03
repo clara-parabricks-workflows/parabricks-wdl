@@ -200,7 +200,7 @@ task restrictVCFToSample {
     }
     String outbase = basename(basename(inputVCF, ".gz"), ".vcf")
     
-    Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.5) + + 65 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.5) + 65 else diskGB
 
     command {
         ~{bcftoolsPath} view --threads ~{nThreads} -O z -o ~{outbase}.~{sample}.vcf.gz -s ~{sample} ~{inputVCF} && \
@@ -453,7 +453,7 @@ task deNovoFilterNaive {
     }
 }
 
-workflow GermlineDNMTrio {
+workflow ClaraParabricks_TrioDeNovo {
     input {
         ## Child inputs
         File inputChildBAM
@@ -838,6 +838,9 @@ workflow GermlineDNMTrio {
         ## Strelka Father VCF
         File father_strelka_vcf = STRELKA_FATHER.strelkaVCF
         File father_strelka_tbi = STRELKA_FATHER.strelkaTBI
+    }
 
+    meta {
+        Author: "Nvidia Clara Parabricks"
     }
 }

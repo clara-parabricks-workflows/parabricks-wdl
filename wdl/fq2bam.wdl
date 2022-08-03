@@ -50,9 +50,9 @@ task fq2bam {
     }
 
     output {
-        File outputBAM = "~{outbase}.pb.realn.bam"
-        File outputBAI = "~{outbase}.pb.realn.bam.bai"
-        File outputBQSR = "~{outbase}.BQSR-REPORT.txt"
+        File outputBAM = "~{outbase}.pb.bam"
+        File outputBAI = "~{outbase}.pb.bam.bai"
+        File outputBQSR = "~{outbase}.pb.BQSR-REPORT.txt"
     }
 
     runtime {
@@ -71,7 +71,7 @@ task fq2bam {
     }
 }
 
-workflow Parabricks_FQ2BAM {
+workflow ClaraParabricks_fq2bam {
 
     input {
         File inputFASTQ_1
@@ -95,11 +95,8 @@ workflow Parabricks_FQ2BAM {
         Int runtimeMinutes = 600
         Int maxPreemptAttempts = 3
     }
-
-    ## Automatically size disk if diskGB is 0.
-    ## Otherwise, use the value provided for diskGB.
     
-    call fq2bam as fq2b {
+    call fq2bam {
         input:
             inputFASTQ_1=inputFASTQ_1,
             inputFASTQ_2=inputFASTQ_2,
@@ -124,8 +121,12 @@ workflow Parabricks_FQ2BAM {
     }
 
     output {
-        File outputBAM = fq2b.outputBAM
-        File outputBAI = fq2b.outputBAI
-        File outputBQSR = fq2b.outputBQSR
+        File outputBAM = fq2bam.outputBAM
+        File outputBAI = fq2bam.outputBAI
+        File outputBQSR = fq2bam.outputBQSR
+    }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
     }
 }

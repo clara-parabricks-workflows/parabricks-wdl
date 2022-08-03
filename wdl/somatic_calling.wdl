@@ -1,49 +1,6 @@
 # Copyright 2022 NVIDIA CORPORATION & AFFILIATES
 version 1.0
 
-task mutect2_prepon {
-    input {
-        File ponVCF
-        File ponTBI
-        String pbPATH
-        File pbLicenseBin
-        String? pbDocker
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-v100"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 32
-        Int gbRAM = 120
-        Int diskGB = 0
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-        Int maxPreemptAttempts = 3
-    }
-
-    Int auto_diskGB = if diskGB == 0 then ceil(size(ponVCF, "GB") * 2) + 50 else diskGB
-
-    String outbase = basename(ponVCF)
-    command {
-        time ~{pbPATH} prepon --in-pon-file ~{ponVCF}
-    }
-    output {
-        File outputPON = "~{outbase}.pon"
-    }
-    runtime {
-        docker : "~{pbDocker}"
-        disks : "local-disk ~{auto_diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
-        zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : maxPreemptAttempts
-    }
-}
-
 task mutect2_call {
     input {
         File tumorBAM
@@ -160,7 +117,7 @@ task mutect2_postpon {
 task compressAndIndexVCF {
     input {
         File inputVCF
-        String? bgzipDocker
+        String bgzipDocker = "samtools/bcftools"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
@@ -169,14 +126,17 @@ task compressAndIndexVCF {
         Int maxPreemptAttempts = 3
     }
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.0) + 40 else diskGB
-
+    ## We need to write to stdout in our task, as bgzip will compress the file in-place on the
+    ## mounted volume and not the local disk. The issue with this is the mounted volume is not visible
+    ## when searching for outputs.
+    String localVCF = basename(inputVCF)
     command {
-        bgzip -@ ~{nThreads} ~{inputVCF} && \
-        tabix ~{inputVCF}.gz
+        bgzip -c -@ ~{nThreads} ~{inputVCF} > ~{localVCF}.gz  && \
+        tabix ~{localVCF}.gz
     }
     output {
-        File outputVCF = "~{inputVCF}.gz"
-        File outputTBI = "~{inputVCF}.gz.tbi"
+        File outputVCF = "~{localVCF}.gz"
+        File outputTBI = "~{localVCF}.gz.tbi"
     }
     runtime {
         docker : "~{bgzipDocker}"
@@ -206,6 +166,7 @@ workflow ClaraParabricks_Somatic {
         File pbLicenseBin
         File? ponVCF
         File? ponTBI
+        File? ponFile
         String pbDocker = "clara-parabricks/parabricks-cloud"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
@@ -221,23 +182,6 @@ workflow ClaraParabricks_Somatic {
     Boolean doPON = defined(ponVCF)
 
     if (doPON){
-        call mutect2_prepon{
-            input:
-                ponVCF=select_first([ponVCF]),
-                ponTBI=select_first([ponTBI]),
-                pbPATH=pbPATH,
-                pbLicenseBin=pbLicenseBin,
-                pbDocker=pbDocker,
-                nGPU=nGPU,
-                gpuModel=gpuModel,
-                gpuDriverVersion=gpuDriverVersion,
-                nThreads=nThreads,
-                gbRAM=gbRAM,
-                diskGB=diskGB,
-                runtimeMinutes=runtimeMinutes,
-                hpcQueue=hpcQueue,
-                maxPreemptAttempts=maxPreemptAttempts
-        }
         call mutect2_call as pb_mutect2_pon {
             input:
                 tumorBAM=tumorBAM,
@@ -247,7 +191,7 @@ workflow ClaraParabricks_Somatic {
                 normalBAI=normalBAI,
                 normalName=normalName,
                 inputRefTarball=inputRefTarball,
-                ponFile=mutect2_prepon.outputPON,
+                ponFile=ponFile,
                 ponVCF=ponVCF,
                 ponTBI=ponTBI,
                 pbPATH=pbPATH,
@@ -266,7 +210,7 @@ workflow ClaraParabricks_Somatic {
         call mutect2_postpon {
             input:
                 inputVCF=pb_mutect2_pon.outputVCF,
-                ponFile=select_first([mutect2_prepon.outputPON]),
+                ponFile=select_first([ponFile]),
                 ponVCF=select_first([ponVCF]),
                 ponTBI=select_first([ponTBI]),
                 pbPATH=pbPATH,
@@ -313,5 +257,9 @@ workflow ClaraParabricks_Somatic {
     output {
         File outputVCF = compressAndIndexVCF.outputVCF
         File outputTBI = compressAndIndexVCF.outputTBI
+    }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
     }
 }
