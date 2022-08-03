@@ -57,4 +57,24 @@ more advanced control over inputs or need additional ones you can modify the ful
 
 Here is a valid minimal example that runs locally, assuming that your test data is inside the `parabricks-wdl` repo.
 
-## Accelerate your own workflow
+# Developing Parabricks-WDL
+
+### Contributing new code
+Please see CONTRIBUTING_WDL.md for more information about requirements for WDL contributions to this repo.
+
+To validate your WDL, you can run `make validate`. To use a custom WOMtool (i.e., if womtool-82.jar is not in the local directory), you can run `make validate WOMTOOL=/path/to/womtool-<version>.jar`.
+
+
+To set the parabricks docker container to the default:
+
+```bash
+make set_docker
+```
+
+to set it to a custom image:  
+
+```bash
+make set_docker PBDOCKER="<repo>/<image>[:<tag>]`
+```
+
+### Validating your WDL file
