@@ -177,7 +177,6 @@ task bam2fq {
         time tar xf ${inputRefTarball} && \
         time ${pbPATH} bam2fq \
             --in-bam ${inputBAM} \
-            --ref ${ref} \
             --out-prefix ${outbase} \
             --license-file ${pbLicenseBin}
     }
