@@ -1,5 +1,6 @@
 WOMTOOL := womtool-81.jar
 PBDOCKER := "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1"
+DEFAULT_GPU_MODEL := "nvidia-tesla-v100"
 
 WDL_DIR := wdl
 WDL_FILES = $(wildcard $(WDL_DIR)/*.wdl)
@@ -26,6 +27,9 @@ inputs: $(MIN_INPUTS) $(FULL_INPUTS)
 
 set_docker: $(wildcard $(WDL_DIR)/*.wdl)
 	for i in $^; do sed -i "s|pbDocker = \".*\"|pbDocker = \"$(PBDOCKER)\"|g" $$i ; done
+
+set_gpu: $(wildcard $(WDL_DIR)/*.wdl)
+	for i in $^; do sed -i "s|gpuModel = \".*\"|gpuModel = \"$(DEFAULT_GPU_MODEL)\"|g" $$i ; done
 
 pre:
 	mkdir -p $(VAL_DIR)
