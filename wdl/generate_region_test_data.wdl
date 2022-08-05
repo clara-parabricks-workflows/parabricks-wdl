@@ -90,16 +90,17 @@ task indexFASTA {
         Int runtimeMinutes = 600
         String hpcQueue = "norm"
     }
-    String outbase = basename(inputFASTA)
+    String localFASTA = basename(inputFASTA)
     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFASTA, "GB")) + 50 else diskGB
 
     command {
-        ~{samtoolsPATH} faidx ~{inputFASTA} && \
-        ~{bwaPATH} index ~{inputFASTA} && \
-        tar cvf ~{outbase}.tar ~{inputFASTA}*
+        cp ~{inputFASTA} . && \
+        ~{samtoolsPATH} faidx ~{localFASTA} && \
+        ~{bwaPATH} index ~{localFASTA} && \
+        tar cvf ~{localFASTA}.tar ~{localFASTA}*
     }
     output {
-        File outputRefTarball = "~{outbase}.tar"
+        File outputRefTarball = "~{localFASTA}.tar"
     }
     runtime {
         docker : "~{indexDocker}"
