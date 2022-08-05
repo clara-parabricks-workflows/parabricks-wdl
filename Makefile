@@ -11,8 +11,6 @@ VALS := $(patsubst %.wdl, $(VAL_DIR)/%.val, $(notdir $(WDL_FILES)))
 MIN_INPUTS := $(patsubst %.wdl, $(INPUTS_DIR)/%.minimalInputs.json, $(notdir $(WDL_FILES)))
 FULL_INPUTS := $(patsubst %.wdl, $(INPUTS_DIR)/%.fullInputs.json, $(notdir $(WDL_FILES)))
 
-
-
 $(VAL_DIR)/%.val : $(WDL_DIR)/%.wdl pre
 	+java -jar $(WOMTOOL) validate $< | tee $@
 
