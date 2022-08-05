@@ -242,9 +242,9 @@ task fq2bam {
     }
 
     output {
-        File outputBAM = "${outbase}.pb.realn.bam"
-        File outputBAI = "${outbase}.pb.realn.bam.bai"
-        File outputBQSR = "${outbase}.BQSR-REPORT.txt"
+        File outputBAM = "${outbase}.pb.bam"
+        File outputBAI = "${outbase}.pb.bam.bai"
+        File outputBQSR = "${outbase}.pb.BQSR-REPORT.txt"
     }
 
     runtime {
