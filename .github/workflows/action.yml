@@ -1,5 +1,9 @@
 name: 'Clara Parabricks WDL'
 description: 'Validate workflows in the repo'
+on:
+  push:
+  pull_request:
+  
 inputs:
 outputs:
 runs:
