@@ -16,10 +16,10 @@ $(VAL_DIR)/%.val : $(WDL_DIR)/%.wdl pre
 
 validate: $(VALS) pre
 
-$(INPUTS_DIR)/%.minimalInputs.json : $(WDL_DIR)/%.wdl
+$(INPUTS_DIR)/%.minimalInputs.json : $(WDL_DIR)/%.wdl FORCE
 	+java -jar $(WOMTOOL) inputs $< | grep -v "optional" | tee $@
 
-$(INPUTS_DIR)/%.fullInputs.json : $(WDL_DIR)/%.wdl
+$(INPUTS_DIR)/%.fullInputs.json : $(WDL_DIR)/%.wdl FORCE
 	+java -jar $(WOMTOOL) inputs $< | tee $@
 
 inputs: $(MIN_INPUTS) $(FULL_INPUTS)
@@ -33,4 +33,6 @@ pre:
 clean:
 	rm -rf $(VAL_DIR)
 
-.PHONY: validate inputs clean pre set_docker
+.PHONY: validate inputs clean pre set_docker 
+
+FORCE:
