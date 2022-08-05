@@ -366,7 +366,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
         input:
             inputBAM=reduceBAM.outputBAM,
             inputBAI=reduceBAM.outputBAI,
-            inputRefTarball=indexFASTA.outputRefTarball,
+            inputRefTarball=inputRefTarball,
             pbPATH=pbPATH,
             pbLicenseBin=pbLicenseBin,
             nThreads=nThreads_bam2fq,
