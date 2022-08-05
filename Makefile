@@ -1,5 +1,5 @@
 WOMTOOL := womtool-81.jar
-PBDOCKER := "clara-parabricks/parabricks-cloud:4.0.0-1.alpha1"
+PBDOCKER := "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1"
 
 WDL_DIR := wdl
 WDL_FILES = $(wildcard $(WDL_DIR)/*.wdl)

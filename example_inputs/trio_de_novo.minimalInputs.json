@@ -1,0 +1,19 @@
+{
+  "ClaraParabricks_TrioDeNovo.inputFatherBAM": "File",
+  "ClaraParabricks_TrioDeNovo.dnmFilterPythonScriptPath": "String",
+  "ClaraParabricks_TrioDeNovo.inputFatherBAI": "File",
+  "ClaraParabricks_TrioDeNovo.inputMotherBAI": "File",
+  "ClaraParabricks_TrioDeNovo.inputChildBAI": "File",
+  "ClaraParabricks_TrioDeNovo.pbPath": "String",
+  "ClaraParabricks_TrioDeNovo.childSampleName": "String",
+  "ClaraParabricks_TrioDeNovo.pbLicenseBin": "File",
+  "ClaraParabricks_TrioDeNovo.inputFatherBQSR": "File",
+  "ClaraParabricks_TrioDeNovo.refTarball": "File",
+  "ClaraParabricks_TrioDeNovo.fatherSampleName": "String",
+  "ClaraParabricks_TrioDeNovo.inputChildBAM": "File",
+  "ClaraParabricks_TrioDeNovo.inputMotherBAM": "File",
+  "ClaraParabricks_TrioDeNovo.inputChildBQSR": "File",
+  "ClaraParabricks_TrioDeNovo.motherSampleName": "String",
+  "ClaraParabricks_TrioDeNovo.inputMotherBQSR": "File",
+}
+

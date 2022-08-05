@@ -1,0 +1,12 @@
+{
+  "ClaraParabricks_Somatic.normalBAM": "File",
+  "ClaraParabricks_Somatic.tumorBAI": "File",
+  "ClaraParabricks_Somatic.tumorName": "String",
+  "ClaraParabricks_Somatic.normalBAI": "File",
+  "ClaraParabricks_Somatic.pbLicenseBin": "File",
+  "ClaraParabricks_Somatic.normalName": "String",
+  "ClaraParabricks_Somatic.pbPATH": "String",
+  "ClaraParabricks_Somatic.inputRefTarball": "File",
+  "ClaraParabricks_Somatic.tumorBAM": "File"
+}
+

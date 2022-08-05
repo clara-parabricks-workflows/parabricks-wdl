@@ -1,10 +1,10 @@
 {
-  "Parabricks_FQ2BAM.pbPATH": "String",
-  "Parabricks_FQ2BAM.pbLicenseBin": "File",
-  "Parabricks_FQ2BAM.inputKnownSitesTBI": "File",
-  "Parabricks_FQ2BAM.inputRefTarball": "File",
-  "Parabricks_FQ2BAM.inputFASTQ_2": "File",
-  "Parabricks_FQ2BAM.inputKnownSites": "File",
-  "Parabricks_FQ2BAM.inputFASTQ_1": "File",
+  "ClaraParabricks_fq2bam.inputFASTQ_2": "File",
+  "ClaraParabricks_fq2bam.pbLicenseBin": "File",
+  "ClaraParabricks_fq2bam.inputKnownSitesTBI": "File",
+  "ClaraParabricks_fq2bam.inputRefTarball": "File",
+  "ClaraParabricks_fq2bam.inputKnownSites": "File",
+  "ClaraParabricks_fq2bam.inputFASTQ_1": "File",
+  "ClaraParabricks_fq2bam.pbPATH": "String"
 }
 

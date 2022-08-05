@@ -9,7 +9,7 @@ task bam2fq {
         File inputRefTarball
         String pbPATH
         File pbLicenseBin
-        String pbDocker = "clara-parabricks/parabricks-cloud:4.0.0-1.alpha1"
+        String pbDocker = "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
@@ -65,7 +65,7 @@ task fq2bam {
         File inputKnownSitesTBI
         File pbLicenseBin
         String pbPATH
-        String pbDocker = "clara-parabricks/parabricks-cloud:4.0.0-1.alpha1"
+        String pbDocker = "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1"
         String tmp_dir = "tmp_fq2bam"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
@@ -134,7 +134,7 @@ workflow ClaraParabricks_bam2fq2bam {
         File inputRefTarball
         File pbLicenseBin
         String pbPATH
-        String pbDocker = "clara-parabricks/parabricks-cloud:4.0.0-1.alpha1"
+        String pbDocker = "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1"
         String tmp_dir = "tmp_fq2bam"
         Int nGPU_fq2bam = 4
         String gpuModel_fq2bam = "nvidia-tesla-v100"

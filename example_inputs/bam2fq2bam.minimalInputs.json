@@ -1,11 +1,11 @@
 {
-  "bam2fq2bam.inputRefTarball": "File",
-  "bam2fq2bam.knownSitesVCF": "File",
-  "bam2fq2bam.knownSitesTBI": "File",
-  "bam2fq2bam.pbPATH": "String",
-  "bam2fq2bam.pbLicenseBin": "File",
-  "bam2fq2bam.originalRefTarball": "File",
-  "bam2fq2bam.inputBAM": "File",
-  "bam2fq2bam.inputBAI": "File"
+  "ClaraParabricks_bam2fq2bam.inputBAM": "File",
+  "ClaraParabricks_bam2fq2bam.inputRefTarball": "File",
+  "ClaraParabricks_bam2fq2bam.originalRefTarball": "File",
+  "ClaraParabricks_bam2fq2bam.pbPATH": "String",
+  "ClaraParabricks_bam2fq2bam.pbLicenseBin": "File",
+  "ClaraParabricks_bam2fq2bam.inputBAI": "File",
+  "ClaraParabricks_bam2fq2bam.knownSitesTBI": "File",
+  "ClaraParabricks_bam2fq2bam.knownSitesVCF": "File",
 }
 
