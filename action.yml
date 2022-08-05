@@ -1,0 +1,9 @@
+name: 'Clara Parabricks WDL'
+description: 'Validate workflows in the repo'
+inputs:
+outputs:
+runs:
+  using: 'docker'
+  image: 'clara-parabricks/cromwell'
+  args:
+    - "make validate WOMTOOL=/usr/bin/womtool.jar"
