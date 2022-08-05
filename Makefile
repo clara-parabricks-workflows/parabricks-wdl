@@ -1,5 +1,5 @@
 WOMTOOL := womtool-81.jar
-PBDOCKER := "us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1"
+PBDOCKER := "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
 DEFAULT_GPU_MODEL := "nvidia-tesla-v100"
 
 WDL_DIR := wdl
