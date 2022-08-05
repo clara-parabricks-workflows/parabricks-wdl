@@ -14,6 +14,7 @@ To learn more about Nvidia Clara Parabricks see [our page describing accelerated
  - fq2bam : Align reads with Clara Parabricks' accelerated version of BWA mem.
  - bam2fq2bam: Extract FASTQ files from a BAM file and realign them to produce a new BAM file on a different reference.
  - germline_calling: Run accelerated GATK HaplotypeCaller and/or accelerated DeepVariant to produce germline VCF or gVCF files for a single sample.
+ - create_pon: Generate a Panel-of-Normals file for use with accelerated Mutect2.
  - somatic_calling: Run accelerated Mutect2 on a matched tumor-normal sample pair to generate a somatic VCF.
  - RNA: Run accelerated RNA-seq alignment using STAR.
  - trio_de_novo_calling: Run accelerated germline calling for a trio sample set before joint calling and filtering for putative de novo mutations.
@@ -53,9 +54,11 @@ wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fa
 wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/hiseqx/wgs_pcr_free/30x/HG002.hiseqx.pcr-free.30x.R2.fastq.gz
 ```
 
+
 ## Run your first workflow
 There are example JSON input slugs in the `example_inputs` directory. To run your first workflow, you can edit the minimal inputs file (`fq2bam.minimalInputs.json`). If you want
 more advanced control over inputs or need additional ones you can modify the full inputs file (`fq2bam.fullInputs.json`).
+
 
 ### Running locally using Parabricks installation
 The following example will run the fq2bam command on a local machine with a Clara Parabricks installation at `/usr/bin/parabricks/`:
@@ -109,8 +112,6 @@ gsutil cp chr22.HG002.hiseqx.pcr-free.30x.R2.fastq.gz gs://test-project-bucket/
 
 ## Copy the parabricks license to the bucket
 gsutil cp /usr/bin/parabricks/license.bin gs://test-project-bucket/
-
-
 ```
 
 Next, update the inputs to reflect their position in GCS:
@@ -128,12 +129,28 @@ Next, update the inputs to reflect their position in GCS:
 }
 ```
 
-## Build larger workflows and analyze your own data
+
+# Build larger workflows and analyze your own data
+
+This repository serves both as a set of pre-configured workflows and a set of building blocks for generating your own wokrflows incorporating Clara Parabricks. See 
+
+
+# WDL Support
+
+All workflows in this repository support [WDL version 1.0](https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md). Support for some WDL features varies by the backend used for a given run.
+
+Support for WDL features:
+
+- Call Caching: call caching is not tested on this repository, but should be functional. See the Cromwell docs for how to enable call caching.
+- Automatic parallelization: WDL supports running tasks that are independent in the execution DAG in parallel. This feature is supported on the `gcp` and `slurm` backends. *This feature is disabled by default for the `local` and `localDocker` backends.* To enable this feature, modify the `maxForks` variable in the corresponding config file. Note: users should adjust thread counts for individual tools to ensure they do not oversubscribe their system when running with maxForks > 1.
+- Imports: This repository supports GitHub-style imports of tasks / workflows. However, this feature is not supported by Nvidia and no guarantee of functionality or maintenance is provided. We recommend forking this repository and maintaining your own stable branch for imports should you desire to use this feature.
+- Terra: All workflows in this repository will run on Terra. Search for Clara Parabricks on Terra for the latest version.
+- Backends: While we only support the backends listed in `config/`, other backends may work with minimal adjustement. This compatibility is not guaranteed or tested unless otherwise noted.
 
 
 # Developing Parabricks-WDL
 
-### Contributing new code
+## Contributing new code
 Please see CONTRIBUTING_WDL.md for more information about requirements for WDL contributions to this repo.
 
 To validate your WDL, you can run `make validate`. To use a custom WOMtool (i.e., if womtool-82.jar is not in the local directory), you can run `make validate WOMTOOL=/path/to/womtool-<version>.jar`.
@@ -153,6 +170,6 @@ make set_docker PBDOCKER="<repo>/<image>[:<tag>]`
 
 ### Validating your WDL file
 
-You can validate all the WDLs in the repo by running `make validate`
+You can validate all the WDLs in this repo's `wdl` directory by running `make validate`. To use a specific path to womtool, run `make validate WOMTOOL=/path/to/womtool-<version>.jar`.
 
 
