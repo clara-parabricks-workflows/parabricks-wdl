@@ -160,6 +160,9 @@ Support for WDL features:
 
 # Developing Parabricks-WDL
 
+## License
+See [LICENSE](https://github.com/clara-parabricks-workflows/parabricks-wdl/blob/main/LICENSE)
+
 ## Contributing new code
 Please see CONTRIBUTING_WDL.md for more information about requirements for WDL contributions to this repo.
 
