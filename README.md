@@ -10,6 +10,9 @@ take a set of inputs and produce a set of outputs.
 
 To learn more about Nvidia Clara Parabricks see [our page describing accelerated genomic analysis](https://www.nvidia.com/en-us/clara/genomics/).
 
+
+These workflows are available on [Dockstore](https://dockstore.org/) and in [Terra](https://terra.bio/); just search Clara Parabricks.
+
 # Available workflows
  - fq2bam : Align reads with Clara Parabricks' accelerated version of BWA mem.
  - bam2fq2bam: Extract FASTQ files from a BAM file and realign them to produce a new BAM file on a different reference.
@@ -59,9 +62,16 @@ wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fa
 There are example JSON input slugs in the `example_inputs` directory. To run your first workflow, you can edit the minimal inputs file (`fq2bam.minimalInputs.json`). If you want
 more advanced control over inputs or need additional ones you can modify the full inputs file (`fq2bam.fullInputs.json`).
 
+### Running in Terra / Dockstore
+
+All workflows in this repository are available on [Terra](https://terra.bio/). If you don't have a local Parabricks installation
+or don't want to configure your own cloud / HPC environment, consider running on Terra.
+
+The workflows in this repository are also available on [Dockstore](https://dockstore.org/), where they can be exported to your Terra,
+AnVIL, or DNANexus workspace.
 
 ### Running locally using Parabricks installation
-The following example will run the fq2bam command on a local machine with a Clara Parabricks installation at `/usr/bin/parabricks/`:
+The following example will run the fq2bam command on a local machine with a Clara Parabricks installation at `/usr/local/parabricks/`:
 
 ```bash
 ## Create the inputs file, removing optional inputs
@@ -73,12 +83,12 @@ Then, edit the inputs file to contain the proper values and remove any trailing 
 ```json
 {
   "ClaraParabricks_fq2bam.inputFASTQ_2": "chr22.HG002.hiseqx.pcr-free.30x.R2.fastq.gz",
-  "ClaraParabricks_fq2bam.pbLicenseBin": "/usr/bin/parabricks/license.bin",
+  "ClaraParabricks_fq2bam.pbLicenseBin": "/usr/local/parabricks/license.bin",
   "ClaraParabricks_fq2bam.inputKnownSitesTBI": "chr22.Mills_1000G_known_indels.vcf.gz.tbi",
   "ClaraParabricks_fq2bam.inputRefTarball": "chr22.Homo_sapiens_assembly38.fasta.tar",
   "ClaraParabricks_fq2bam.inputKnownSites": "chr22.Mills_1000G_known_indels.vcf.gz",
   "ClaraParabricks_fq2bam.inputFASTQ_1": "chr22.HG002.hiseqx.pcr-free.30x.R1.fastq.gz",
-  "ClaraParabricks_fq2bam.pbPATH": "/usr/bin/parabricks/pbrun"
+  "ClaraParabricks_fq2bam.pbPATH": "/usr/local/parabricks/pbrun"
 }
 ```
 
