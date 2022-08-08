@@ -5,4 +5,4 @@ jobs:
   Validate-WDLs:
     runs-on: 'clara-parabricks/cromwell'
     steps:
-      run: echo "testing"
+      - run: echo "testing"
