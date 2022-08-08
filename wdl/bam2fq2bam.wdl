@@ -8,7 +8,7 @@ task bam2fq {
         File inputBAI
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         Int nThreads = 32
         Int gbRAM = 120
@@ -23,12 +23,12 @@ task bam2fq {
     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 50 else diskGB
 
     command {
-        time tar xf ${inputRefTarball} && \
-        time ${pbPATH} bam2fq \
-            --in-bam ${inputBAM} \
-            --ref ${ref} \
-            --out-prefix ${outbase} \
-            --license-file ${pbLicenseBin}
+        time tar xf ~{inputRefTarball} && \
+        time ~{pbPATH} bam2fq \
+            --in-bam ~{inputBAM} \
+            --ref ~{ref} \
+            --out-prefix ~{outbase} \
+            ~{"--license-file " + pbLicenseBin}
     }
 
     output {
@@ -63,7 +63,7 @@ task fq2bam {
         File inputRefTarball
         File inputKnownSitesVCF
         File inputKnownSitesTBI
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         String tmp_dir = "tmp_fq2bam"
@@ -82,16 +82,16 @@ task fq2bam {
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(inputFQ_1, "_1.fastq.gz")
     command {
-        mkdir -p ${tmp_dir} && \
-        time tar xf ${inputRefTarball} && \
-        time ${pbPATH} fq2bam \
-        --tmp-dir ${tmp_dir} \
-        --in-fq ${inputFQ_1} ${inputFQ_2} \
-        --ref ${ref} \
-        --knownSites ${inputKnownSitesVCF} \
-        --out-bam ${outbase}.pb.bam \
-        --out-recal-file ${outbase}.pb.BQSR-REPORT.txt \
-        --license-file ${pbLicenseBin}
+        mkdir -p ~{tmp_dir} && \
+        time tar xf ~{inputRefTarball} && \
+        time ~{pbPATH} fq2bam \
+        --tmp-dir ~{tmp_dir} \
+        --in-fq ~{inputFQ_1} ${inputFQ_2} \
+        --ref ~{ref} \
+        --knownSites ~{inputKnownSitesVCF} \
+        --out-bam ~{outbase}.pb.bam \
+        --out-recal-file ~{outbase}.pb.BQSR-REPORT.txt \
+        ~{"--license-file " + pbLicenseBin}
 
 
 
@@ -132,7 +132,7 @@ workflow ClaraParabricks_bam2fq2bam {
         File knownSitesTBI
         File originalRefTarball
         File inputRefTarball
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         String tmp_dir = "tmp_fq2bam"

@@ -9,7 +9,7 @@ task haplotypecaller {
         Boolean gvcfMode = false
         String? haplotypecallerPassthroughOptions
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         String? pbDocker
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
@@ -38,7 +38,7 @@ task haplotypecaller {
         --ref ~{ref} \
         --in-recal-file ~{inputRecal} \
         --out-variants ~{outVCF} \
-        --license-file ~{pbLicenseBin} && \
+        ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
     }
@@ -70,7 +70,7 @@ task deepvariant {
         File inputBAI
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         String? pbDocker
         Boolean gvcfMode = false
         Int nGPU = 4
@@ -99,7 +99,7 @@ task deepvariant {
         --ref ${ref} \
         --in-bam ${inputBAM} \
         --out-variants ~{outVCF} \
-        --license-file ${pbLicenseBin} && \
+        ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
     }
@@ -131,7 +131,7 @@ workflow ClaraParabricks_Germline {
         File inputRecal
 
         File inputRefTarball
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
 

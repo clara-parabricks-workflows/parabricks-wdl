@@ -5,7 +5,7 @@ task mutect2_prepon {
         File ponVCF
         File ponTBI
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         String? pbDocker
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
@@ -25,7 +25,9 @@ task mutect2_prepon {
     command {
         cp ~{ponVCF} ~{localVCF} && \
         cp ~{ponTBI} ~{localTBI} && \
-        time ~{pbPATH} prepon --in-pon-file ~{localVCF}
+        time ~{pbPATH} prepon \
+        --in-pon-file ~{localVCF} \
+        ~{"--license-file " + pbLicenseBin}
     }
     output {
         File outputPON = "~{localVCF}.pon"
@@ -53,7 +55,7 @@ workflow ClaraParabricks_Somatic {
         File ponVCF
         File ponTBI
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"

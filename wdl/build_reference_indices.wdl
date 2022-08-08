@@ -10,7 +10,7 @@ task index {
         Int gbRAM = 120
         Int diskGB = 0
         Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
+        String hpcQueue = "norm"
     }
     String outbase = basename(inputFASTA)
     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFASTA, "GB")) + 50 else diskGB
@@ -24,7 +24,7 @@ task index {
         File refTarball = "~{outbase}.tar"
     }
     runtime {
-        docker: "erictdawson/bwa"
+        docker: "claraparabricks/bwa"
         runtime_minutes : "180"
         cpu : "3"
         memory : "14 GB"
@@ -39,12 +39,12 @@ workflow ClaraParabricks_IndexReference {
         File fastaFile
         String samtoolsPATH = "samtools"
         String bwaPATH = "bwa"
-        String indexDocker = "clara-parabricks/bwa"
+        String indexDocker = "claraparabricks/bwa"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
         Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
+        String hpcQueue = "norm"
     }
 
     call index {

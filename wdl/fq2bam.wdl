@@ -12,7 +12,7 @@ task fq2bam {
         File inputRefTarball
         File inputKnownSites
         File inputKnownSitesTBI
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         String tmpDir = "tmp_fq2bam"
@@ -46,7 +46,7 @@ task fq2bam {
         --knownSites ~{inputKnownSites} \
         --out-bam ~{outbase}.pb.bam \
         --out-recal-file ~{outbase}.pb.BQSR-REPORT.txt \
-        --license-file ~{pbLicenseBin}
+        ~{"--license-file " + pbLicenseBin}
     }
 
     output {
@@ -83,7 +83,7 @@ workflow ClaraParabricks_fq2bam {
         File inputRefTarball
         File inputKnownSites
         File inputKnownSitesTBI
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         String tmpDir = "tmp_fq2bam"

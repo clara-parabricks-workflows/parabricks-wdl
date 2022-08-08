@@ -159,7 +159,7 @@ task bam2fq {
         File inputBAI
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         Int nThreads = 32
         Int gbRAM = 120
@@ -178,7 +178,7 @@ task bam2fq {
         time ${pbPATH} bam2fq \
             --in-bam ${inputBAM} \
             --out-prefix ${outbase} \
-            --license-file ${pbLicenseBin}
+            ~{"--license-file " + pbLicenseBin}
     }
 
     output {
@@ -210,7 +210,7 @@ task fq2bam {
         File inputRefTarball
         File inputKnownSitesVCF
         File inputKnownSitesTBI
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         String tmp_dir = "tmp_fq2bam"
@@ -238,7 +238,7 @@ task fq2bam {
         --knownSites ${inputKnownSitesVCF} \
         --out-bam ${outbase}.pb.bam \
         --out-recal-file ${outbase}.pb.BQSR-REPORT.txt \
-        --license-file ${pbLicenseBin}
+        ~{"--license-file " + pbLicenseBin}
     }
 
     output {
@@ -275,7 +275,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
         File knownSitesVCF
         File knownSitesTBI
         File inputRefTarball
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         

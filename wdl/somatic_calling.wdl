@@ -13,7 +13,7 @@ task mutect2_call {
         String normalName
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         File? ponFile
         File? ponVCF
         File? ponTBI
@@ -44,7 +44,7 @@ task mutect2_call {
         --normal-name ~{normalName} \
         --in-normal-bam ~{normalBAM} \
         ~{"--pon " + ponVCF} \
-        --license-file ~{pbLicenseBin} \
+        ~{"--license-file " + pbLicenseBin} \
         --out-vcf ~{outbase}.vcf
     }
     output {
@@ -73,7 +73,7 @@ task mutect2_postpon {
         File ponVCF
         File ponTBI
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         String? pbDocker
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-v100"
@@ -163,7 +163,7 @@ workflow ClaraParabricks_Somatic {
         String normalName
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         File? ponVCF
         File? ponTBI
         File? ponFile

@@ -8,7 +8,7 @@ task strelka {
         File inputBAI
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
 
         String? pbDocker  = "parabricks/3.7.0-1"
         Int maxPreemptAttempts = 3
@@ -32,7 +32,7 @@ task strelka {
         --ref ${ref} \
         --out-prefix ${outbase}.strelka \
         --num-threads ${nThreads} \
-        --license-file ${pbLicenseBin} && \
+        ~{"--license-file " + pbLicenseBin} && \
         cp ${outbase}.strelka.strelka_work/results/variants/variants.vcf.gz ${outbase}.strelka.variants.vcf.gz && \
         cp ${outbase}.strelka.strelka_work/results/variants/variants.vcf.gz.tbi ${outbase}.strelka.variants.vcf.gz.tbi && \
         cp ${outbase}.strelka.strelka_work/results/variants/genome.S1.vcf.gz ${outbase}.strelka.genomic.vcf.gz && \
@@ -66,7 +66,7 @@ task haplotypecaller {
         File inputRecal
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         Boolean gvcfMode = false
         String? haplotypecallerPassthroughOptions
 
@@ -97,7 +97,7 @@ task haplotypecaller {
         --ref ~{ref} \
         --in-recal-file ~{inputRecal} \
         --out-variants ~{outVCF} \
-        --license-file ~{pbLicenseBin} && \
+        ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
     }
@@ -129,7 +129,7 @@ task deepvariant {
         File inputBAI
         File inputRefTarball
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         Boolean gvcfMode = false
 
         String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
@@ -158,7 +158,7 @@ task deepvariant {
         --ref ${ref} \
         --in-bam ${inputBAM} \
         --out-variants ~{outVCF} \
-        --license-file ${pbLicenseBin} && \
+        ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
     }
@@ -285,7 +285,7 @@ task GLNexusJointGenotypeTrioGVCFs {
         File inputFatherTBI
         String config
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
 
         String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         Int maxPreemptAttempts = 3
@@ -318,7 +318,7 @@ task GLNexusJointGenotypeTrioGVCFs {
 
     command {
         ~{pbPATH} glnexus \
-        --license-file ${pbLicenseBin} \
+        ~{"--license-file " + pbLicenseBin} \
         --glnexus-options="--config ~{config} --mem-gbytes ~{glnexusRAM} --threads ~{m_glnexusThreads}" \
         --in-gvcf ~{inputChildVCF} \
         --in-gvcf ~{inputMotherVCF} \
@@ -355,7 +355,7 @@ task numberOfCallersFilter {
         File haplotypecallerTBI
         File strelkaTBI
         String pbPATH
-        File pbLicenseBin
+        File? pbLicenseBin
         Int minVotes = 3
 
         String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
@@ -371,7 +371,7 @@ task numberOfCallersFilter {
 
     command {
         ~{pbPATH} votebasedvcfmerger \
-        --license ~{pbLicenseBin} \
+        ~{"--license-file " + pbLicenseBin} \
         --min-votes ~{minVotes} \
         --in-vcf deepvariant:~{deepvariantVCF} \
         --in-vcf haplotypecaller:~{haplotypecallerVCF} \
@@ -478,7 +478,7 @@ workflow ClaraParabricks_TrioDeNovo {
         
         ## A path to a valid Parabricks license file,
         ## which must be on the same file system as the inputs.
-        File pbLicenseBin
+        File? pbLicenseBin
         String pbPath
         String tmpDir = "tmp_dir"
 
