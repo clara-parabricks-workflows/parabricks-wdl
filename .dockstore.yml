@@ -30,6 +30,13 @@ workflows:
         affiliation: NVIDIA
         orcid: 0000-0001-5448-1653
   - subclass: WDL
+    primaryDescriptorPath: /wdl/create_PON.wdl
+    name: clara-parabricks-create-PON
+    authors:
+      - name: Eric T. Dawson
+        affiliation: NVIDIA
+        orcid: 0000-0001-5448-1653
+  - subclass: WDL
     primaryDescriptorPath: /wdl/somatic-calling.wdl
     name: clara-parabricks-somatic-calling
     authors:
