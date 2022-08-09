@@ -4,7 +4,7 @@ task haplotypecaller {
     input {
         File inputBAM
         File inputBAI
-        File inputRecal
+        File? inputRecal
         File inputRefTarball
         Boolean gvcfMode = false
         String? haplotypecallerPassthroughOptions
@@ -36,7 +36,7 @@ task haplotypecaller {
         ~{"--haplotypecaller-options " + '"' + haplotypecallerPassthroughOptions + '"'} \
         --in-bam ~{inputBAM} \
         --ref ~{ref} \
-        --in-recal-file ~{inputRecal} \
+        ~{"--in-recal-file " + inputRecal} \
         --out-variants ~{outVCF} \
         ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
@@ -128,7 +128,7 @@ workflow ClaraParabricks_Germline {
     input {
         File inputBAM
         File inputBAI
-        File inputRecal
+        File? inputRecal
 
         File inputRefTarball
         File? pbLicenseBin
