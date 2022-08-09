@@ -1,7 +1,7 @@
 # Copyright 2021 NVIDIA CORPORATION & AFFILIATES
 version 1.0
 
-import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/main/wdl/fq2bam.wdl" as ToBam
+import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/imports/wdl/fq2bam.wdl" as ToBam
 
 ## Convert a BAM file into a pair of FASTQ files.
 task bam2fq {
@@ -34,8 +34,8 @@ task bam2fq {
     }
 
     output {
-        File outputFQ_1 = "${outbase}_1.fastq.gz"
-        File outputFQ_2 = "${outbase}_2.fastq.gz"
+        File outputFASTQ_1 = "${outbase}_1.fastq.gz"
+        File outputFASTQ_2 = "${outbase}_2.fastq.gz"
     }
 
     runtime {
@@ -87,6 +87,9 @@ task bam2fq {
 #         mkdir -p ~{tmp_dir} && \
 #         time tar xf ~{inputRefTarball} && \
 #         time ~{pbPATH} fq2bam \
+
+
+
 #         --tmp-dir ~{tmp_dir} \
 #         --in-fq ~{inputFQ_1} ${inputFQ_2} \
 #         --ref ~{ref} \
@@ -130,14 +133,14 @@ workflow ClaraParabricks_bam2fq2bam {
     input {
         File inputBAM
         File inputBAI
-        File knownSitesVCF
-        File knownSitesTBI
+        File inputKnownSitesVCF
+        File inputKnownSitesTBI
         File originalRefTarball
         File inputRefTarball
         File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
-        String tmp_dir = "tmp_fq2bam"
+        String tmpDir = "tmp_fq2bam"
         Int nGPU_fq2bam = 4
         String gpuModel_fq2bam = "nvidia-tesla-v100"
         String gpuDriverVersion_fq2bam = "460.73.01"
@@ -171,11 +174,11 @@ workflow ClaraParabricks_bam2fq2bam {
     ## Remap the reads from the bam2fq stage to the new reference to produce a BAM file.
     call ToBam.fq2bam as fq2bam {
         input:
-            inputFQ_1=bam2fq.outputFQ_1,
-            inputFQ_2=bam2fq.outputFQ_2,
+            inputFASTQ_1=bam2fq.outputFASTQ_1,
+            inputFASTQ_2=bam2fq.outputFASTQ_2,
             inputRefTarball=inputRefTarball,
-            inputKnownSitesVCF=knownSitesVCF,
-            inputKnownSitesTBI=knownSitesTBI,
+            inputKnownSitesVCF=inputKnownSitesVCF,
+            inputKnownSitesTBI=inputKnownSitesTBI,
             pbLicenseBin=pbLicenseBin,
             pbPATH=pbPATH,
             nGPU=nGPU_fq2bam,
@@ -185,14 +188,14 @@ workflow ClaraParabricks_bam2fq2bam {
             gpuModel=gpuModel_fq2bam,
             gpuDriverVersion=gpuDriverVersion_fq2bam,
             diskGB=diskGB,
-            tmp_dir=tmp_dir,
+            tmpDir=tmpDir,
             hpcQueue=hpcQueue_fq2bam,
             pbDocker=pbDocker
     }
 
     output {
-        File outputFQ_1 = bam2fq.outputFQ_1
-        File outputFQ_2 = bam2fq.outputFQ_2
+        File outputFASTQ_1 = bam2fq.outputFASTQ_1
+        File outputFASTQ_2 = bam2fq.outputFASTQ_2
         File outputBAM = fq2bam.outputBAM
         File outputBAI = fq2bam.outputBAI
         File outputBQSR = fq2bam.outputBQSR

@@ -10,7 +10,7 @@ task fq2bam {
         String? readGroupName 
         String? platformName 
         File inputRefTarball
-        File inputKnownSites
+        File inputKnownSitesVCF
         File inputKnownSitesTBI
         File? pbLicenseBin
         String pbPATH
@@ -28,7 +28,7 @@ task fq2bam {
         Int maxPreemptAttempts = 3
     }
 
-    Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputFASTQ_1, "GB")) + ceil(5.0 * size(inputFASTQ_2, "GB")) + ceil(3.0 * size(inputRefTarball, "GB")) + ceil(size(inputKnownSites, "GB")) + 150 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputFASTQ_1, "GB")) + ceil(5.0 * size(inputFASTQ_2, "GB")) + ceil(3.0 * size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 150 else diskGB
 
 
     String ref = basename(inputRefTarball, ".tar")
@@ -44,7 +44,7 @@ task fq2bam {
         ~{"--read-group-pl " + platformName} \
         ~{"--read-group-id-prefix " + readGroupName} \
         --ref ~{ref} \
-        --knownSites ~{inputKnownSites} \
+        --knownSites ~{inputKnownSitesVCF} \
         --out-bam ~{outbase}.pb.bam \
         --out-recal-file ~{outbase}.pb.BQSR-REPORT.txt \
         ~{"--license-file " + pbLicenseBin}
