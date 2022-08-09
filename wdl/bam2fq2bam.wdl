@@ -1,7 +1,7 @@
 # Copyright 2021 NVIDIA CORPORATION & AFFILIATES
 version 1.0
 
-import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/imports/wdl/fq2bam.wdl" as ToBam
+import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/main/wdl/fq2bam.wdl" as ToBam
 
 ## Convert a BAM file into a pair of FASTQ files.
 task bam2fq {
@@ -9,6 +9,7 @@ task bam2fq {
         File inputBAM
         File inputBAI
         File inputRefTarball
+        File? originalRefTarball # Required for CRAM input
         String pbPATH
         File? pbLicenseBin
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
@@ -25,12 +26,13 @@ task bam2fq {
     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 50 else diskGB
 
     command {
+        ~{"tar xvf " + originalRefTarball}\
         time tar xf ~{inputRefTarball} && \
         time ~{pbPATH} bam2fq \
             --in-bam ~{inputBAM} \
-            --ref ~{ref} \
             --out-prefix ~{outbase} \
-            ~{"--license-file " + pbLicenseBin}
+            ~{"--license-file " + pbLicenseBin} \
+            ~{"--ref " + ref} \
     }
 
     output {
@@ -54,77 +56,6 @@ task bam2fq {
 
 }
 
-## Map the reads in a pair of FASTQ files to a reference,
-## producing a BAM file with the default sample name of sample
-## Also produces a BQSR report that can be used downstream for variant calling
-## with HaplotypeCaller.
-# task fq2bam {
-#     input {
-#         File inputFQ_1
-#         File inputFQ_2
-#         File inputRefTarball
-#         File inputKnownSitesVCF
-#         File inputKnownSitesTBI
-#         File? pbLicenseBin
-#         String pbPATH
-#         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
-#         String tmp_dir = "tmp_fq2bam"
-#         Int nGPU = 4
-#         String gpuModel = "nvidia-tesla-v100"
-#         String gpuDriverVersion = "460.73.01"
-#         Int nThreads = 32
-#         Int gbRAM = 120
-#         Int diskGB = 0
-#         Int runtimeMinutes = 600
-#         String hpcQueue = "gpu"
-#     }
-
-#     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFQ_1, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 50 else diskGB
-
-#     String ref = basename(inputRefTarball, ".tar")
-#     String outbase = basename(inputFQ_1, "_1.fastq.gz")
-#     command {
-#         mkdir -p ~{tmp_dir} && \
-#         time tar xf ~{inputRefTarball} && \
-#         time ~{pbPATH} fq2bam \
-
-
-
-#         --tmp-dir ~{tmp_dir} \
-#         --in-fq ~{inputFQ_1} ${inputFQ_2} \
-#         --ref ~{ref} \
-#         --knownSites ~{inputKnownSitesVCF} \
-#         --out-bam ~{outbase}.pb.bam \
-#         --out-recal-file ~{outbase}.pb.BQSR-REPORT.txt \
-#         ~{"--license-file " + pbLicenseBin}
-
-
-
-#     }
-
-#     output {
-#         File outputBAM = "${outbase}.pb.realn.bam"
-#         File outputBAI = "${outbase}.pb.realn.bam.bai"
-#         File outputBQSR = "${outbase}.BQSR-REPORT.txt"
-#     }
-
-#     runtime {
-#         docker : "~{pbDocker}"
-#         disks : "local-disk ~{auto_diskGB} SSD"
-#         cpu : nThreads
-#         memory : "~{gbRAM} GB"
-#         hpcMemory : gbRAM
-#         hpcQueue : "~{hpcQueue}"
-#         hpcRuntimeMinutes : runtimeMinutes
-#         gpuType : "~{gpuModel}"
-#         gpuCount : nGPU
-#         nvidiaDriverVersion : "~{gpuDriverVersion}"
-#         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-#         preemptible : 3
-#     }
-
-# }
-
 workflow ClaraParabricks_bam2fq2bam {
     ## Given a BAM file,
     ## extract the reads from it and realign them to a new reference genome.
@@ -135,7 +66,7 @@ workflow ClaraParabricks_bam2fq2bam {
         File inputBAI
         File inputKnownSitesVCF
         File inputKnownSitesTBI
-        File originalRefTarball
+        File? originalRefTarball  # for CRAM input
         File inputRefTarball
         File? pbLicenseBin
         String pbPATH
