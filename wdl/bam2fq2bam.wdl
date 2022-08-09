@@ -1,6 +1,8 @@
 # Copyright 2021 NVIDIA CORPORATION & AFFILIATES
 version 1.0
 
+import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/main/wdl/fq2bam.wdl" as ToBam
+
 ## Convert a BAM file into a pair of FASTQ files.
 task bam2fq {
     input {
@@ -56,69 +58,69 @@ task bam2fq {
 ## producing a BAM file with the default sample name of sample
 ## Also produces a BQSR report that can be used downstream for variant calling
 ## with HaplotypeCaller.
-task fq2bam {
-    input {
-        File inputFQ_1
-        File inputFQ_2
-        File inputRefTarball
-        File inputKnownSitesVCF
-        File inputKnownSitesTBI
-        File? pbLicenseBin
-        String pbPATH
-        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
-        String tmp_dir = "tmp_fq2bam"
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-v100"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 32
-        Int gbRAM = 120
-        Int diskGB = 0
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-    }
+# task fq2bam {
+#     input {
+#         File inputFQ_1
+#         File inputFQ_2
+#         File inputRefTarball
+#         File inputKnownSitesVCF
+#         File inputKnownSitesTBI
+#         File? pbLicenseBin
+#         String pbPATH
+#         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
+#         String tmp_dir = "tmp_fq2bam"
+#         Int nGPU = 4
+#         String gpuModel = "nvidia-tesla-v100"
+#         String gpuDriverVersion = "460.73.01"
+#         Int nThreads = 32
+#         Int gbRAM = 120
+#         Int diskGB = 0
+#         Int runtimeMinutes = 600
+#         String hpcQueue = "gpu"
+#     }
 
-    Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFQ_1, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 50 else diskGB
+#     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFQ_1, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 50 else diskGB
 
-    String ref = basename(inputRefTarball, ".tar")
-    String outbase = basename(inputFQ_1, "_1.fastq.gz")
-    command {
-        mkdir -p ~{tmp_dir} && \
-        time tar xf ~{inputRefTarball} && \
-        time ~{pbPATH} fq2bam \
-        --tmp-dir ~{tmp_dir} \
-        --in-fq ~{inputFQ_1} ${inputFQ_2} \
-        --ref ~{ref} \
-        --knownSites ~{inputKnownSitesVCF} \
-        --out-bam ~{outbase}.pb.bam \
-        --out-recal-file ~{outbase}.pb.BQSR-REPORT.txt \
-        ~{"--license-file " + pbLicenseBin}
+#     String ref = basename(inputRefTarball, ".tar")
+#     String outbase = basename(inputFQ_1, "_1.fastq.gz")
+#     command {
+#         mkdir -p ~{tmp_dir} && \
+#         time tar xf ~{inputRefTarball} && \
+#         time ~{pbPATH} fq2bam \
+#         --tmp-dir ~{tmp_dir} \
+#         --in-fq ~{inputFQ_1} ${inputFQ_2} \
+#         --ref ~{ref} \
+#         --knownSites ~{inputKnownSitesVCF} \
+#         --out-bam ~{outbase}.pb.bam \
+#         --out-recal-file ~{outbase}.pb.BQSR-REPORT.txt \
+#         ~{"--license-file " + pbLicenseBin}
 
 
 
-    }
+#     }
 
-    output {
-        File outputBAM = "${outbase}.pb.realn.bam"
-        File outputBAI = "${outbase}.pb.realn.bam.bai"
-        File outputBQSR = "${outbase}.BQSR-REPORT.txt"
-    }
+#     output {
+#         File outputBAM = "${outbase}.pb.realn.bam"
+#         File outputBAI = "${outbase}.pb.realn.bam.bai"
+#         File outputBQSR = "${outbase}.BQSR-REPORT.txt"
+#     }
 
-    runtime {
-        docker : "~{pbDocker}"
-        disks : "local-disk ~{auto_diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
-        zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : 3
-    }
+#     runtime {
+#         docker : "~{pbDocker}"
+#         disks : "local-disk ~{auto_diskGB} SSD"
+#         cpu : nThreads
+#         memory : "~{gbRAM} GB"
+#         hpcMemory : gbRAM
+#         hpcQueue : "~{hpcQueue}"
+#         hpcRuntimeMinutes : runtimeMinutes
+#         gpuType : "~{gpuModel}"
+#         gpuCount : nGPU
+#         nvidiaDriverVersion : "~{gpuDriverVersion}"
+#         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
+#         preemptible : 3
+#     }
 
-}
+# }
 
 workflow ClaraParabricks_bam2fq2bam {
     ## Given a BAM file,
@@ -167,7 +169,7 @@ workflow ClaraParabricks_bam2fq2bam {
     }
 
     ## Remap the reads from the bam2fq stage to the new reference to produce a BAM file.
-    call fq2bam {
+    call ToBam.fq2bam as fq2bam {
         input:
             inputFQ_1=bam2fq.outputFQ_1,
             inputFQ_2=bam2fq.outputFQ_2,

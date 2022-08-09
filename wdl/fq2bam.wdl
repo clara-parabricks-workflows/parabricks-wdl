@@ -72,64 +72,64 @@ task fq2bam {
     }
 }
 
-workflow ClaraParabricks_fq2bam {
+# workflow ClaraParabricks_fq2bam {
 
-    input {
-        File inputFASTQ_1
-        File inputFASTQ_2
-        String? sampleName 
-        String? libraryName
-        String? readGroupName 
-        String? platformName
-        File inputRefTarball
-        File inputKnownSites
-        File inputKnownSitesTBI
-        File? pbLicenseBin
-        String pbPATH
-        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
-        String tmpDir = "tmp_fq2bam"
-        String gpuModel = "nvidia-tesla-v100"
-        Int nGPU = 4
-        Int nThreads = 32
-        Int gbRAM = 120
-        Int diskGB = 0
-        String diskType = "SSD"
-        Int runtimeMinutes = 600
-        Int maxPreemptAttempts = 3
-    }
+#     input {
+#         File inputFASTQ_1
+#         File inputFASTQ_2
+#         String? sampleName 
+#         String? libraryName
+#         String? readGroupName 
+#         String? platformName
+#         File inputRefTarball
+#         File inputKnownSites
+#         File inputKnownSitesTBI
+#         File? pbLicenseBin
+#         String pbPATH
+#         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
+#         String tmpDir = "tmp_fq2bam"
+#         String gpuModel = "nvidia-tesla-v100"
+#         Int nGPU = 4
+#         Int nThreads = 32
+#         Int gbRAM = 120
+#         Int diskGB = 0
+#         String diskType = "SSD"
+#         Int runtimeMinutes = 600
+#         Int maxPreemptAttempts = 3
+#     }
     
-    call fq2bam {
-        input:
-            inputFASTQ_1=inputFASTQ_1,
-            inputFASTQ_2=inputFASTQ_2,
-            inputRefTarball=inputRefTarball,
-            inputKnownSites=inputKnownSites,
-            inputKnownSitesTBI=inputKnownSitesTBI,
-            pbLicenseBin=pbLicenseBin,
-            pbPATH=pbPATH,
-            sampleName=sampleName,
-            libraryName=libraryName,
-            readGroupName=readGroupName,
-            platformName=platformName,
-            pbDocker=pbDocker,
-            tmpDir=tmpDir,
-            nGPU=nGPU,
-            gpuModel=gpuModel,
-            nThreads=nThreads,
-            gbRAM=gbRAM,
-            diskGB=diskGB,
-            diskType=diskType,
-            runtimeMinutes=runtimeMinutes,
-            maxPreemptAttempts=maxPreemptAttempts
-    }
+#     call fq2bam {
+#         input:
+#             inputFASTQ_1=inputFASTQ_1,
+#             inputFASTQ_2=inputFASTQ_2,
+#             inputRefTarball=inputRefTarball,
+#             inputKnownSites=inputKnownSites,
+#             inputKnownSitesTBI=inputKnownSitesTBI,
+#             pbLicenseBin=pbLicenseBin,
+#             pbPATH=pbPATH,
+#             sampleName=sampleName,
+#             libraryName=libraryName,
+#             readGroupName=readGroupName,
+#             platformName=platformName,
+#             pbDocker=pbDocker,
+#             tmpDir=tmpDir,
+#             nGPU=nGPU,
+#             gpuModel=gpuModel,
+#             nThreads=nThreads,
+#             gbRAM=gbRAM,
+#             diskGB=diskGB,
+#             diskType=diskType,
+#             runtimeMinutes=runtimeMinutes,
+#             maxPreemptAttempts=maxPreemptAttempts
+#     }
 
-    output {
-        File outputBAM = fq2bam.outputBAM
-        File outputBAI = fq2bam.outputBAI
-        File outputBQSR = fq2bam.outputBQSR
-    }
+#     output {
+#         File outputBAM = fq2bam.outputBAM
+#         File outputBAI = fq2bam.outputBAI
+#         File outputBQSR = fq2bam.outputBQSR
+#     }
 
-    meta {
-        Author: "Nvidia Clara Parabricks"
-    }
-}
+#     meta {
+#         Author: "Nvidia Clara Parabricks"
+#     }
+# }
