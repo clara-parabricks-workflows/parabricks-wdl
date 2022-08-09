@@ -10,8 +10,8 @@ task fq2bam {
         String? readGroupName 
         String? platformName 
         File inputRefTarball
-        File inputKnownSitesVCF
-        File inputKnownSitesTBI
+        File? inputKnownSitesVCF
+        File? inputKnownSitesTBI
         File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
@@ -44,7 +44,7 @@ task fq2bam {
         ~{"--read-group-pl " + platformName} \
         ~{"--read-group-id-prefix " + readGroupName} \
         --ref ~{ref} \
-        --knownSites ~{inputKnownSitesVCF} \
+        ~{"--knownSites " + inputKnownSitesVCF} \
         --out-bam ~{outbase}.pb.bam \
         --out-recal-file ~{outbase}.pb.BQSR-REPORT.txt \
         ~{"--license-file " + pbLicenseBin}
@@ -53,7 +53,7 @@ task fq2bam {
     output {
         File outputBAM = "~{outbase}.pb.bam"
         File outputBAI = "~{outbase}.pb.bam.bai"
-        File outputBQSR = "~{outbase}.pb.BQSR-REPORT.txt"
+        File? outputBQSR = "~{outbase}.pb.BQSR-REPORT.txt"
     }
 
     runtime {
@@ -126,7 +126,7 @@ workflow ClaraParabricks_fq2bam {
     output {
         File outputBAM = fq2bam.outputBAM
         File outputBAI = fq2bam.outputBAI
-        File outputBQSR = fq2bam.outputBQSR
+        File? outputBQSR = fq2bam.outputBQSR
     }
 
     meta {

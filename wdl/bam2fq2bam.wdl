@@ -19,7 +19,10 @@ task bam2fq {
         String hpcQueue = "gpu"
     }
 
-    String ref = basename(inputRefTarball, ".tar")
+    # if (! undefined(originalRefTarball)){
+    String ref = basename(select_first([originalRefTarball]), ".tar")
+    
+
     String outbase = basename(inputBAM, ".bam")
 
     Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputBAM, "GB")) + ceil(size(inputBAI, "GB")) + 100 else diskGB
@@ -62,8 +65,8 @@ workflow ClaraParabricks_bam2fq2bam {
     input {
         File inputBAM
         File inputBAI
-        File inputKnownSitesVCF
-        File inputKnownSitesTBI
+        File? inputKnownSitesVCF
+        File? inputKnownSitesTBI
         File? originalRefTarball  # for CRAM input
         File inputRefTarball
         File? pbLicenseBin
@@ -127,7 +130,7 @@ workflow ClaraParabricks_bam2fq2bam {
         File outputFASTQ_2 = bam2fq.outputFASTQ_2
         File outputBAM = fq2bam.outputBAM
         File outputBAI = fq2bam.outputBAI
-        File outputBQSR = fq2bam.outputBQSR
+        File? outputBQSR = fq2bam.outputBQSR
     }
 
     meta {
