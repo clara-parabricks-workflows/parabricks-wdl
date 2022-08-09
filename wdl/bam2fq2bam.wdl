@@ -8,7 +8,6 @@ task bam2fq {
     input {
         File inputBAM
         File inputBAI
-        File inputRefTarball
         File? originalRefTarball # Required for CRAM input
         String pbPATH
         File? pbLicenseBin
@@ -23,11 +22,10 @@ task bam2fq {
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(inputBAM, ".bam")
 
-    Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 50 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputBAM, "GB")) + ceil(size(inputBAI, "GB")) + 100 else diskGB
 
     command {
-        ~{"tar xvf " + originalRefTarball}\
-        time tar xf ~{inputRefTarball} && \
+        ~{"tar xvf " + originalRefTarball + " && "}\
         time ~{pbPATH} bam2fq \
             --in-bam ~{inputBAM} \
             --out-prefix ~{outbase} \
@@ -91,7 +89,7 @@ workflow ClaraParabricks_bam2fq2bam {
         input:
             inputBAM=inputBAM,
             inputBAI=inputBAI,
-            inputRefTarball=originalRefTarball,
+            originalRefTarball=originalRefTarball,
             pbPATH=pbPATH,
             pbLicenseBin=pbLicenseBin,
             nThreads=nThreads_bam2fq,

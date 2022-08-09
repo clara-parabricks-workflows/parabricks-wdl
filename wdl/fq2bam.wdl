@@ -82,7 +82,7 @@ workflow ClaraParabricks_fq2bam {
         String? readGroupName 
         String? platformName
         File inputRefTarball
-        File inputKnownSites
+        File inputKnownSitesVCF
         File inputKnownSitesTBI
         File? pbLicenseBin
         String pbPATH
@@ -103,7 +103,7 @@ workflow ClaraParabricks_fq2bam {
             inputFASTQ_1=inputFASTQ_1,
             inputFASTQ_2=inputFASTQ_2,
             inputRefTarball=inputRefTarball,
-            inputKnownSites=inputKnownSites,
+            inputKnownSitesVCF=inputKnownSitesVCF,
             inputKnownSitesTBI=inputKnownSitesTBI,
             pbLicenseBin=pbLicenseBin,
             pbPATH=pbPATH,
