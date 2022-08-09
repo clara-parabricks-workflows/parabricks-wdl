@@ -28,7 +28,7 @@ task fq2bam {
         Int maxPreemptAttempts = 3
     }
 
-    Int auto_diskGB = if diskGB == 0 then ceil(size(inputFASTQ_1, "GB")) + ceil(size(inputFASTQ_2, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputKnownSites, "GB")) + ceil(3.0 * size(inputFASTQ_1, "GB")) + 50 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(4.0 * size(inputFASTQ_1, "GB")) + ceil(4.0 * size(inputFASTQ_2, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputKnownSites, "GB")) + 50 else diskGB
 
 
     String ref = basename(inputRefTarball, ".tar")
