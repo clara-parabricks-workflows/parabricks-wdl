@@ -37,7 +37,7 @@ workflows:
         affiliation: NVIDIA
         orcid: 0000-0001-5448-1653
   - subclass: WDL
-    primaryDescriptorPath: /wdl/somatic-calling.wdl
+    primaryDescriptorPath: /wdl/somatic_calling.wdl
     name: clara-parabricks-somatic-calling
     authors:
       - name: Eric T. Dawson
