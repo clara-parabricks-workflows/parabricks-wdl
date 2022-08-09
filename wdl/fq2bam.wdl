@@ -22,6 +22,7 @@ task fq2bam {
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
+        String diskType = "SSD"
         Int runtimeMinutes = 600
         String hpcQueue = "gpu"
         Int maxPreemptAttempts = 3
@@ -57,7 +58,7 @@ task fq2bam {
 
     runtime {
         docker : "~{pbDocker}"
-        disks : "local-disk ~{auto_diskGB} SSD"
+        disks : "local-disk ~{auto_diskGB} ~{diskType}"
         cpu : nThreads
         memory : "~{gbRAM} GB"
         hpcMemory : gbRAM
@@ -92,6 +93,7 @@ workflow ClaraParabricks_fq2bam {
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
+        String diskType = "SSD"
         Int runtimeMinutes = 600
         Int maxPreemptAttempts = 3
     }
@@ -116,6 +118,7 @@ workflow ClaraParabricks_fq2bam {
             nThreads=nThreads,
             gbRAM=gbRAM,
             diskGB=diskGB,
+            diskType=diskType,
             runtimeMinutes=runtimeMinutes,
             maxPreemptAttempts=maxPreemptAttempts
     }
