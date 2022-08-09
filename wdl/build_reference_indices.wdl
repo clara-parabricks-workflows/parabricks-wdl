@@ -14,7 +14,7 @@ task index {
         Int maxPreemptAttempts = 3
     }
     String outbase = basename(inputFASTA)
-    Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputFASTA, "GB")) + 50 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(4 * size(inputFASTA, "GB")) + 50 else diskGB
 
     command {
         ~{samtoolsPATH} faidx ~{inputFASTA} && \
@@ -59,7 +59,7 @@ workflow ClaraParabricks_IndexReference {
             gbRAM=gbRAM,
             runtimeMinutes=runtimeMinutes,
             hpcQueue=hpcQueue,
-            diskGB=diskGB,
+            diskGB=diskGB
     }
 
     output {
