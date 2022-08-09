@@ -1,10 +1,9 @@
 {
   "ClaraParabricks_fq2bam.inputFASTQ_2": "File",
-  "ClaraParabricks_fq2bam.pbLicenseBin": "File",
   "ClaraParabricks_fq2bam.inputKnownSitesTBI": "File",
   "ClaraParabricks_fq2bam.inputRefTarball": "File",
   "ClaraParabricks_fq2bam.inputKnownSites": "File",
   "ClaraParabricks_fq2bam.inputFASTQ_1": "File",
-  "ClaraParabricks_fq2bam.pbPATH": "String"
+  "ClaraParabricks_fq2bam.pbPATH": "String",
 }
 

@@ -20,7 +20,7 @@
   "ClaraParabricks_GenerateRegionTestData.reduceVCF.nThreads": "Int (optional, default = 4)",
   "ClaraParabricks_GenerateRegionTestData.bcftoolsDocker": "String (optional, default = \"claraparabricks/bcftools\")",
   "ClaraParabricks_GenerateRegionTestData.runtimeMinutes_indexFASTA": "Int (optional, default = 600)",
-  "ClaraParabricks_GenerateRegionTestData.pbDocker": "String (optional, default = \"us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1\")",
+  "ClaraParabricks_GenerateRegionTestData.pbDocker": "String (optional, default = \"gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1\")",
   "ClaraParabricks_GenerateRegionTestData.reduceVCF.runtimeMinutes": "Int (optional, default = 60)",
   "ClaraParabricks_GenerateRegionTestData.inputBAM": "File",
   "ClaraParabricks_GenerateRegionTestData.indexDocker": "String (optional, default = \"claraparabricks/bwa\")",
@@ -47,6 +47,6 @@
   "ClaraParabricks_GenerateRegionTestData.reduceVCF.maxPreemptAttempts": "Int (optional, default = 3)",
   "ClaraParabricks_GenerateRegionTestData.hpcQueue_bam2fq": "String (optional, default = \"norm\")",
   "ClaraParabricks_GenerateRegionTestData.nThreads_reduceFASTA": "Int (optional, default = 4)",
-  "ClaraParabricks_GenerateRegionTestData.pbLicenseBin": "File"
+  "ClaraParabricks_GenerateRegionTestData.pbLicenseBin": "File? (optional)"
 }
 

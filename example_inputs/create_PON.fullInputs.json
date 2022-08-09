@@ -3,7 +3,7 @@
   "ClaraParabricks_Somatic.nGPU": "Int (optional, default = 4)",
   "ClaraParabricks_Somatic.gbRAM": "Int (optional, default = 120)",
   "ClaraParabricks_Somatic.runtimeMinutes": "Int (optional, default = 600)",
-  "ClaraParabricks_Somatic.pbLicenseBin": "File",
+  "ClaraParabricks_Somatic.pbLicenseBin": "File? (optional)",
   "ClaraParabricks_Somatic.gpuModel": "String (optional, default = \"nvidia-tesla-v100\")",
   "ClaraParabricks_Somatic.gpuDriverVersion": "String (optional, default = \"460.73.01\")",
   "ClaraParabricks_Somatic.diskGB": "Int (optional, default = 0)",
@@ -12,6 +12,6 @@
   "ClaraParabricks_Somatic.nThreads": "Int (optional, default = 32)",
   "ClaraParabricks_Somatic.ponTBI": "File",
   "ClaraParabricks_Somatic.pbPATH": "String",
-  "ClaraParabricks_Somatic.pbDocker": "String (optional, default = \"us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1\")"
+  "ClaraParabricks_Somatic.pbDocker": "String (optional, default = \"gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1\")"
 }
 

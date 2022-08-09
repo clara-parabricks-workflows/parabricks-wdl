@@ -1,12 +1,13 @@
 {
   "ClaraParabricks_IndexReference.runtimeMinutes": "Int (optional, default = 600)",
   "ClaraParabricks_IndexReference.bwaPATH": "String (optional, default = \"bwa\")",
+  "ClaraParabricks_IndexReference.index.maxPreemptAttempts": "Int (optional, default = 3)",
   "ClaraParabricks_IndexReference.samtoolsPATH": "String (optional, default = \"samtools\")",
   "ClaraParabricks_IndexReference.diskGB": "Int (optional, default = 0)",
-  "ClaraParabricks_IndexReference.gbRAM": "Int (optional, default = 120)",
-  "ClaraParabricks_IndexReference.indexDocker": "String (optional, default = \"clara-parabricks/bwa\")",
-  "ClaraParabricks_IndexReference.hpcQueue": "String (optional, default = \"gpu\")",
-  "ClaraParabricks_IndexReference.nThreads": "Int (optional, default = 32)",
+  "ClaraParabricks_IndexReference.gbRAM": "Int (optional, default = 48)",
+  "ClaraParabricks_IndexReference.indexDocker": "String (optional, default = \"claraparabricks/bwa\")",
+  "ClaraParabricks_IndexReference.hpcQueue": "String (optional, default = \"norm\")",
+  "ClaraParabricks_IndexReference.nThreads": "Int (optional, default = 4)",
   "ClaraParabricks_IndexReference.fastaFile": "File"
 }
 

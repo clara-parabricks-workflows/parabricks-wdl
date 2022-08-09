@@ -7,7 +7,6 @@
   "ClaraParabricks_fq2bam.gbRAM": "Int (optional, default = 120)",
   "ClaraParabricks_fq2bam.readGroupName": "String? (optional)",
   "ClaraParabricks_fq2bam.nGPU": "Int (optional, default = 4)",
-  "ClaraParabricks_fq2bam.pbLicenseBin": "File",
   "ClaraParabricks_fq2bam.inputKnownSitesTBI": "File",
   "ClaraParabricks_fq2bam.inputRefTarball": "File",
   "ClaraParabricks_fq2bam.inputKnownSites": "File",
@@ -18,8 +17,10 @@
   "ClaraParabricks_fq2bam.inputFASTQ_1": "File",
   "ClaraParabricks_fq2bam.platformName": "String? (optional)",
   "ClaraParabricks_fq2bam.maxPreemptAttempts": "Int (optional, default = 3)",
-  "ClaraParabricks_fq2bam.pbDocker": "String (optional, default = \"us-docker.pkg.dev/clara-lifesci/nv-parabricks-test/parabricks-cloud:4.0.0-1.alpha1\")",
+  "ClaraParabricks_fq2bam.pbDocker": "String (optional, default = \"gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1\")",
   "ClaraParabricks_fq2bam.nThreads": "Int (optional, default = 32)",
-  "ClaraParabricks_fq2bam.pbPATH": "String"
+  "ClaraParabricks_fq2bam.pbPATH": "String",
+  "ClaraParabricks_fq2bam.diskType": "String (optional, default = \"SSD\")",
+  "ClaraParabricks_fq2bam.pbLicenseBin": "File? (optional)"
 }
 
