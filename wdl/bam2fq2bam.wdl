@@ -9,6 +9,7 @@ task bam2fq {
         File inputBAM
         File inputBAI
         File? originalRefTarball # Required for CRAM input
+        String? ref # Name of FASTA reference file, required for CRAM input
         String pbPATH
         File? pbLicenseBin
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
@@ -18,10 +19,6 @@ task bam2fq {
         Int runtimeMinutes = 600
         String hpcQueue = "gpu"
     }
-
-    # if (! undefined(originalRefTarball)){
-    String ref = basename(select_first([originalRefTarball]), ".tar")
-    
 
     String outbase = basename(inputBAM, ".bam")
 
@@ -86,6 +83,11 @@ workflow ClaraParabricks_bam2fq2bam {
         String hpcQueue_bam2fq = "norm"
         String hpcQueue_fq2bam = "gpu"
     }
+
+    if (defined(originalRefTarball)){
+        String ref = basename(select_first([originalRefTarball]), ".tar")
+    }
+
 
     ## Run the BAM -> FASTQ conversion
     call bam2fq {
