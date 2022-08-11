@@ -22,7 +22,7 @@ task bam2fq {
 
     String outbase = basename(inputBAM, ".bam")
 
-    Int auto_diskGB = if diskGB == 0 then ceil(2.5* size(inputBAM, "GB")) + ceil(size(inputBAI, "GB")) + 100 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputBAM, "GB")) + ceil(size(inputBAI, "GB")) + 100 else diskGB
 
     command {
         ~{"tar xvf " + originalRefTarball + " && "}\
