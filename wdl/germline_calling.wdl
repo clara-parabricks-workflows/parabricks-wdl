@@ -25,7 +25,7 @@ task haplotypecaller {
     String outbase = basename(inputBAM, ".bam")
     String ref = basename(inputRefTarball, ".tar")
 
-    Int auto_diskGB = if diskGB == 0 then ceil(size(inputBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 65 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(2.0 * size(inputBAM, "GB")) + ceil(2.0 * size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 120 else diskGB
 
     String outVCF = outbase + ".haplotypecaller" + (if gvcfMode then '.g' else '') + ".vcf"
 

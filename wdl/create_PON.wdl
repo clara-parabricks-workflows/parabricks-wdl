@@ -18,7 +18,7 @@ task mutect2_prepon {
         Int maxPreemptAttempts = 3
     }
 
-    Int auto_diskGB = if diskGB == 0 then ceil(size(ponVCF, "GB") * 2) + 50 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(3.0 * size(ponVCF, "GB") * 2) + 50 else diskGB
     String localVCF = basename(ponVCF)
     String localTBI = basename(ponTBI)
     String outbase = basename(ponVCF, ".vcf.gz")

@@ -32,7 +32,7 @@ task mutect2_call {
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(tumorBAM, ".bam") + "." + basename(normalBAM, ".bam") + ".mutectcaller"
 
-    Int auto_diskGB = if diskGB == 0 then ceil(size(tumorBAM, "GB")) + ceil(size(tumorBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + 85 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(2.0 * size(tumorBAM, "GB")) + ceil(size(normalBAM, "GB")) + ceil(3.0 * size(inputRefTarball, "GB")) + 120 else diskGB
 
     command {
         time tar xf ~{inputRefTarball} && \
@@ -85,7 +85,7 @@ task mutect2_postpon {
         String hpcQueue = "gpu"
         Int maxPreemptAttempts = 3
     }
-    Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.5) + ceil(size(ponFile, "GB")) + ceil(size(ponVCF, "GB"))  + 65 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(3.0 * size(inputVCF, "GB") * 2.5) + ceil(size(ponFile, "GB")) + ceil(size(ponVCF, "GB"))  + 120 else diskGB
 
     String outbase = basename(basename(inputVCF, ".gz"), ".vcf")
 
@@ -125,7 +125,7 @@ task compressAndIndexVCF {
         String hpcQueue = "norm"
         Int maxPreemptAttempts = 3
     }
-    Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.0) + 40 else diskGB
+    Int auto_diskGB = if diskGB == 0 then ceil(3.0 * size(inputVCF, "GB") * 2.0) + 40 else diskGB
     ## We need to write to stdout in our task, as bgzip will compress the file in-place on the
     ## mounted volume and not the local disk. The issue with this is the mounted volume is not visible
     ## when searching for outputs.
