@@ -95,6 +95,7 @@ workflow ClaraParabricks_bam2fq2bam {
             inputBAM=inputBAM,
             inputBAI=inputBAI,
             originalRefTarball=originalRefTarball,
+            ref=ref,
             pbPATH=pbPATH,
             pbLicenseBin=pbLicenseBin,
             nThreads=nThreads_bam2fq,
