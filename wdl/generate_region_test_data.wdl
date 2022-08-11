@@ -134,7 +134,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
         
-        String tmp_dir = "tmp_fq2bam"
+        String tmpDir = "tmp_fq2bam"
         Int nGPU_fq2bam = 4
         String gpuModel_fq2bam = "nvidia-tesla-v100"
         String gpuDriverVersion_fq2bam = "460.73.01"
@@ -247,7 +247,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
             gpuModel=gpuModel_fq2bam,
             gpuDriverVersion=gpuDriverVersion_fq2bam,
             diskGB=diskGB,
-            tmp_dir=tmpDir,
+            tmpDir=tmpDir,
             hpcQueue=hpcQueue_fq2bam,
             pbDocker=pbDocker
     }
@@ -257,7 +257,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
         File outputFQ_2 = bam2fq.outputFASTQ_2
         File outputBAM = fq2bam.outputBAM
         File outputBAI = fq2bam.outputBAI
-        File outputBQSR = fq2bam.outputBQSR
+        File? outputBQSR = fq2bam.outputBQSR
         File outputRefTarball = indexFASTA.refTarball
     }
 
