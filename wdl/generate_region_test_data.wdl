@@ -127,8 +127,8 @@ workflow ClaraParabricks_GenerateRegionTestData {
         File inputBAM
         File inputBAI
         String inputRegion
-        File knownSitesVCF
-        File knownSitesTBI
+        File? knownSitesVCF
+        File? knownSitesTBI
         File inputRefTarball
         File? pbLicenseBin
         String pbPATH
@@ -200,14 +200,17 @@ workflow ClaraParabricks_GenerateRegionTestData {
     }
 
     ## Shrink and index the knownSites VCF file
-    call reduceVCF {
-        input:
-            inputVCF=knownSitesVCF,
-            inputTBI=knownSitesTBI,
-            region=inputRegion,
-            bcftoolsPATH=bcftoolsPATH,
-            bcftoolsDocker=bcftoolsDocker
-    } 
+    if (defined(knownSitesVCF)){
+        call reduceVCF {
+            input:
+                inputVCF=select_first([knownSitesVCF]),
+                inputTBI=select_first([knownSitesTBI]),
+                region=inputRegion,
+                bcftoolsPATH=bcftoolsPATH,
+                bcftoolsDocker=bcftoolsDocker
+        }
+    }
+ 
 
     call reduceBAM {
         input:
