@@ -239,6 +239,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
         input:
             inputFASTQ_1=bam2fq.outputFASTQ_1,
             inputFASTQ_2=bam2fq.outputFASTQ_2,
+            inputRefTarball=inputRefTarball,
             inputKnownSitesVCF=reduceVCF.outputVCF,
             inputKnownSitesTBI=reduceVCF.outputTBI,
             pbLicenseBin=pbLicenseBin,
