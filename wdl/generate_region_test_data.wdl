@@ -222,7 +222,6 @@ workflow ClaraParabricks_GenerateRegionTestData {
         input:
             inputBAM=reduceBAM.outputBAM,
             inputBAI=reduceBAM.outputBAI,
-            inputRefTarball=inputRefTarball,
             pbPATH=pbPATH,
             pbLicenseBin=pbLicenseBin,
             nThreads=nThreads_bam2fq,
@@ -235,8 +234,8 @@ workflow ClaraParabricks_GenerateRegionTestData {
 
     call CPB_fq2bam.fq2bam as fq2bam {
         input:
-            inputFQ_1=bam2fq.outputFASTQ_1,
-            inputFQ_2=bam2fq.outputFASTQ_2,
+            inputFASTQ_1=bam2fq.outputFASTQ_1,
+            inputFASTQ_2=bam2fq.outputFASTQ_2,
             inputKnownSitesVCF=reduceVCF.outputVCF,
             inputKnownSitesTBI=reduceVCF.outputTBI,
             pbLicenseBin=pbLicenseBin,
@@ -248,7 +247,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
             gpuModel=gpuModel_fq2bam,
             gpuDriverVersion=gpuDriverVersion_fq2bam,
             diskGB=diskGB,
-            tmp_dir=tmp_dir,
+            tmp_dir=tmpDir,
             hpcQueue=hpcQueue_fq2bam,
             pbDocker=pbDocker
     }
