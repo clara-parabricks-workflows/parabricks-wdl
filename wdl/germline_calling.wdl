@@ -23,6 +23,7 @@ task haplotypecaller {
     }
 
     String outbase = basename(inputBAM, ".bam")
+    String localTarball = basename(inputRefTarball)
     String ref = basename(inputRefTarball, ".tar")
 
     Int auto_diskGB = if diskGB == 0 then ceil(2.0 * size(inputBAM, "GB")) + ceil(2.0 * size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 120 else diskGB
@@ -30,7 +31,8 @@ task haplotypecaller {
     String outVCF = outbase + ".haplotypecaller" + (if gvcfMode then '.g' else '') + ".vcf"
 
     command {
-        time tar xvf ~{inputRefTarball} && \
+        mv ~{inputRefTarball} ${localTarball} && \
+        time tar xvf ~{localTarball} && \
         time ~{pbPATH} haplotypecaller \
         ~{if gvcfMode then "--gvcf " else ""} \
         ~{"--haplotypecaller-options " + '"' + haplotypecallerPassthroughOptions + '"'} \
@@ -85,6 +87,7 @@ task deepvariant {
     }
 
     String ref = basename(inputRefTarball, ".tar")
+    String localTarball = basename(inputRefTarball)
     String outbase = basename(inputBAM, ".bam")
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 65 else diskGB
@@ -93,7 +96,8 @@ task deepvariant {
 
 
     command {
-        time tar xf ${inputRefTarball} && \
+        mv ~{inputRefTarball} ${localTarball} && \
+        time tar xvf ~{localTarball} && \
         time ${pbPATH} deepvariant \
         ~{if gvcfMode then "--gvcf " else ""} \
         --ref ${ref} \
