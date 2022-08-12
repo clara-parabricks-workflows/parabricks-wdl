@@ -14,12 +14,13 @@ task index {
         Int maxPreemptAttempts = 3
     }
     String outbase = basename(inputFASTA)
+    String ref = basename(inputFASTA)
     Int auto_diskGB = if diskGB == 0 then ceil(4.0 * size(inputFASTA, "GB")) + 100 else diskGB
 
     command {
-        ~{samtoolsPATH} faidx ~{inputFASTA} && \
-        ~{bwaPATH} index ~{inputFASTA} && \
-        tar cvf ~{outbase}.tar ~{inputFASTA}*
+        ~{samtoolsPATH} faidx ~{ref} && \
+        ~{bwaPATH} index ~{ref} && \
+        tar cvf ~{outbase}.tar ~{ref}*
     }
     output {
         File refTarball = "~{outbase}.tar"
