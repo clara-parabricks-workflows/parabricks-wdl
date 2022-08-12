@@ -44,7 +44,7 @@ task fq2bam {
         ~{"--read-group-pl " + platformName} \
         ~{"--read-group-id-prefix " + readGroupName} \
         --ref ~{ref} \
-        ~{"--knownSites " + inputKnownSitesVCF + "--out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
+        ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
         --out-bam ~{outbase}.pb.bam \
         ~{"--license-file " + pbLicenseBin}
     }
