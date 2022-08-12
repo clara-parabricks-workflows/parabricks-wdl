@@ -81,8 +81,8 @@ workflow ClaraParabricks_fq2bam {
         String? readGroupName 
         String? platformName
         File inputRefTarball
-        File inputKnownSitesVCF
-        File inputKnownSitesTBI
+        File? inputKnownSitesVCF
+        File? inputKnownSitesTBI
         File? pbLicenseBin
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.alpha1"
