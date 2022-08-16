@@ -56,7 +56,7 @@ workflow ClaraParabricks_Somatic {
         File ponTBI
         String pbPATH
         File? pbLicenseBin
-        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:3.8.0-1"
+        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta1"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
         String gpuDriverVersion = "460.73.01"

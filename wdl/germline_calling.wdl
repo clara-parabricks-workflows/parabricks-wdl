@@ -137,7 +137,7 @@ workflow ClaraParabricks_Germline {
         File inputRefTarball
         File? pbLicenseBin
         String pbPATH
-        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:3.8.0-1"
+        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta1"
 
         ## Run both DeepVariant and HaplotypeCaller in gVCF mode
         Boolean gvcfMode = false
