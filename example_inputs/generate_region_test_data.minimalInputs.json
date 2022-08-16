@@ -1,10 +1,8 @@
 {
   "ClaraParabricks_GenerateRegionTestData.inputBAI": "File",
-  "ClaraParabricks_GenerateRegionTestData.knownSitesVCF": "File",
   "ClaraParabricks_GenerateRegionTestData.inputBAM": "File",
   "ClaraParabricks_GenerateRegionTestData.inputRefTarball": "File",
   "ClaraParabricks_GenerateRegionTestData.pbPATH": "String",
-  "ClaraParabricks_GenerateRegionTestData.knownSitesTBI": "File",
   "ClaraParabricks_GenerateRegionTestData.inputRegion": "String",
 }
 
