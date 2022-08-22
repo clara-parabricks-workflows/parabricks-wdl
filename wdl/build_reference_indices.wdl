@@ -18,6 +18,7 @@ task index {
     Int auto_diskGB = if diskGB == 0 then ceil(4.0 * size(inputFASTA, "GB")) + 100 else diskGB
 
     command {
+        cp ~{inputFASTA} ~{ref} && \
         ~{samtoolsPATH} faidx ~{ref} && \
         ~{bwaPATH} index ~{ref} && \
         tar cvf ~{outbase}.tar ~{ref}*
