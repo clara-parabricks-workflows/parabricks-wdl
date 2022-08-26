@@ -103,7 +103,8 @@ scp inputs.fq2bam.template.json $USER@biowulf.nih.gov
 
 Now, we can set up our run on Biowulf. Let's log in, organize our files in a directory,
 load the modules we need, and use CromRunner to generate our input and launch files:
-```
+
+```bash
 ssh $user@biowulf.nih.gov
 
 ## Install CromRunner if not already installed
