@@ -12,7 +12,7 @@ task bam2fq {
         String? ref # Name of FASTA reference file, required for CRAM input
         String pbPATH
         File? pbLicenseBin
-        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta3"
+        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
@@ -68,7 +68,7 @@ workflow ClaraParabricks_bam2fq2bam {
         File inputRefTarball
         File? pbLicenseBin
         String pbPATH
-        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta3"
+        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
         String tmpDir = "tmp_fq2bam"
         Int nGPU_fq2bam = 4
         String gpuModel_fq2bam = "nvidia-tesla-v100"

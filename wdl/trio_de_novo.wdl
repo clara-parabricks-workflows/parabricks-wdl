@@ -70,7 +70,7 @@ task haplotypecaller {
         Boolean gvcfMode = false
         String? haplotypecallerPassthroughOptions
 
-        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta3"
+        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
         Int? maxPreemptAttempts = 3
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
@@ -132,7 +132,7 @@ task deepvariant {
         File? pbLicenseBin
         Boolean gvcfMode = false
 
-        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta3"
+        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
         Int maxPreemptAttempts = 3
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
@@ -287,7 +287,7 @@ task GLNexusJointGenotypeTrioGVCFs {
         String pbPATH
         File? pbLicenseBin
 
-        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta3"
+        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
         Int maxPreemptAttempts = 3
         Int nThreads = 12
         Int gbRAM = 120
@@ -358,7 +358,7 @@ task numberOfCallersFilter {
         File? pbLicenseBin
         Int minVotes = 3
 
-        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta3"
+        String? pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
         Int maxPreemptAttempts = 3
         Int nThreads = 4
         Int gbRAM = 15
