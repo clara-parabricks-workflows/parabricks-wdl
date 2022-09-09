@@ -6,9 +6,13 @@ task haplotypecaller {
         File inputBAI
         File? inputRecal
         File inputRefTarball
-        Boolean gvcfMode = false
-        String? haplotypecallerPassthroughOptions
         String pbPATH
+        File? intervalFile
+        Boolean gvcfMode = false
+        Boolean useBestPractices = false
+        String haplotypecallerPassthroughOptions = ""
+        String annotationArgs = ""
+        
         File? pbLicenseBin
         String? pbDocker
         Int nGPU = 4
@@ -30,16 +34,37 @@ task haplotypecaller {
 
     String outVCF = outbase + ".haplotypecaller" + (if gvcfMode then '.g' else '') + ".vcf"
 
+    String quantization_band_stub = if useBestPractices then " -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 " else ""
+    String quantization_qual_stub = if useBestPractices then " --static-quantized-quals 10 --static-quantized-quals 20 --static-quantized-quals 30" else ""
+    String annotation_stub_base = if useBestPractices then "-G StandardAnnotation -G StandardHCAnnotation" else annotationArgs
+    String annotation_stub = if useBestPractices && gvcfMode then annotation_stub_base + " -G AS_StandardAnnotation " else annotation_stub_base
+
+    #     -R ~{ref_fasta} \
+    #   -I ~{input_bam} \
+    #   -L ~{interval_list} \
+    #   -O ~{output_file_name} \
+    #   -contamination ~{default=0 contamination} \
+    #   -G StandardAnnotation -G StandardHCAnnotation ~{true="-G AS_StandardAnnotation" false="" make_gvcf} \
+    #   ~{true="--dragen-mode" false="" run_dragen_mode_variant_calling} \
+    #   ~{false="--disable-spanning-event-genotyping" true="" use_spanning_event_genotyping} \
+    #   ~{if defined(dragstr_model) then "--dragstr-params-path " + dragstr_model else ""} \
+    #   -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
+    #   ~{true="-ERC GVCF" false="" make_gvcf} \
+    #   ~{bamout_arg}
+
     command {
         mv ~{inputRefTarball} ${localTarball} && \
         time tar xvf ~{localTarball} && \
         time ~{pbPATH} haplotypecaller \
-        ~{if gvcfMode then "--gvcf " else ""} \
-        ~{"--haplotypecaller-options " + '"' + haplotypecallerPassthroughOptions + '"'} \
         --in-bam ~{inputBAM} \
         --ref ~{ref} \
-        ~{"--in-recal-file " + inputRecal} \
         --out-variants ~{outVCF} \
+        ~{"--in-recal-file " + inputRecal} \
+        ~{if gvcfMode then "--gvcf " else ""} \
+        ~{"--haplotypecaller-options " + '"' + haplotypecallerPassthroughOptions + '"'} \
+        ~{annotation_stub} \
+        ~{quantization_band_stub} \
+        ~{quantization_qual_stub} \
         ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
