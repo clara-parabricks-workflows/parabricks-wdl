@@ -15,6 +15,7 @@ task fq2bam {
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
         File? pbLicenseBin
+        Boolean use_best_practices = false
 
         String pbPATH
         String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
@@ -23,7 +24,7 @@ task fq2bam {
         String gpuModel = "nvidia-tesla-t4"
         String gpuDriverVersion = "460.73.01"
         Int nThreads = 32
-        Int gbRAM = 120
+        Int gbRAM = 180
         Int diskGB = 0
         String diskType = "SSD"
         Int runtimeMinutes = 600
@@ -33,7 +34,7 @@ task fq2bam {
 
     Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputFASTQ_1, "GB")) + ceil(5.0 * size(inputFASTQ_2, "GB")) + ceil(3.0 * size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 150 else diskGB
 
-
+    String best_practice_args = if use_best_practices then " -Y -K 100000000 " else ""
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
     command {
@@ -42,6 +43,7 @@ task fq2bam {
         time ~{pbPATH} fq2bam \
         --tmp-dir ~{tmpDir} \
         --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} \
+        ~{best_practice_args} \
         ~{"--read-group-sm " + sampleName} \
         ~{"--read-group-lb " + libraryName} \
         ~{"--read-group-pl " + platformName} \
