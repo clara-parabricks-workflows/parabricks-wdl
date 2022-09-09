@@ -162,7 +162,7 @@ workflow ClaraParabricks_Germline {
         File inputRefTarball
         File? pbLicenseBin
         String pbPATH
-        String pbDocker = "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
 
         ## Run both DeepVariant and HaplotypeCaller in gVCF mode
         Boolean gvcfMode = false
