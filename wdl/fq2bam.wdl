@@ -34,7 +34,7 @@ task fq2bam {
 
     Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputFASTQ_1, "GB")) + ceil(5.0 * size(inputFASTQ_2, "GB")) + ceil(3.0 * size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 150 else diskGB
 
-    String best_practice_args = if use_best_practices then " -Y -K 100000000 " else ""
+    String best_practice_args = if use_best_practices then "--bwa-options \" -Y -K 100000000 \" " else ""
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
     command {
