@@ -39,19 +39,6 @@ task haplotypecaller {
     String annotation_stub_base = if useBestPractices then "-G StandardAnnotation -G StandardHCAnnotation" else annotationArgs
     String annotation_stub = if useBestPractices && gvcfMode then annotation_stub_base + " -G AS_StandardAnnotation " else annotation_stub_base
 
-    #     -R ~{ref_fasta} \
-    #   -I ~{input_bam} \
-    #   -L ~{interval_list} \
-    #   -O ~{output_file_name} \
-    #   -contamination ~{default=0 contamination} \
-    #   -G StandardAnnotation -G StandardHCAnnotation ~{true="-G AS_StandardAnnotation" false="" make_gvcf} \
-    #   ~{true="--dragen-mode" false="" run_dragen_mode_variant_calling} \
-    #   ~{false="--disable-spanning-event-genotyping" true="" use_spanning_event_genotyping} \
-    #   ~{if defined(dragstr_model) then "--dragstr-params-path " + dragstr_model else ""} \
-    #   -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
-    #   ~{true="-ERC GVCF" false="" make_gvcf} \
-    #   ~{bamout_arg}
-
     command {
         mv ~{inputRefTarball} ${localTarball} && \
         time tar xvf ~{localTarball} && \
@@ -158,8 +145,8 @@ workflow ClaraParabricks_Germline {
         File? pbLicenseBin
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
 
-        Bool runDeepVariant = true
-        Bool runHaplotypeCaller = true
+        Boolean runDeepVariant = true
+        Boolean runHaplotypeCaller = true
         ## Run both DeepVariant and HaplotypeCaller in gVCF mode
         Boolean gvcfMode = false
 
