@@ -65,14 +65,11 @@ task haplotypecaller {
         ~{annotation_stub} \
         ~{quantization_band_stub} \
         ~{quantization_qual_stub} \
-        ~{"--license-file " + pbLicenseBin} && \
-        bgzip -@ ~{nThreads} ~{outVCF} && \
-        tabix ~{outVCF}.gz
+        ~{"--license-file " + pbLicenseBin}
     }
 
     output {
-        File haplotypecallerVCF = "~{outVCF}.gz"
-        File haplotypecallerTBI = "~{outVCF}.gz.tbi"
+        File haplotypecallerVCF = "~{outVCF}"
     }
 
     runtime {
@@ -128,14 +125,11 @@ task deepvariant {
         --ref ${ref} \
         --in-bam ${inputBAM} \
         --out-variants ~{outVCF} \
-        ~{"--license-file " + pbLicenseBin} && \
-        bgzip -@ ~{nThreads} ~{outVCF} && \
-        tabix ~{outVCF}.gz
+        ~{"--license-file " + pbLicenseBin}
     }
 
     output {
-        File deepvariantVCF = "~{outVCF}.gz"
-        File deepvariantTBI = "~{outVCF}.gz.tbi"
+        File deepvariantVCF = "~{outVCF}"
     }
     runtime {
         docker : "~{pbDocker}"
@@ -158,12 +152,14 @@ workflow ClaraParabricks_Germline {
         File inputBAM
         File inputBAI
         File? inputRecal
-
         File inputRefTarball
-        File? pbLicenseBin
         String pbPATH
+
+        File? pbLicenseBin
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
 
+        Bool runDeepVariant = true
+        Bool runHaplotypeCaller = true
         ## Run both DeepVariant and HaplotypeCaller in gVCF mode
         Boolean gvcfMode = false
 
@@ -192,53 +188,57 @@ workflow ClaraParabricks_Germline {
         String hpcQueue_HaplotypeCaller = "gpu"
     }
 
-    call haplotypecaller {
-        input:
-            inputBAM=inputBAM,
-            inputBAI=inputBAI,
-            inputRecal=inputRecal,
-            inputRefTarball=inputRefTarball,
-            pbLicenseBin=pbLicenseBin,
-            pbPATH=pbPATH,
-            gvcfMode=gvcfMode,
-            haplotypecallerPassthroughOptions=haplotypecallerPassthroughOptions,
-            nThreads=nThreads_HaplotypeCaller,
-            nGPU=nGPU_HaplotypeCaller,
-            gpuModel=gpuModel_HaplotypeCaller,
-            gpuDriverVersion=gpuDriverVersion_HaplotypeCaller,
-            gbRAM=gbRAM_HaplotypeCaller,
-            diskGB=diskGB_HaplotypeCaller,
-            runtimeMinutes=runtimeMinutes_HaplotypeCaller,
-            hpcQueue=hpcQueue_HaplotypeCaller,
-            pbDocker=pbDocker,
-            maxPreemptAttempts=maxPreemptAttempts
+    if (runHaplotypeCaller){
+        call haplotypecaller {
+            input:
+                inputBAM=inputBAM,
+                inputBAI=inputBAI,
+                inputRecal=inputRecal,
+                inputRefTarball=inputRefTarball,
+                pbLicenseBin=pbLicenseBin,
+                pbPATH=pbPATH,
+                gvcfMode=gvcfMode,
+                haplotypecallerPassthroughOptions=haplotypecallerPassthroughOptions,
+                nThreads=nThreads_HaplotypeCaller,
+                nGPU=nGPU_HaplotypeCaller,
+                gpuModel=gpuModel_HaplotypeCaller,
+                gpuDriverVersion=gpuDriverVersion_HaplotypeCaller,
+                gbRAM=gbRAM_HaplotypeCaller,
+                diskGB=diskGB_HaplotypeCaller,
+                runtimeMinutes=runtimeMinutes_HaplotypeCaller,
+                hpcQueue=hpcQueue_HaplotypeCaller,
+                pbDocker=pbDocker,
+                maxPreemptAttempts=maxPreemptAttempts
+        }
+
     }
 
-    call deepvariant {
-        input:
-            inputBAM=inputBAM,
-            inputBAI=inputBAI,
-            inputRefTarball=inputRefTarball,
-            pbLicenseBin=pbLicenseBin,
-            pbPATH=pbPATH,
-            gvcfMode=gvcfMode,
-            nThreads=nThreads_DeepVariant,
-            nGPU=nGPU_DeepVariant,
-            gpuModel=gpuModel_DeepVariant,
-            gpuDriverVersion=gpuDriverVersion_DeepVariant,
-            gbRAM=gbRAM_DeepVariant,
-            diskGB=diskGB_DeepVariant,
-            runtimeMinutes=runtimeMinutes_DeepVariant,
-            hpcQueue=hpcQueue_DeepVariant,
-            pbDocker=pbDocker,
-            maxPreemptAttempts=maxPreemptAttempts
+    if (runDeepVariant){
+        call deepvariant {
+            input:
+                inputBAM=inputBAM,
+                inputBAI=inputBAI,
+                inputRefTarball=inputRefTarball,
+                pbLicenseBin=pbLicenseBin,
+                pbPATH=pbPATH,
+                gvcfMode=gvcfMode,
+                nThreads=nThreads_DeepVariant,
+                nGPU=nGPU_DeepVariant,
+                gpuModel=gpuModel_DeepVariant,
+                gpuDriverVersion=gpuDriverVersion_DeepVariant,
+                gbRAM=gbRAM_DeepVariant,
+                diskGB=diskGB_DeepVariant,
+                runtimeMinutes=runtimeMinutes_DeepVariant,
+                hpcQueue=hpcQueue_DeepVariant,
+                pbDocker=pbDocker,
+                maxPreemptAttempts=maxPreemptAttempts
+        }
     }
+
 
     output {
-        File deepvariantVCF = deepvariant.deepvariantVCF
-        File deepvariantTBI = deepvariant.deepvariantTBI
-        File haplotypecallerVCF = haplotypecaller.haplotypecallerVCF
-        File haplotypecallerTBI = haplotypecaller.haplotypecallerTBI
+        File? deepvariantVCF = deepvariant.deepvariantVCF
+        File? haplotypecallerVCF = haplotypecaller.haplotypecallerVCF
     }
 
     meta {
