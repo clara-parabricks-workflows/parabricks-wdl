@@ -17,7 +17,7 @@ task fq2bam {
         File? pbLicenseBin
         Boolean use_best_practices = false
 
-        String pbPATH
+        String pbPATH = "pbrun"
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
         String tmpDir = "tmp_fq2bam"
         Int nGPU = 4
@@ -89,7 +89,7 @@ workflow ClaraParabricks_fq2bam {
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
         File? pbLicenseBin
-        String pbPATH
+        String pbPATH = "pbrun"
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
         String tmpDir = "tmp_fq2bam"
         String gpuModel = "nvidia-tesla-t4"
