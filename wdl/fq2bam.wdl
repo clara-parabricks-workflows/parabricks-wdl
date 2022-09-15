@@ -81,10 +81,10 @@ workflow ClaraParabricks_fq2bam {
     input {
         File inputFASTQ_1
         File inputFASTQ_2
-        String? sampleName 
-        String? libraryName
-        String? readGroupName 
-        String? platformName
+        String? readGroup_sampleName = "SAMPLE"
+        String? readGroup_libraryName = "LIB1"
+        String? readGroup_ID = "RG1"
+        String? readGroup_platformName = "ILMN"
         File inputRefTarball
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
