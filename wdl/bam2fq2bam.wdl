@@ -13,7 +13,7 @@ task bam2fq {
         String pbPATH
         File? pbLicenseBin
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
-        Int nThreads = 32
+        Int nThreads = 16
         Int gbRAM = 120
         Int diskGB = 0
         Int runtimeMinutes = 600
@@ -71,12 +71,12 @@ workflow ClaraParabricks_bam2fq2bam {
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
         String tmpDir = "tmp_fq2bam"
         Int nGPU_fq2bam = 4
-        String gpuModel_fq2bam = "nvidia-tesla-v100"
+        String gpuModel_fq2bam = "nvidia-tesla-t4"
         String gpuDriverVersion_fq2bam = "460.73.01"
-        Int nThreads_bam2fq = 12
+        Int nThreads_bam2fq = 16
         Int nThreads_fq2bam = 32
         Int gbRAM_bam2fq = 120
-        Int gbRAM_fq2bam = 120
+        Int gbRAM_fq2bam = 180
         Int diskGB = 0
         Int runtimeMinutes_bam2fq = 600
         Int runtimeMinutes_fq2bam = 600

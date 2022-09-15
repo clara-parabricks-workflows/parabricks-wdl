@@ -95,7 +95,7 @@ workflow ClaraParabricks_fq2bam {
         String gpuModel = "nvidia-tesla-t4"
         Int nGPU = 4
         Int nThreads = 32
-        Int gbRAM = 120
+        Int gbRAM = 180
         Int diskGB = 0
         String diskType = "SSD"
         Int runtimeMinutes = 600
