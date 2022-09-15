@@ -4,7 +4,7 @@ task mutect2_prepon {
     input {
         File ponVCF
         File ponTBI
-        String pbPATH
+        String pbPATH = "pbrun"
         File? pbLicenseBin
         String? pbDocker
         Int nGPU = 4
@@ -54,7 +54,7 @@ workflow ClaraParabricks_Somatic {
     input {
         File ponVCF
         File ponTBI
-        String pbPATH
+        String pbPATH = "pbrun"
         File? pbLicenseBin
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
         Int nGPU = 4

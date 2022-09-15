@@ -6,7 +6,7 @@ task haplotypecaller {
         File inputBAI
         File? inputRecal
         File inputRefTarball
-        String pbPATH
+        String pbPATH = "pbrun"
         File? intervalFile
         Boolean gvcfMode = false
         Boolean useBestPractices = false
@@ -80,7 +80,7 @@ task deepvariant {
         File inputBAM
         File inputBAI
         File inputRefTarball
-        String pbPATH
+        String pbPATH = "pbrun"
         File? pbLicenseBin
         String? pbDocker
         Boolean gvcfMode = false
@@ -140,7 +140,7 @@ workflow ClaraParabricks_Germline {
         File inputBAI
         File? inputRecal
         File inputRefTarball
-        String pbPATH
+        String pbPATH = "pbrun"
 
         File? pbLicenseBin
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"

@@ -12,7 +12,7 @@ task mutect2_call {
         File? normalBQSR
         String normalName
         File inputRefTarball
-        String pbPATH
+        String pbPATH = "pbrun"
         File? pbLicenseBin
         File? ponFile
         File? ponVCF
@@ -72,7 +72,7 @@ task mutect2_postpon {
         File ponFile
         File ponVCF
         File ponTBI
-        String pbPATH
+        String pbPATH = "pbrun"
         File? pbLicenseBin
         String? pbDocker
         Int nGPU = 4
@@ -162,7 +162,7 @@ workflow ClaraParabricks_Somatic {
         File? normalBQSR
         String normalName
         File inputRefTarball
-        String pbPATH
+        String pbPATH = "pbrun"
         File? pbLicenseBin
         File? ponVCF
         File? ponTBI

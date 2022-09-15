@@ -131,7 +131,7 @@ workflow ClaraParabricks_GenerateRegionTestData {
         File? knownSitesTBI
         File inputRefTarball
         File? pbLicenseBin
-        String pbPATH
+        String pbPATH = "pbrun"
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
         
         String tmpDir = "tmp_fq2bam"
