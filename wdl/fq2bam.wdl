@@ -7,10 +7,10 @@ task fq2bam {
         File inputFASTQ_2
         File inputRefTarball
 
-        String? sampleName 
-        String? libraryName 
-        String? readGroupName 
-        String? platformName 
+        String? readGroup_sampleName = "SAMPLE"
+        String? readGroup_libraryName = "LIB1"
+        String? readGroup_ID = "RG1"
+        String? readGroup_platformName = "ILMN"
 
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
@@ -44,10 +44,10 @@ task fq2bam {
         --tmp-dir ~{tmpDir} \
         --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} \
         ~{best_practice_args} \
-        ~{"--read-group-sm " + sampleName} \
-        ~{"--read-group-lb " + libraryName} \
-        ~{"--read-group-pl " + platformName} \
-        ~{"--read-group-id-prefix " + readGroupName} \
+        ~{"--read-group-sm " + readGroup_sampleName} \
+        ~{"--read-group-lb " + readGroup_libraryName} \
+        ~{"--read-group-pl " + readGroup_platformName} \
+        ~{"--read-group-id-prefix " + readGroup_ID} \
         --ref ~{ref} \
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
         --out-bam ~{outbase}.pb.bam \
