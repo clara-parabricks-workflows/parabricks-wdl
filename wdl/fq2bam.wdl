@@ -11,6 +11,7 @@ task fq2bam {
         String? readGroup_libraryName = "LIB1"
         String? readGroup_ID = "RG1"
         String? readGroup_platformName = "ILMN"
+        String? readGroup_PU = "Barcode1"
 
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
@@ -43,11 +44,8 @@ task fq2bam {
         time ~{pbPATH} fq2bam \
         --tmp-dir ~{tmpDir} \
         --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} \
+        "@RG\tID:~{readGroup_ID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}\tPU:~{readGroup_PU}" \
         ~{best_practice_args} \
-        ~{"--read-group-sm " + readGroup_sampleName} \
-        ~{"--read-group-lb " + readGroup_libraryName} \
-        ~{"--read-group-pl " + readGroup_platformName} \
-        ~{"--read-group-id-prefix " + readGroup_ID} \
         --ref ~{ref} \
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
         --out-bam ~{outbase}.pb.bam \
@@ -85,6 +83,7 @@ workflow ClaraParabricks_fq2bam {
         String? readGroup_libraryName = "LIB1"
         String? readGroup_ID = "RG1"
         String? readGroup_platformName = "ILMN"
+        String? readGroup_PU = "Barcode1"
         File inputRefTarball
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
