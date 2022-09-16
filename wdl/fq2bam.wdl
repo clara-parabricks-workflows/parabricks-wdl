@@ -11,7 +11,7 @@ task fq2bam {
         String? readGroup_libraryName = "LIB1"
         String? readGroup_ID = "RG1"
         String? readGroup_platformName = "ILMN"
-        String? readGroup_PU = "Barcode1"
+        String? readGroup_PU
 
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
@@ -36,15 +36,21 @@ task fq2bam {
     Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputFASTQ_1, "GB")) + ceil(5.0 * size(inputFASTQ_2, "GB")) + ceil(3.0 * size(inputRefTarball, "GB")) + ceil(size(inputKnownSitesVCF, "GB")) + 150 else diskGB
 
     String best_practice_args = if use_best_practices then "--bwa-options \" -Y -K 100000000 \" " else ""
+
+    String rg_PU_tag = if defined(readGroup_PU) then "\tPU:" + readGroup_PU else ""
+
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
     command {
+        set -e
+        set -x
+        set -o pipefail
         mkdir -p ~{tmpDir} && \
         time tar xf ~{inputRefTarball} && \
         time ~{pbPATH} fq2bam \
         --tmp-dir ~{tmpDir} \
         --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} \
-        "@RG\tID:~{readGroup_ID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}\tPU:~{readGroup_PU}" \
+        "@RG\tID:~{readGroup_ID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}~{rg_PU_tag}" \
         ~{best_practice_args} \
         --ref ~{ref} \
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
