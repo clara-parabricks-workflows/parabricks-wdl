@@ -37,7 +37,7 @@ task fq2bam {
 
     String best_practice_args = if use_best_practices then "--bwa-options \" -Y -K 100000000 \" " else ""
 
-    String rg_PU_tag = if defined(readGroup_PU) then "\tPU:" + readGroup_PU else ""
+    String rg_PU_tag = if defined(readGroup_PU) then  readGroup_PU else readGroup_sampleName + "-" + readGroup_ID
 
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
@@ -50,7 +50,7 @@ task fq2bam {
         time ~{pbPATH} fq2bam \
         --tmp-dir ~{tmpDir} \
         --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} \
-        "@RG\tID:~{readGroup_ID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}~{rg_PU_tag}" \
+        "@RG\tID:~{readGroup_ID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}~{rg_PU_tag}\tPU:~{rg_PU_tag}" \
         ~{best_practice_args} \
         --ref ~{ref} \
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
