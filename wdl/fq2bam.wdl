@@ -50,7 +50,7 @@ task fq2bam {
         time ~{pbPATH} fq2bam \
         --tmp-dir ~{tmpDir} \
         --in-fq ~{inputFASTQ_1} ~{inputFASTQ_2} \
-        "@RG\tID:~{readGroup_ID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}~{rg_PU_tag}\tPU:~{rg_PU_tag}" \
+        "@RG\tID:~{readGroup_ID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}\tPU:~{rg_PU_tag}" \
         ~{best_practice_args} \
         --ref ~{ref} \
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
