@@ -5,13 +5,14 @@ task mutect2_call {
     input {
         File tumorBAM
         File tumorBAI
-        File? tumorBQSR
         String tumorName
         File normalBAM
         File normalBAI
-        File? normalBQSR
         String normalName
         File inputRefTarball
+        File? intervalFile
+        File? tumorBQSR
+        File? normalBQSR
         String pbPATH = "pbrun"
         File? pbLicenseBin
         File? ponFile
@@ -39,11 +40,13 @@ task mutect2_call {
         time ~{pbPATH} mutectcaller \
         --ref ~{ref} \
         --tumor-name ~{tumorName} \
-        ~{"--in-tumor-bqsr " + tumorBQSR} \
+        ~{"--in-tumor-recal-file " + tumorBQSR} \
         --in-tumor-bam ~{tumorBAM} \
         --normal-name ~{normalName} \
         --in-normal-bam ~{normalBAM} \
+        ~{"--in-normal-recal-file " + normalBQSR} \
         ~{"--pon " + ponVCF} \
+        ~{"--interval-file " + intervalFile} \
         ~{"--license-file " + pbLicenseBin} \
         --out-vcf ~{outbase}.vcf
     }
@@ -117,7 +120,7 @@ task mutect2_postpon {
 task compressAndIndexVCF {
     input {
         File inputVCF
-        String bgzipDocker = "samtools/bcftools"
+        String bgzipDocker = "claraparabricks/samtools"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
