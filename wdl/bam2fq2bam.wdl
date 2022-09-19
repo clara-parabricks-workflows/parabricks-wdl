@@ -58,7 +58,8 @@ workflow ClaraParabricks_bam2fq2bam {
     ## Given a BAM file,
     ## extract the reads from it and realign them to a new reference genome.
     ## Expected runtime for a 30X BAM is less than 3 hours on a 4x V100 system.
-    ## We recommend running with at least 32 threads and 4x V100 GPUs.
+    ## We recommend running with at least 32 threads and 4x V100 GPUs on Baremetal and
+    ## utilizing 4x T4s on the cloud.
     input {
         File inputBAM
         File inputBAI

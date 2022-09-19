@@ -155,7 +155,7 @@ workflow ClaraParabricks_Germline {
 
         ## DeepVariant Runtime Args
         Int nGPU_DeepVariant = 4
-        String gpuModel_DeepVariant = "nvidia-tesla-v100"
+        String gpuModel_DeepVariant = "nvidia-tesla-t4"
         String gpuDriverVersion_DeepVariant = "460.73.01"
         Int nThreads_DeepVariant = 32
         Int gbRAM_DeepVariant = 120
@@ -166,7 +166,7 @@ workflow ClaraParabricks_Germline {
         ## HaplotypeCaller Runtime Args
         String? haplotypecallerPassthroughOptions
         Int nGPU_HaplotypeCaller = 4
-        String gpuModel_HaplotypeCaller = "nvidia-tesla-v100"
+        String gpuModel_HaplotypeCaller = "nvidia-tesla-t4"
         String gpuDriverVersion_HaplotypeCaller = "460.73.01"
         Int nThreads_HaplotypeCaller = 32
         Int gbRAM_HaplotypeCaller = 120
