@@ -37,7 +37,7 @@ task fq2bam {
 
     String best_practice_args = if use_best_practices then "--bwa-options \" -Y -K 100000000 \" " else ""
 
-    String rgID = if readGroup_sampleName != "SAMPLE" then readGroup_ID else readGroup_sampleName + "-" + readGroup_ID
+    String rgID = if readGroup_sampleName == "SAMPLE" then readGroup_ID else readGroup_sampleName + "-" + readGroup_ID
 
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
