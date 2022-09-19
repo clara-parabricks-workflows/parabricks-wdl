@@ -10,7 +10,7 @@ task fq2bam {
         String? readGroup_sampleName = "SAMPLE"
         String? readGroup_libraryName = "LIB1"
         String? readGroup_ID = "RG1"
-        String? readGroup_platformName = "ILMN"
+        String? readGroup_platformName = "Illumina"
         String? readGroup_PU
 
         File? inputKnownSitesVCF
