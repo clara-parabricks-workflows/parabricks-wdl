@@ -15,10 +15,10 @@ task haplotypecaller {
         
         File? pbLicenseBin
         String? pbDocker
-        Int nGPU = 4
+        Int nGPU = 2
         String gpuModel = "nvidia-tesla-t4"
         String gpuDriverVersion = "460.73.01"
-        Int nThreads = 32
+        Int nThreads = 24
         Int gbRAM = 120
         Int diskGB = 0
         Int runtimeMinutes = 600
@@ -87,7 +87,7 @@ task deepvariant {
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
         String gpuDriverVersion = "460.73.01"
-        Int nThreads = 32
+        Int nThreads = 24
         Int gbRAM = 120
         Int diskGB = 0
         Int runtimeMinutes = 600
@@ -157,7 +157,7 @@ workflow ClaraParabricks_Germline {
         Int nGPU_DeepVariant = 4
         String gpuModel_DeepVariant = "nvidia-tesla-t4"
         String gpuDriverVersion_DeepVariant = "460.73.01"
-        Int nThreads_DeepVariant = 32
+        Int nThreads_DeepVariant = 24
         Int gbRAM_DeepVariant = 120
         Int diskGB_DeepVariant = 0
         Int runtimeMinutes_DeepVariant = 600
@@ -165,10 +165,10 @@ workflow ClaraParabricks_Germline {
 
         ## HaplotypeCaller Runtime Args
         String? haplotypecallerPassthroughOptions
-        Int nGPU_HaplotypeCaller = 4
+        Int nGPU_HaplotypeCaller = 2
         String gpuModel_HaplotypeCaller = "nvidia-tesla-t4"
         String gpuDriverVersion_HaplotypeCaller = "460.73.01"
-        Int nThreads_HaplotypeCaller = 32
+        Int nThreads_HaplotypeCaller = 24
         Int gbRAM_HaplotypeCaller = 120
         Int diskGB_HaplotypeCaller = 0
         Int runtimeMinutes_HaplotypeCaller = 600
