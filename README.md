@@ -139,6 +139,14 @@ Next, update the inputs to reflect their position in GCS:
 }
 ```
 
+You'll need to update the `gcp_template.wdl.conf` file in the `config` directory with your project and bucket. Once that's done, save the file as `config/gcp.wdl.conf`.
+
+Then, you can launch using the GCP Configuration in the `config` directory:
+
+```bash
+java -Dconfig.file=config_wdl/gcp.wdl.conf -jar cromwell-81.jar run -i inputs.local.json wdl/fq2bam.wdl
+```
+
 
 # Build larger workflows and analyze your own data
 
