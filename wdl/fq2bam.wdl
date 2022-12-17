@@ -13,8 +13,8 @@ task fq2bam {
         String? readGroup_platformName = "ILLUMINA"
         String? readGroup_PU = "unit1"
 
-        File? inputKnownSitesVCF
-        File? inputKnownSitesTBI
+        Array[File]? inputKnownSitesVCF
+        Array[File]? inputKnownSitesTBI
         File? pbLicenseBin
         Boolean use_best_practices = false
 
@@ -41,6 +41,10 @@ task fq2bam {
 
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
+
+    Int n_KnownSitesFiles = length(select_first([inputKnownSitesVCF, []]))
+    String knownSitesInputStub = if n_KnownSitesFiles > 0 then "-L" else ""
+    String knownSitesOutputStub = if n_KnownSitesFiles > 0 then " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt" else ""
     command {
         set -e
         set -x
@@ -53,7 +57,8 @@ task fq2bam {
         "@RG\tID:~{rgID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{readGroup_sampleName}\tPU:~{readGroup_PU}" \
         ~{best_practice_args} \
         --ref ~{ref} \
-        ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
+        ~{knownSitesInputStub} ~{sep=" -L" inputKnownSitesVCF} \
+        ~{knownSitesOutputStub} \
         --out-bam ~{outbase}.pb.bam \
         ~{"--license-file " + pbLicenseBin}
     }
@@ -91,8 +96,8 @@ workflow ClaraParabricks_fq2bam {
         String? readGroup_platformName = "ILMN"
         String? readGroup_PU = "Barcode1"
         File inputRefTarball
-        File? inputKnownSitesVCF
-        File? inputKnownSitesTBI
+        Array[File]? inputKnownSitesVCF
+        Array[File]? inputKnownSitesTBI
         File? pbLicenseBin
         String pbPATH = "pbrun"
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
