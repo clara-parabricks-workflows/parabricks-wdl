@@ -63,8 +63,8 @@ workflow ClaraParabricks_bam2fq2bam {
     input {
         File inputBAM
         File inputBAI
-        File? inputKnownSitesVCF
-        File? inputKnownSitesTBI
+        Array[File]? inputKnownSitesVCF
+        Array[File]? inputKnownSitesTBI
         File? originalRefTarball  # for CRAM input
         File inputRefTarball
         File? pbLicenseBin
