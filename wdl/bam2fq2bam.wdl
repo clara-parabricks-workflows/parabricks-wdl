@@ -24,18 +24,18 @@ task bam2fq {
 
     Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputBAM, "GB")) + ceil(size(inputBAI, "GB")) + 100 else diskGB
 
-    command {
+    command <<<
         ~{"tar xvf " + originalRefTarball + " && "}\
         time ~{pbPATH} bam2fq \
             --in-bam ~{inputBAM} \
             --out-prefix ~{outbase} \
             ~{"--license-file " + pbLicenseBin} \
             ~{"--ref " + ref} \
-    }
+    >>>
 
     output {
-        File outputFASTQ_1 = "${outbase}_1.fastq.gz"
-        File outputFASTQ_2 = "${outbase}_2.fastq.gz"
+        File outputFASTQ_1 = "~{outbase}_1.fastq.gz"
+        File outputFASTQ_2 = "~{outbase}_2.fastq.gz"
     }
 
     runtime {
@@ -49,9 +49,6 @@ task bam2fq {
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : 3
     }
-
-
-
 }
 
 workflow ClaraParabricks_bam2fq2bam {
@@ -88,7 +85,6 @@ workflow ClaraParabricks_bam2fq2bam {
     if (defined(originalRefTarball)){
         String ref = basename(select_first([originalRefTarball]), ".tar")
     }
-
 
     ## Run the BAM -> FASTQ conversion
     call bam2fq {

@@ -13,19 +13,22 @@ task index {
         String hpcQueue = "norm"
         Int maxPreemptAttempts = 3
     }
+
     String outbase = basename(inputFASTA)
     String ref = basename(inputFASTA)
     Int auto_diskGB = if diskGB == 0 then ceil(4.0 * size(inputFASTA, "GB")) + 100 else diskGB
 
-    command {
+    command <<<
         cp ~{inputFASTA} ~{ref} && \
         ~{samtoolsPATH} faidx ~{ref} && \
         ~{bwaPATH} index ~{ref} && \
         tar cvf ~{outbase}.tar ~{ref}*
-    }
+    >>>
+
     output {
         File refTarball = "~{outbase}.tar"
     }
+
     runtime {
         docker : "~{indexDocker}"
         disks : "local-disk ~{auto_diskGB} HDD"
@@ -38,6 +41,7 @@ task index {
         preemptible : maxPreemptAttempts
     }
 }
+
 workflow ClaraParabricks_IndexReference {
     input{
         File fastaFile

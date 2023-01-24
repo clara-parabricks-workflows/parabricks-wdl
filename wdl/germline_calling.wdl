@@ -12,7 +12,7 @@ task haplotypecaller {
         Boolean useBestPractices = false
         String haplotypecallerPassthroughOptions = ""
         String annotationArgs = ""
-        
+
         File? pbLicenseBin
         String? pbDocker
         Int nGPU = 2
@@ -39,8 +39,8 @@ task haplotypecaller {
     String annotation_stub_base = if useBestPractices then "-G StandardAnnotation -G StandardHCAnnotation" else annotationArgs
     String annotation_stub = if useBestPractices && gvcfMode then annotation_stub_base + " -G AS_StandardAnnotation " else annotation_stub_base
 
-    command {
-        mv ~{inputRefTarball} ${localTarball} && \
+    command <<<
+        mv ~{inputRefTarball} ~{localTarball} && \
         time tar xvf ~{localTarball} && \
         time ~{pbPATH} haplotypecaller \
         --in-bam ~{inputBAM} \
@@ -53,7 +53,7 @@ task haplotypecaller {
         ~{quantization_band_stub} \
         ~{quantization_qual_stub} \
         ~{"--license-file " + pbLicenseBin}
-    }
+    >>>
 
     output {
         File haplotypecallerVCF = "~{outVCF}"
@@ -104,20 +104,21 @@ task deepvariant {
     String outVCF = outbase + ".deepvariant" + (if gvcfMode then '.g' else '') + ".vcf"
 
 
-    command {
-        mv ~{inputRefTarball} ${localTarball} && \
+    command <<<
+        mv ~{inputRefTarball} ~{localTarball} && \
         time tar xvf ~{localTarball} && \
-        time ${pbPATH} deepvariant \
+        time ~{pbPATH} deepvariant \
         ~{if gvcfMode then "--gvcf " else ""} \
-        --ref ${ref} \
-        --in-bam ${inputBAM} \
+        --ref ~{ref} \
+        --in-bam ~{inputBAM} \
         --out-variants ~{outVCF} \
         ~{"--license-file " + pbLicenseBin}
-    }
+    >>>
 
     output {
         File deepvariantVCF = "~{outVCF}"
     }
+
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -221,7 +222,6 @@ workflow ClaraParabricks_Germline {
                 maxPreemptAttempts=maxPreemptAttempts
         }
     }
-
 
     output {
         File? deepvariantVCF = deepvariant.deepvariantVCF

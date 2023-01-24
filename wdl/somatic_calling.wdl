@@ -35,7 +35,7 @@ task mutect2_call {
 
     Int auto_diskGB = if diskGB == 0 then ceil(2.0 * size(tumorBAM, "GB")) + ceil(size(normalBAM, "GB")) + ceil(3.0 * size(inputRefTarball, "GB")) + 120 else diskGB
 
-    command {
+    command <<<
         time tar xf ~{inputRefTarball} && \
         time ~{pbPATH} mutectcaller \
         --ref ~{ref} \
@@ -49,10 +49,12 @@ task mutect2_call {
         ~{"--interval-file " + intervalFile} \
         ~{"--license-file " + pbLicenseBin} \
         --out-vcf ~{outbase}.vcf
-    }
+    >>>
+
     output {
         File outputVCF = "~{outbase}.vcf"
     }
+
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -88,19 +90,22 @@ task mutect2_postpon {
         String hpcQueue = "gpu"
         Int maxPreemptAttempts = 3
     }
+
     Int auto_diskGB = if diskGB == 0 then ceil(3.0 * size(inputVCF, "GB") * 2.5) + ceil(size(ponFile, "GB")) + ceil(size(ponVCF, "GB"))  + 120 else diskGB
 
     String outbase = basename(basename(inputVCF, ".gz"), ".vcf")
 
-    command {
-        time ${pbPATH} postpon \
+    command <<<
+        time ~{pbPATH} postpon \
         --in-vcf ~{inputVCF} \
         --in-pon-file ~{ponVCF} \
         --out-vcf ~{outbase}.postpon.vcf
-    }
+    >>>
+
     output {
         File outputVCF = "~{outbase}.postpon.vcf"
     }
+
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -128,19 +133,23 @@ task compressAndIndexVCF {
         String hpcQueue = "norm"
         Int maxPreemptAttempts = 3
     }
+
     Int auto_diskGB = if diskGB == 0 then ceil(3.0 * size(inputVCF, "GB") * 2.0) + 40 else diskGB
     ## We need to write to stdout in our task, as bgzip will compress the file in-place on the
     ## mounted volume and not the local disk. The issue with this is the mounted volume is not visible
     ## when searching for outputs.
     String localVCF = basename(inputVCF)
-    command {
+
+    command <<<
         bgzip -c -@ ~{nThreads} ~{inputVCF} > ~{localVCF}.gz  && \
         tabix ~{localVCF}.gz
-    }
+    >>>
+
     output {
         File outputVCF = "~{localVCF}.gz"
         File outputTBI = "~{localVCF}.gz.tbi"
     }
+
     runtime {
         docker : "~{bgzipDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -184,7 +193,7 @@ workflow ClaraParabricks_Somatic {
 
     Boolean doPON = defined(ponVCF)
 
-    if (doPON){
+    if (doPON) {
         call mutect2_call as pb_mutect2_pon {
             input:
                 tumorBAM=tumorBAM,
@@ -224,6 +233,7 @@ workflow ClaraParabricks_Somatic {
                 gpuDriverVersion=gpuDriverVersion,
         }
     }
+
     if (!doPON){
         call mutect2_call as pb_mutect2_withoutPON {
             input:
@@ -250,7 +260,6 @@ workflow ClaraParabricks_Somatic {
     }
 
     File? to_compress_VCF = if doPON then select_first([mutect2_postpon.outputVCF]) else pb_mutect2_withoutPON.outputVCF
-
 
     call compressAndIndexVCF {
         input:

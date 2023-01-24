@@ -22,18 +22,21 @@ task mutect2_prepon {
     String localVCF = basename(ponVCF)
     String localTBI = basename(ponTBI)
     String outbase = basename(ponVCF, ".vcf.gz")
-    command {
+
+    command <<<
         cp ~{ponVCF} ~{localVCF} && \
         cp ~{ponTBI} ~{localTBI} && \
         time ~{pbPATH} prepon \
         --in-pon-file ~{localVCF} \
         ~{"--license-file " + pbLicenseBin}
-    }
+    >>>
+
     output {
         File outputPON = "~{localVCF}.pon"
         File outputVCF = "~{localVCF}"
         File outputTBI = "~{localTBI}"
     }
+
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -69,7 +72,7 @@ workflow ClaraParabricks_Somatic {
     }
 
     call mutect2_prepon {
-        input: 
+        input:
             ponVCF=ponVCF,
             ponTBI=ponTBI,
             pbPATH=pbPATH,
@@ -90,5 +93,9 @@ workflow ClaraParabricks_Somatic {
         File outputPON = mutect2_prepon.outputPON
         File outputVCF = mutect2_prepon.outputVCF
         File outputTBI = mutect2_prepon.outputTBI
+    }
+
+    meta {
+        Author: "Nvidia Clara Parabricks"
     }
 }

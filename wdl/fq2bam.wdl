@@ -7,11 +7,11 @@ task fq2bam {
         File inputFASTQ_2
         File inputRefTarball
 
-        String? readGroup_sampleName = "SAMPLE"
-        String? readGroup_libraryName = "LIB1"
-        String? readGroup_ID = "RG1"
-        String? readGroup_platformName = "ILLUMINA"
-        String? readGroup_PU = "unit1"
+        String readGroup_sampleName = "SAMPLE"
+        String readGroup_libraryName = "LIB1"
+        String readGroup_ID = "RG1"
+        String readGroup_platformName = "ILLUMINA"
+        String readGroup_PU = "unit1"
 
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
@@ -41,7 +41,8 @@ task fq2bam {
 
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
-    command {
+
+    command <<<
         set -e
         set -x
         set -o pipefail
@@ -56,7 +57,7 @@ task fq2bam {
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
         --out-bam ~{outbase}.pb.bam \
         ~{"--license-file " + pbLicenseBin}
-    }
+    >>>
 
     output {
         File outputBAM = "~{outbase}.pb.bam"
@@ -81,15 +82,14 @@ task fq2bam {
 }
 
 workflow ClaraParabricks_fq2bam {
-
     input {
         File inputFASTQ_1
         File inputFASTQ_2
-        String? readGroup_sampleName = "SAMPLE"
-        String? readGroup_libraryName = "LIB1"
-        String? readGroup_ID = "RG1"
-        String? readGroup_platformName = "ILMN"
-        String? readGroup_PU = "Barcode1"
+        String readGroup_sampleName = "SAMPLE"
+        String readGroup_libraryName = "LIB1"
+        String readGroup_ID = "RG1"
+        String readGroup_platformName = "ILMN"
+        String readGroup_PU = "Barcode1"
         File inputRefTarball
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
@@ -106,7 +106,7 @@ workflow ClaraParabricks_fq2bam {
         Int runtimeMinutes = 600
         Int maxPreemptAttempts = 3
     }
-    
+
     call fq2bam {
         input:
             inputFASTQ_1=inputFASTQ_1,
