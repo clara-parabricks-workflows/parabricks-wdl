@@ -1,4 +1,5 @@
 task make_examples {
+
     input {
         File ref
         File bam
@@ -6,11 +7,22 @@ task make_examples {
         File truth_bed 
         File examples 
         String region
+
+        Int nGPU = 4
+        String gpuModel = "nvidia-tesla-t4"
+        String gpuDriverVersion = "460.73.01"
+        Int nThreads = 24
+        Int gbRAM = 120
+        Int diskGB = 500
+        Int runtimeMinutes = 600
+        String hpcQueue = "gpu"
+        Int maxPreemptAttempts = 3
     }
 
     String docker_image = "nvcr.io/nv-parabricks-dev/clara-parabricks-dvtrain:4.1.0-1.dvtrain"
     String binary_path = "/usr/local/parabricks/binaries/bin/deepvariant"
     String outbase = basename(bam, ".bam")
+    String examples_basename = basename(examples, ".gz")
 
     command {
         ~{binary_path} \
@@ -29,28 +41,44 @@ task make_examples {
         -z 4
     }
 
-    # TODO: The outputs are complicated, I'm not sure how to fit them here 
     output {
-
+        Array[File] examples = glob("~{examples_basename}*")
     }
 
-    # TODO: Does docker_image need to be ~{docker_image}?
-    # TODO: Are these the correct keywords for GPU type, and GPU count? 
     runtime {
         docker: "~{docker_image}"
-        acceleratorType: "nvidia-tesla-t4"
-        acceleratorCount: 4
-        cpu: 48
-        memory: "192GiB"
+        disks : "local-disk ~{diskGB} SSD"
+        cpu : nThreads
+        memory : "~{gbRAM} GB"
+        hpcMemory : gbRAM
+        hpcQueue : "~{hpcQueue}"
+        hpcRuntimeMinutes : runtimeMinutes
+        gpuType : "~{gpuModel}"
+        gpuCount : nGPU
+        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
+        preemptible : maxPreemptAttempts
     }
 }
 
 task shuffle_data {
+
     input {
+        Array[File] examples # The output of make_examples from the previous step 
         String input_pattern_list
         String output_pattern_prefix
         String output_dataset_config
         String output_dataset_name
+
+        Int nGPU = 4
+        String gpuModel = "nvidia-tesla-t4"
+        String gpuDriverVersion = "460.73.01"
+        Int nThreads = 24
+        Int gbRAM = 120
+        Int diskGB = 500
+        Int runtimeMinutes = 600
+        String hpcQueue = "gpu"
+        Int maxPreemptAttempts = 3
     }
 
     String shuffle_data_script_link = "https://api.ngc.nvidia.com/v2/resources/nvidia/clara/parabricks_deepvariant_retraining_notebook/versions/4.0.0-1/files/parabricks_deepvariant_retraining_notebook.zip"
@@ -68,26 +96,46 @@ task shuffle_data {
     }
 
     output {
-
+        Array[File] shuffled_examples = glob("~{output_pattern_prefix}*")
     }
 
-    # Note: This step does not use the GPU 
     runtime {
         docker: "tensorflow/tensorflow"
-        cpu: 48
-        memory: "192GiB"
+        disks : "local-disk ~{diskGB} SSD"
+        cpu : nThreads
+        memory : "~{gbRAM} GB"
+        hpcMemory : gbRAM
+        hpcQueue : "~{hpcQueue}"
+        hpcRuntimeMinutes : runtimeMinutes
+        gpuType : "~{gpuModel}"
+        gpuCount : nGPU
+        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
+        preemptible : maxPreemptAttempts
     }
 }
 
 task training {
 
     input {
+        Array[File] train_examples
+        Array[File] val_examples
         String training_output_dataset_config
         String validation_output_dataset_config
         Int? number_of_steps = 5000
         Int? batch_size = 32 
         Float? learning_rate = 0.0005
         Int? save_interval_secs = 300 
+
+        Int nGPU = 4
+        String gpuModel = "nvidia-tesla-t4"
+        String gpuDriverVersion = "460.73.01"
+        Int nThreads = 24
+        Int gbRAM = 120
+        Int diskGB = 500
+        Int runtimeMinutes = 600
+        String hpcQueue = "gpu"
+        Int maxPreemptAttempts = 3
     }
 
     String bin_version = "1.4.0"
@@ -98,9 +146,7 @@ task training {
 
     String docker_image = "google/deepvariant:~{bin_version}-gpu"
 
-    # TODO: How do you call put two commands here? Do you need "&&"? 
     command {
-
         /opt/deepvariant/bin/model_eval \
             --dataset_config_pbtxt=~{training_output_dataset_config} \
             --checkpoint_dir=~{training_dir} \
@@ -118,24 +164,28 @@ task training {
     }
 
     output {
-
+        Array[File] training_dir = glob("~{training_dir}/*")
     }
 
     runtime {
-        docker: "~{docker_image}"
-        acceleratorType: "nvidia-tesla-t4"
-        acceleratorCount: 4
-        cpu: 48
-        memory: "192GiB"
+        docker: "tensorflow/tensorflow"
+        disks : "local-disk ~{diskGB} SSD"
+        cpu : nThreads
+        memory : "~{gbRAM} GB"
+        hpcMemory : gbRAM
+        hpcQueue : "~{hpcQueue}"
+        hpcRuntimeMinutes : runtimeMinutes
+        gpuType : "~{gpuModel}"
+        gpuCount : nGPU
+        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
+        preemptible : maxPreemptAttempts
     }
 }
-
-
 
 workflow DeepVariant_Retraining {
 
     input {
-
         # Make Examples 
         File ref
         File bam
@@ -167,61 +217,62 @@ workflow DeepVariant_Retraining {
     }
 
     ## Make training examples 
-    ## Alias these with "as" 
     call make_examples as make_examples_train {
         input:
-            ref=ref
-            bam=bam
-            truth_vcf=truth_vcf
-            truth_bed=truth_bed
-            examples=training_examples
+            ref=ref,
+            bam=bam,
+            truth_vcf=truth_vcf,
+            truth_bed=truth_bed,
+            examples=training_examples,
             region=training_region
     }
 
     ## Make validation examples 
     call make_examples as make_examples_val {
         input:
-            ref=ref
-            bam=bam
-            truth_vcf=truth_vcf
-            truth_bed=truth_bed
-            examples=validation_examples
+            ref=ref,
+            bam=bam,
+            truth_vcf=truth_vcf,
+            truth_bed=truth_bed,
+            examples=validation_examples,
             region=validation_region
     }
 
     ## Shuffle training data 
     call shuffle_data as shuffle_data_train {
         input: 
-            vcf=make_examples_train.output_vcf ## This is just an example to capture previous output 
-            input_pattern_list=training_input_pattern_list
-            output_pattern_prefix=training_output_pattern_prefix
-            output_dataset_config=training_output_dataset_config
+            examples=make_examples_train.examples,
+            input_pattern_list=training_input_pattern_list,
+            output_pattern_prefix=training_output_pattern_prefix,
+            output_dataset_config=training_output_dataset_config,
             output_dataset_name=training_output_dataset_name
     }
 
     ## Shuffle validation data 
     call shuffle_data as shuffle_data_val {
         input: 
-            input_pattern_list=validation_input_pattern_list
-            output_pattern_prefix=validation_output_pattern_prefix
-            output_dataset_config=validation_output_dataset_config
+            examples=make_examples_val.examples,
+            input_pattern_list=validation_input_pattern_list,
+            output_pattern_prefix=validation_output_pattern_prefix,
+            output_dataset_config=validation_output_dataset_config,
             output_dataset_name=validation_output_dataset_name
     }
 
+    ## Run DeepVariant Retraining 
     call training{
         input: 
-            training_output_dataset_config=training_output_dataset_config
-            validation_output_dataset_config=validation_output_dataset_config
-            number_of_steps=number_of_steps
-            batch_size =batch_size
-            learning_rate=learning_rate
+            train_examples=shuffle_data_train.shuffled_examples,
+            val_examples=shuffle_data_val.shuffled_examples,
+            training_output_dataset_config=training_output_dataset_config,
+            validation_output_dataset_config=validation_output_dataset_config,
+            number_of_steps=number_of_steps,
+            batch_size =batch_size,
+            learning_rate=learning_rate,
             save_interval_secs=save_interval_secs
     }
 
-    ## Anything the end user should be interested in (from any of the previous tasks)
-    ## These get stored in the Terra data table 
     output {
-        performance_file=training.performance_file ## Example
+        training_dir=training.training_dir
     }
 
     meta {
