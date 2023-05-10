@@ -1,0 +1,8 @@
+{
+    "DeepVariant_Retraining.ref": "/mnt/1tb_drive/terra/data/ucsc_hg19.fa",
+    "DeepVariant_Retraining.bam": "/mnt/1tb_drive/terra/data/mark_dups_HG001_g03_30_30xcov.bam",
+    "DeepVariant_Retraining.truth_vcf": "/mnt/1tb_drive/terra/data/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_PGandRTGphasetransfer_chrs_FIXED.vcf.gz",
+    "DeepVariant_Retraining.truth_bed": "/mnt/1tb_drive/terra/data/HG001_GRCh37_GIAB_highconf_CG-IllFB-IllGATKHC-Ion-10X-SOLID_CHROM1-X_v.3.3.2_highconf_nosomaticdel_chr.bed",
+    "DeepVariant_Retraining.training_region": "",
+    "DeepVariant_Retraining.validation_region": ""
+}
