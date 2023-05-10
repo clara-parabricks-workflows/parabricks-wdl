@@ -2,7 +2,6 @@
 *.Dockerfile
 cromwell-*
 womtool-*
-*.txt
 *.csv
 *.fq
 *.fastq
