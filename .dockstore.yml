@@ -50,3 +50,10 @@ workflows:
       - name: Eric T. Dawson
         affiliation: NVIDIA
         orcid: 0000-0001-5448-1653
+  - subclass: WDL
+    primaryDescriptorPath: /wdl/deepvariant_retraining.wdl
+    name: clara-parabricks-deepvariant-retraining
+    authors:
+      - name: Gary L. Burnett
+        affiliation: NVIDIA
+        orcid: 0000-0002-3972-3121

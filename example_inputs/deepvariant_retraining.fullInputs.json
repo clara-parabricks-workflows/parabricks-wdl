@@ -1,0 +1,23 @@
+{
+    "DeepVariant_Retraining.ref": "File",
+    "DeepVariant_Retraining.bam": "File",
+    "DeepVariant_Retraining.bam_index": "File",
+    "DeepVariant_Retraining.truth_vcf": "File",
+    "DeepVariant_Retraining.truth_bed": "File",
+    "DeepVariant_Retraining.training_region": "String (ex. 'chr1')",
+    "DeepVariant_Retraining.validation_region": "String (ex. 'chr21')",
+    "DeepVariant_Retraining.training_examples": "String (optional, default = training_set_gpu.with_label.tfrecord.gz)",
+    "DeepVariant_Retraining.validation_examples": "String (optional, default = validation_set_gpu.with_label.tfrecord.gz)",
+    "DeepVariant_Retraining.training_input_pattern_list": "String (optional, default = training_set_gpu.with_label.tfrecord-?????-of-00004.gz)",
+    "DeepVariant_Retraining.training_output_pattern_prefix": "String (optional, default = training_set_gpu.with_label.shuffled)",
+    "DeepVariant_Retraining.training_output_dataset_config": "String (optional, default = training_set_gpu.pbtxt)",
+    "DeepVariant_Retraining.training_output_dataset_name": "String (optional, default = HG001)",
+    "DeepVariant_Retraining.validation_input_pattern_list": "String (optional, default = validation_set_gpu.with_label.tfrecord-?????-of-00004.gz)",
+    "DeepVariant_Retraining.validation_output_pattern_prefix": "String (optional, default = validation_set_gpu.with_label.shuffled)",
+    "DeepVariant_Retraining.validation_output_dataset_config": "String (optional, default = validation_set_gpu.pbtxt)",
+    "DeepVariant_Retraining.validation_output_dataset_name": "String (optional, default = HG001)",
+    "DeepVariant_Retraining.number_of_steps":  "Int (optional, default = 5000)",
+    "DeepVariant_Retraining.batch_size":  "Int (optional, default = 32)",
+    "DeepVariant_Retraining.learning_rate":  "Float (optional, default = 0.0005)",
+    "DeepVariant_Retraining.save_interval_secs":  "Int (optional, default = 300)"
+}

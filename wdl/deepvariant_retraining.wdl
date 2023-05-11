@@ -5,9 +5,10 @@ task make_examples {
     input {
         File ref
         File bam
+        File bam_index
         File truth_vcf 
         File truth_bed 
-        File examples 
+        String examples 
         String region
 
         Int nGPU = 4
@@ -191,30 +192,31 @@ workflow DeepVariant_Retraining {
         # Make Examples 
         File ref
         File bam
+        File bam_index
         File truth_vcf 
         File truth_bed 
 
         String training_region
         String validation_region
 
-        File training_examples = "training_set_gpu.with_label.tfrecord.gz"
-        File validation_examples = "validation_set_gpu.with_label.tfrecord.gz"
+        String? training_examples = "training_set_gpu.with_label.tfrecord.gz"
+        String? validation_examples = "validation_set_gpu.with_label.tfrecord.gz"
 
         # Shuffle Data 
-        String training_input_pattern_list = "training_set_gpu.with_label.tfrecord-?????-of-00004.gz"
-        String training_output_pattern_prefix = "training_set_gpu.with_label.shuffled"
-        String training_output_dataset_config = "training_set_gpu.pbtxt"
-        String training_output_dataset_name = "HG001"
-        String validation_input_pattern_list = "validation_set_gpu.with_label.tfrecord-?????-of-00004.gz"
-        String validation_output_pattern_prefix = "validation_set_gpu.with_label.shuffled"
-        String validation_output_dataset_config = "validation_set_gpu.pbtxt"
-        String validation_output_dataset_name = "HG001"
+        String? training_input_pattern_list = "training_set_gpu.with_label.tfrecord-?????-of-00004.gz"
+        String? training_output_pattern_prefix = "training_set_gpu.with_label.shuffled"
+        String? training_output_dataset_config = "training_set_gpu.pbtxt"
+        String? training_output_dataset_name = "HG001"
+        String? validation_input_pattern_list = "validation_set_gpu.with_label.tfrecord-?????-of-00004.gz"
+        String? validation_output_pattern_prefix = "validation_set_gpu.with_label.shuffled"
+        String? validation_output_dataset_config = "validation_set_gpu.pbtxt"
+        String? validation_output_dataset_name = "HG001"
 
         # Training 
-        Int number_of_steps = 5000
-        Int batch_size = 32 
-        Float learning_rate = 0.0005
-        Int save_interval_secs = 300 
+        Int? number_of_steps = 5000
+        Int? batch_size = 32 
+        Float? learning_rate = 0.0005
+        Int? save_interval_secs = 300 
     }
 
     ## Make training examples 
@@ -222,6 +224,7 @@ workflow DeepVariant_Retraining {
         input:
             ref=ref,
             bam=bam,
+            bam_index=bam_index,
             truth_vcf=truth_vcf,
             truth_bed=truth_bed,
             examples=training_examples,
@@ -233,6 +236,7 @@ workflow DeepVariant_Retraining {
         input:
             ref=ref,
             bam=bam,
+            bam_index=bam_index,
             truth_vcf=truth_vcf,
             truth_bed=truth_bed,
             examples=validation_examples,
