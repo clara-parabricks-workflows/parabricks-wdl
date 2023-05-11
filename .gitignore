@@ -14,3 +14,4 @@ test-data/
 test_data/
 data/
 *.sh
+*.log
