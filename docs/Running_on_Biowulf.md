@@ -7,21 +7,6 @@ This document provides a basic getting started guide to running
 the WDL workflows in this repository on the NIH Biowulf compute cluster.
 Note that these instructions can change often and should not be considered stable.
 
-## Preequisites: install Singularity and build a Biowulf-compatible Parabricks installation
-
-### Install Singularity
-
-### Pull the latest Parabricks container
-
-```bash
-git pull nvcr.io/nv-parabricks-dev/clara-parabricks:4.0.0-1.beta2
-```
-
-### Build a Parabricks Singularity / Apptainer package
-
-```bash
-
-```
 
 ## Getting started
 
@@ -41,6 +26,14 @@ To run on Biowulf, we'll need to do the following:
 For this example, we're also going to use CromRunner to write our submission scripts for the cluster. While this isn't necessary,
 it makes it easy to write batches in inputs in a declarative manner. The generated files can also be used as examples for your
 own scripts.
+
+### Example data
+
+We can make use of the HG001/2/3 30X PCR Free HiSeqX Genome-in-a-Bottle data sequenced by Google, available here:
+
+```
+https://console.cloud.google.com/storage/browser/brain-genomics-public/research/sequencing/fastq/hiseqx/wgs_pcr_free/30x?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&prefix=&forceOnObjectsSortingFiltering=false
+```
 
 #### Stage 1: FASTQ2BAM
 
