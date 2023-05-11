@@ -1,5 +1,5 @@
 WOMTOOL := womtool-81.jar
-PBDOCKER := "gcr.io/clara-lifesci/parabricks-cloud:4.0.0-1.beta4"
+PBDOCKER := "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
 DEFAULT_GPU_MODEL := "nvidia-tesla-t4"
 
 WDL_DIR := wdl
