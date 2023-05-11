@@ -17,6 +17,7 @@ task fq2bam {
         File? inputKnownSitesTBI
         File? pbLicenseBin
         Boolean use_best_practices = false
+        Boolean low_memory = true
 
         String pbPATH = "pbrun"
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
@@ -93,6 +94,8 @@ workflow ClaraParabricks_fq2bam {
         File inputRefTarball
         File? inputKnownSitesVCF
         File? inputKnownSitesTBI
+        Boolean use_best_practices = false
+        Boolean low_memory = true
         File? pbLicenseBin
         String pbPATH = "pbrun"
         String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
@@ -114,6 +117,8 @@ workflow ClaraParabricks_fq2bam {
             inputRefTarball=inputRefTarball,
             inputKnownSitesVCF=inputKnownSitesVCF,
             inputKnownSitesTBI=inputKnownSitesTBI,
+            use_best_practices=use_best_practices,
+            low_memory=low_memory,
             pbLicenseBin=pbLicenseBin,
             pbPATH=pbPATH,
             readGroup_sampleName=readGroup_sampleName,
