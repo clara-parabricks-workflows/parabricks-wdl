@@ -143,7 +143,7 @@ workflow ClaraParabricks_Germline {
         String pbPATH = "pbrun"
 
         File? pbLicenseBin
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
 
         Boolean runDeepVariant = true
         Boolean runHaplotypeCaller = true
