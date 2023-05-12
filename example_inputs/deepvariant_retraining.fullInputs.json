@@ -3,6 +3,7 @@
     "DeepVariant_Retraining.bam": "File",
     "DeepVariant_Retraining.bam_index": "File",
     "DeepVariant_Retraining.truth_vcf": "File",
+    "DeepVariant_Retraining.truth_vcf_index": "File",
     "DeepVariant_Retraining.truth_bed": "File",
     "DeepVariant_Retraining.training_region": "String (ex. 'chr1')",
     "DeepVariant_Retraining.validation_region": "String (ex. 'chr21')",

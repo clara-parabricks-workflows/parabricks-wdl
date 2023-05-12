@@ -7,6 +7,7 @@ task make_examples {
         File bam
         File bam_index
         File truth_vcf 
+        File truth_vcf_index
         File truth_bed 
         String examples 
         String region
@@ -35,7 +36,7 @@ task make_examples {
         -o ~{outbase}.vcf \
         -n 8 \
         --channel_insert_size \
-        -L ~{region} \
+        -L "~{region}" \
         -disable-use-window-selector-model \
         --mode training \
         --truth_variants ~{truth_vcf} \
@@ -87,15 +88,16 @@ task shuffle_data {
     String shuffle_data_script_link = "https://api.ngc.nvidia.com/v2/resources/nvidia/clara/parabricks_deepvariant_retraining_notebook/versions/4.0.0-1/files/parabricks_deepvariant_retraining_notebook.zip"
 
     command {
+        apt install -y wget && \
         wget --content-disposition ~{shuffle_data_script_link} && \
-            unzip parabricks_deepvariant_retraining_notebook.zip &&
-            python3 scripts/shuffle_tfrecords_lowmem.py \
-                --input_pattern_list=~{input_pattern_list} \
-                --output_pattern_prefix=~{output_pattern_prefix} \
-                --output_dataset_config=~{output_dataset_config} \
-                --output_dataset_name=~{output_dataset_name} \
-                --direct_num_workers=8 \
-                --step=-1
+        unzip parabricks_deepvariant_retraining_notebook.zip &&
+        python3 scripts/shuffle_tfrecords_lowmem.py \
+            --input_pattern_list=~{input_pattern_list} \
+            --output_pattern_prefix=~{output_pattern_prefix} \
+            --output_dataset_config=~{output_dataset_config} \
+            --output_dataset_name=~{output_dataset_name} \
+            --direct_num_workers=8 \
+            --step=-1
     }
 
     output {
@@ -103,7 +105,7 @@ task shuffle_data {
     }
 
     runtime {
-        docker: "tensorflow/tensorflow"
+        docker: "nvcr.io/nvidia/tensorflow:23.03-tf2-py3"
         disks : "local-disk ~{diskGB} SSD"
         cpu : nThreads
         memory : "~{gbRAM} GB"
@@ -194,6 +196,7 @@ workflow DeepVariant_Retraining {
         File bam
         File bam_index
         File truth_vcf 
+        File truth_vcf_index
         File truth_bed 
 
         String training_region
@@ -226,6 +229,7 @@ workflow DeepVariant_Retraining {
             bam=bam,
             bam_index=bam_index,
             truth_vcf=truth_vcf,
+            truth_vcf_index=truth_vcf_index,
             truth_bed=truth_bed,
             examples=training_examples,
             region=training_region
@@ -238,6 +242,7 @@ workflow DeepVariant_Retraining {
             bam=bam,
             bam_index=bam_index,
             truth_vcf=truth_vcf,
+            truth_vcf_index=truth_vcf_index,
             truth_bed=truth_bed,
             examples=validation_examples,
             region=validation_region
