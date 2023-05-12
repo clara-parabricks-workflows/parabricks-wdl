@@ -21,6 +21,7 @@ These workflows are available on [Dockstore](https://dockstore.org/) and in [Ter
  - somatic_calling: Run accelerated Mutect2 on a matched tumor-normal sample pair to generate a somatic VCF.
  - RNA: Run accelerated RNA-seq alignment using STAR.
  - trio_de_novo_calling: Run accelerated germline calling for a trio sample set before joint calling and filtering for putative de novo mutations.
+ - deepvariant-retraining: Retrain the DeepVariant model on a custom dataset generated from a .bam 
 
 # Getting Started
 All pipelines in this repository have been validated using WOMtool and tested to run using Cromwell.

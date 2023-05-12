@@ -2,8 +2,6 @@
 *.Dockerfile
 cromwell-*
 womtool-*
-*.json
-*.txt
 *.csv
 *.fq
 *.fastq
@@ -14,4 +12,7 @@ womtool-*
 .validate/
 test-data/
 test_data/
-*.wdl
+data/
+*.sh
+*.log
+testInputs.*
