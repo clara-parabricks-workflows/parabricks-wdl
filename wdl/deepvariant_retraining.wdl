@@ -23,7 +23,7 @@ task make_examples {
         Int maxPreemptAttempts = 3
     }
 
-    String docker_image = "nvcr.io/nv-parabricks-dev/clara-parabricks-dvtrain:4.1.0-1.dvtrain"
+    String docker_image = "nvcr.io/nvidia/clara/deepvariant_train:4.1.0-1"
     String binary_path = "/usr/local/parabricks/binaries/bin/deepvariant"
     String outbase = basename(bam, ".bam")
     String examples_basename = basename(examples, ".gz")
