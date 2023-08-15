@@ -1,5 +1,17 @@
 version 1.0
 
+struct RuntimeAttributes {
+    Int diskGB
+    Int nThreads
+    Int gbRAM
+    String hpcQueue
+    Int runtimeMinutes
+    String gpuModel
+    Int nGPU
+    String gpuDriverVersion
+    Int maxPreemptAttempts
+}
+
 task make_examples {
 
     input {
@@ -12,15 +24,17 @@ task make_examples {
         String examples 
         String region
 
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 24
-        Int gbRAM = 120
-        Int diskGB = 500
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-        Int maxPreemptAttempts = 3
+        RuntimeAttributes runtimeAttributes = {
+            "diskGB": 500,
+            "nThreads": 24,
+            "gbRAM": 120,
+            "hpcQueue": "gpu",
+            "runtimeMinutes": 600,
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
+            "gpuDriverVersion": "460.73.01",
+            "maxPreemptAttempts": 3
+        }
     }
 
     String docker_image = "nvcr.io/nvidia/clara/deepvariant_train:4.1.0-1"
@@ -51,17 +65,17 @@ task make_examples {
 
     runtime {
         docker: "~{docker_image}"
-        disks : "local-disk ~{diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        disks : "local-disk ~{runtimeAttributes.diskGB} SSD"
+        cpu : runtimeAttributes.nThreads
+        memory : "~{runtimeAttributes.gbRAM} GB"
+        hpcMemory : runtimeAttributes.gbRAM
+        hpcQueue : "~{runtimeAttributes.hpcQueue}"
+        hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
+        gpuType : "~{runtimeAttributes.gpuModel}"
+        gpuCount : runtimeAttributes.nGPU
+        nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : maxPreemptAttempts
+        preemptible : runtimeAttributes.maxPreemptAttempts
     }
 }
 
@@ -74,15 +88,17 @@ task shuffle_data {
         String output_dataset_config
         String output_dataset_name
 
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 24
-        Int gbRAM = 120
-        Int diskGB = 500
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-        Int maxPreemptAttempts = 3
+        RuntimeAttributes runtimeAttributes = {
+            "diskGB": 500,
+            "nThreads": 24,
+            "gbRAM": 120,
+            "hpcQueue": "gpu",
+            "runtimeMinutes": 600,
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
+            "gpuDriverVersion": "460.73.01",
+            "maxPreemptAttempts": 3
+        }
     }
 
     String shuffle_data_script_link = "https://api.ngc.nvidia.com/v2/resources/nvidia/clara/parabricks_deepvariant_retraining_notebook/versions/4.0.0-1/files/parabricks_deepvariant_retraining_notebook.zip"
@@ -106,17 +122,17 @@ task shuffle_data {
 
     runtime {
         docker: "nvcr.io/nvidia/tensorflow:23.03-tf2-py3"
-        disks : "local-disk ~{diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        disks : "local-disk ~{runtimeAttributes.diskGB} SSD"
+        cpu : runtimeAttributes.nThreads
+        memory : "~{runtimeAttributes.gbRAM} GB"
+        hpcMemory : runtimeAttributes.gbRAM
+        hpcQueue : "~{runtimeAttributes.hpcQueue}"
+        hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
+        gpuType : "~{runtimeAttributes.gpuModel}"
+        gpuCount : runtimeAttributes.nGPU
+        nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : maxPreemptAttempts
+        preemptible : runtimeAttributes.maxPreemptAttempts
     }
 }
 
@@ -130,17 +146,19 @@ task training {
         Int number_of_steps = 5000
         Int batch_size = 32 
         Float learning_rate = 0.0005
-        Int save_interval_secs = 300 
+        Int save_interval_secs = 300
 
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 24
-        Int gbRAM = 120
-        Int diskGB = 500
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-        Int maxPreemptAttempts = 3
+        RuntimeAttributes runtimeAttributes = {
+            "diskGB": 500,
+            "nThreads": 24,
+            "gbRAM": 120,
+            "hpcQueue": "gpu",
+            "runtimeMinutes": 600,
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
+            "gpuDriverVersion": "460.73.01",
+            "maxPreemptAttempts": 3
+        }
     }
 
     String bin_version = "1.4.0"
@@ -174,17 +192,17 @@ task training {
 
     runtime {
         docker: "tensorflow/tensorflow"
-        disks : "local-disk ~{diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        disks : "local-disk ~{runtimeAttributes.diskGB} SSD"
+        cpu : runtimeAttributes.nThreads
+        memory : "~{runtimeAttributes.gbRAM} GB"
+        hpcMemory : runtimeAttributes.gbRAM
+        hpcQueue : "~{runtimeAttributes.hpcQueue}"
+        hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
+        gpuType : "~{runtimeAttributes.gpuModel}"
+        gpuCount : runtimeAttributes.nGPU
+        nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : maxPreemptAttempts
+        preemptible : runtimeAttributes.maxPreemptAttempts
     }
 }
 
