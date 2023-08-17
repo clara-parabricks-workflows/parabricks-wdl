@@ -82,11 +82,9 @@ task make_examples {
 task shuffle_data {
 
     input {
-        Array[File] examples # The output of make_examples from the previous step 
-        String input_pattern_list
-        String output_pattern_prefix
-        String output_dataset_config
-        String output_dataset_name
+        Array[File] examples # The output of make_examples from the previous step
+        String output_dataset_name = "HG001"
+        String mode  # Must be either "training" or "validation"
 
         RuntimeAttributes runtimeAttributes = {
             "diskGB": 500,
@@ -102,6 +100,9 @@ task shuffle_data {
     }
 
     String shuffle_data_script_link = "https://api.ngc.nvidia.com/v2/resources/nvidia/clara/parabricks_deepvariant_retraining_notebook/versions/4.0.0-1/files/parabricks_deepvariant_retraining_notebook.zip"
+    String input_pattern_list = mode + "_set_gpu.with_label.tfrecord-?????-of-00004.gz"
+    String output_pattern_prefix = mode + "_set_gpu.with_label.shuffled"
+    String output_dataset_config = mode + "_set_gpu.pbtxt"
 
     command {
         apt install -y wget && \
@@ -223,16 +224,6 @@ workflow DeepVariant_Retraining {
         String training_examples = "training_set_gpu.with_label.tfrecord.gz"
         String validation_examples = "validation_set_gpu.with_label.tfrecord.gz"
 
-        # Shuffle Data 
-        String training_input_pattern_list = "training_set_gpu.with_label.tfrecord-?????-of-00004.gz"
-        String training_output_pattern_prefix = "training_set_gpu.with_label.shuffled"
-        String training_output_dataset_config = "training_set_gpu.pbtxt"
-        String training_output_dataset_name = "HG001"
-        String validation_input_pattern_list = "validation_set_gpu.with_label.tfrecord-?????-of-00004.gz"
-        String validation_output_pattern_prefix = "validation_set_gpu.with_label.shuffled"
-        String validation_output_dataset_config = "validation_set_gpu.pbtxt"
-        String validation_output_dataset_name = "HG001"
-
         # Training 
         Int number_of_steps = 5000
         Int batch_size = 32 
@@ -270,29 +261,23 @@ workflow DeepVariant_Retraining {
     call shuffle_data as shuffle_data_train {
         input: 
             examples=make_examples_train.made_examples,
-            input_pattern_list=training_input_pattern_list,
-            output_pattern_prefix=training_output_pattern_prefix,
-            output_dataset_config=training_output_dataset_config,
-            output_dataset_name=training_output_dataset_name
+            mode="training"
     }
 
     ## Shuffle validation data 
     call shuffle_data as shuffle_data_val {
         input: 
             examples=make_examples_val.made_examples,
-            input_pattern_list=validation_input_pattern_list,
-            output_pattern_prefix=validation_output_pattern_prefix,
-            output_dataset_config=validation_output_dataset_config,
-            output_dataset_name=validation_output_dataset_name
+            mode="validation"
     }
 
     ## Run DeepVariant Retraining 
-    call training{
+    call training {
         input: 
             train_examples=shuffle_data_train.shuffled_examples,
             val_examples=shuffle_data_val.shuffled_examples,
-            training_output_dataset_config=training_output_dataset_config,
-            validation_output_dataset_config=validation_output_dataset_config,
+            training_output_dataset_config="training_set_gpu.pbtxt",
+            validation_output_dataset_config="validation_set_gpu.pbtxt",
             number_of_steps=number_of_steps,
             batch_size =batch_size,
             learning_rate=learning_rate,
