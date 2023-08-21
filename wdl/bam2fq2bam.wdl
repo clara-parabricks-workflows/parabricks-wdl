@@ -16,6 +16,7 @@ task bam2fq {
         Int nThreads = 16
         Int gbRAM = 120
         Int diskGB = 0
+        Int bootDiskGB = 20
         Int runtimeMinutes = 600
         String hpcQueue = "gpu"
     }
@@ -41,6 +42,7 @@ task bam2fq {
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
+        bootDiskSizeGb: bootDiskGB
         cpu : nThreads
         memory : "~{gbRAM} GB"
         hpcMemory : gbRAM
@@ -76,6 +78,7 @@ workflow ClaraParabricks_bam2fq2bam {
         Int gbRAM_bam2fq = 120
         Int gbRAM_fq2bam = 180
         Int diskGB = 0
+        Int bootDiskGB = 20
         Int runtimeMinutes_bam2fq = 600
         Int runtimeMinutes_fq2bam = 600
         String hpcQueue_bam2fq = "norm"
@@ -100,6 +103,7 @@ workflow ClaraParabricks_bam2fq2bam {
             runtimeMinutes=runtimeMinutes_bam2fq,
             hpcQueue=hpcQueue_bam2fq,
             diskGB=diskGB,
+            bootDiskGB=bootDiskGB,
             pbDocker=pbDocker
     }
 
