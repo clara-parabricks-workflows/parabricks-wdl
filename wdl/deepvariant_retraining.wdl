@@ -6,10 +6,13 @@ struct RuntimeAttributes {
     Int gbRAM
     String hpcQueue
     Int runtimeMinutes
-    String gpuModel
-    Int nGPU
     String gpuDriverVersion
     Int maxPreemptAttempts
+}
+
+struct GPUAttributes {
+    String gpuModel
+    Int nGPU
 }
 
 task make_examples {
@@ -21,7 +24,7 @@ task make_examples {
         File truth_vcf 
         File truth_vcf_index
         File truth_bed 
-        String examples 
+        String examples_name
         String region
 
         RuntimeAttributes runtimeAttributes = {
@@ -30,17 +33,20 @@ task make_examples {
             "gbRAM": 120,
             "hpcQueue": "gpu",
             "runtimeMinutes": 600,
-            "gpuModel": "nvidia-tesla-t4",
-            "nGPU": 4,
             "gpuDriverVersion": "460.73.01",
             "maxPreemptAttempts": 3
+        }
+
+        GPUAttributes gpuAttributes = {
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
         }
     }
 
     String docker_image = "nvcr.io/nvidia/clara/deepvariant_train:4.1.0-1"
     String binary_path = "/usr/local/parabricks/binaries/bin/deepvariant"
     String outbase = basename(bam, ".bam")
-    String examples_basename = basename(examples, ".gz")
+    String examples_basename = basename(examples_name, ".gz")
 
     command {
         ~{binary_path} \
@@ -55,7 +61,7 @@ task make_examples {
         --mode training \
         --truth_variants ~{truth_vcf} \
         --confident_regions ~{truth_bed} \
-        --examples ~{examples} \
+        --examples ~{examples_name} \
         -z 4
     }
 
@@ -71,8 +77,8 @@ task make_examples {
         hpcMemory : runtimeAttributes.gbRAM
         hpcQueue : "~{runtimeAttributes.hpcQueue}"
         hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
-        gpuType : "~{runtimeAttributes.gpuModel}"
-        gpuCount : runtimeAttributes.nGPU
+        gpuType : "~{gpuAttributes.gpuModel}"
+        gpuCount : gpuAttributes.nGPU
         nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : runtimeAttributes.maxPreemptAttempts
@@ -92,10 +98,13 @@ task shuffle_data {
             "gbRAM": 120,
             "hpcQueue": "gpu",
             "runtimeMinutes": 600,
-            "gpuModel": "nvidia-tesla-t4",
-            "nGPU": 4,
             "gpuDriverVersion": "460.73.01",
             "maxPreemptAttempts": 3
+        }
+
+        GPUAttributes gpuAttributes = {
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
         }
     }
 
@@ -129,8 +138,8 @@ task shuffle_data {
         hpcMemory : runtimeAttributes.gbRAM
         hpcQueue : "~{runtimeAttributes.hpcQueue}"
         hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
-        gpuType : "~{runtimeAttributes.gpuModel}"
-        gpuCount : runtimeAttributes.nGPU
+        gpuType : "~{gpuAttributes.gpuModel}"
+        gpuCount : gpuAttributes.nGPU
         nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : runtimeAttributes.maxPreemptAttempts
@@ -155,10 +164,13 @@ task training {
             "gbRAM": 120,
             "hpcQueue": "gpu",
             "runtimeMinutes": 600,
-            "gpuModel": "nvidia-tesla-t4",
-            "nGPU": 4,
             "gpuDriverVersion": "460.73.01",
             "maxPreemptAttempts": 3
+        }
+
+        GPUAttributes gpuAttributes = {
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
         }
     }
 
@@ -199,8 +211,8 @@ task training {
         hpcMemory : runtimeAttributes.gbRAM
         hpcQueue : "~{runtimeAttributes.hpcQueue}"
         hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
-        gpuType : "~{runtimeAttributes.gpuModel}"
-        gpuCount : runtimeAttributes.nGPU
+        gpuType : "~{gpuAttributes.gpuModel}"
+        gpuCount : gpuAttributes.nGPU
         nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : runtimeAttributes.maxPreemptAttempts
@@ -221,8 +233,8 @@ workflow DeepVariant_Retraining {
         String training_region
         String validation_region
 
-        String training_examples = "training_set_gpu.with_label.tfrecord.gz"
-        String validation_examples = "validation_set_gpu.with_label.tfrecord.gz"
+        String training_examples_name = "training_set_gpu.with_label.tfrecord.gz"
+        String validation_examples_name = "validation_set_gpu.with_label.tfrecord.gz"
 
         # Training 
         Int number_of_steps = 5000
@@ -240,7 +252,7 @@ workflow DeepVariant_Retraining {
             truth_vcf=truth_vcf,
             truth_vcf_index=truth_vcf_index,
             truth_bed=truth_bed,
-            examples=training_examples,
+            examples_name=training_examples_name,
             region=training_region
     }
 
@@ -253,7 +265,7 @@ workflow DeepVariant_Retraining {
             truth_vcf=truth_vcf,
             truth_vcf_index=truth_vcf_index,
             truth_bed=truth_bed,
-            examples=validation_examples,
+            examples_name=validation_examples_name,
             region=validation_region
     }
 
