@@ -5,7 +5,6 @@ import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-
 import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/main/wdl/bam2fq2bam.wdl" as CPB_bam2fq
 import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/main/wdl/fq2bam.wdl" as CPB_fq2bam
 
-
 task reduceVCF {
     input {
         File inputVCF
@@ -20,17 +19,20 @@ task reduceVCF {
         String hpcQueue = "norm"
         Int maxPreemptAttempts = 3
     }
+
     String outbase = basename(inputVCF)
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB")) + 50 else diskGB
 
-    command {
+    command <<<
         ~{bcftoolsPATH} view -O z -o ~{region}.~{outbase} ~{inputVCF} ~{region} && \
         tabix ~{region}.~{outbase}
-    }
+    >>>
+
     output {
         File outputVCF = "~{region}.~{outbase}"
         File outputTBI = "~{region}.~{outbase}.tbi"
     }
+
     runtime {
         docker : "~{bcftoolsDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -58,17 +60,20 @@ task reduceBAM {
         String hpcQueue = "norm"
         Int maxPreemptAttempts = 3
     }
+
     String outbase = basename(inputBAM)
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputBAM, "GB")) + 50 else diskGB
 
-    command {
+    command <<<
         ~{samtoolsPATH} view -b -o ~{region}.~{outbase} ~{inputBAM} ~{region} && \
         ~{samtoolsPATH} index ~{region}.~{outbase}
-    }
+    >>>
+
     output {
         File outputBAM = "~{region}.~{outbase}"
         File outputBAI = "~{region}.~{outbase}.bai"
     }
+
     runtime {
         docker : "~{samtoolsDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -81,7 +86,6 @@ task reduceBAM {
         preemptible : maxPreemptAttempts
     }
 }
-
 
 task reduceFASTA {
     input {
@@ -96,16 +100,19 @@ task reduceFASTA {
         String hpcQueue = "norm"
         Int maxPreemptAttempts = 3
     }
+
     String outbase = basename(inputRefTarball, ".tar")
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputRefTarball, "GB")) + 50 else diskGB
 
-    command {
+    command <<<
         tar xvf ~{inputRefTarball} && \
         ~{samtoolsPATH} faidx ~{outbase} ~{inputRegion} > ~{inputRegion}.~{outbase}
-    }
+    >>>
+
     output {
         File outputFASTA = "~{inputRegion}.~{outbase}"
     }
+
     runtime {
         docker : "~{samtoolsDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -168,8 +175,6 @@ workflow ClaraParabricks_GenerateRegionTestData {
         Int nThreads_indexFASTA = 14
         Int gbRAM_indexFASTA = 64
         Int runtimeMinutes_indexFASTA = 600
-
-
     }
 
     ## Reduce our reference file
@@ -210,7 +215,6 @@ workflow ClaraParabricks_GenerateRegionTestData {
                 bcftoolsDocker=bcftoolsDocker
         }
     }
- 
 
     call reduceBAM {
         input:

@@ -10,7 +10,7 @@ task strelka {
         String pbPATH
         File? pbLicenseBin
 
-        String? pbDocker  = "parabricks/3.7.0-1"
+        String pbDocker  = "parabricks/3.7.0-1"
         Int maxPreemptAttempts = 3
         Int nThreads = 32
         Int gbRAM = 120
@@ -24,26 +24,26 @@ task strelka {
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputBAM, "GB")) + ceil(size(inputRefTarball, "GB")) + ceil(size(inputBAI, "GB")) + 50 else diskGB
 
-    command {
-        time tar xvf ${inputRefTarball} && \
+    command <<<
+        time tar xvf ~{inputRefTarball} && \
         touch ~{inputBAI} && \
-        time ${pbPATH} strelka \
-        --in-bams ${inputBAM} \
-        --ref ${ref} \
-        --out-prefix ${outbase}.strelka \
-        --num-threads ${nThreads} \
+        time ~{pbPATH} strelka \
+        --in-bams ~{inputBAM} \
+        --ref ~{ref} \
+        --out-prefix ~{outbase}.strelka \
+        --num-threads ~{nThreads} \
         ~{"--license-file " + pbLicenseBin} && \
-        cp ${outbase}.strelka.strelka_work/results/variants/variants.vcf.gz ${outbase}.strelka.variants.vcf.gz && \
-        cp ${outbase}.strelka.strelka_work/results/variants/variants.vcf.gz.tbi ${outbase}.strelka.variants.vcf.gz.tbi && \
-        cp ${outbase}.strelka.strelka_work/results/variants/genome.S1.vcf.gz ${outbase}.strelka.genomic.vcf.gz && \
-        cp ${outbase}.strelka.strelka_work/results/variants/genome.S1.vcf.gz.tbi ${outbase}.strelka.genomic.vcf.gz.tbi
-    }
+        cp ~{outbase}.strelka.strelka_work/results/variants/variants.vcf.gz ~{outbase}.strelka.variants.vcf.gz && \
+        cp ~{outbase}.strelka.strelka_work/results/variants/variants.vcf.gz.tbi ~{outbase}.strelka.variants.vcf.gz.tbi && \
+        cp ~{outbase}.strelka.strelka_work/results/variants/genome.S1.vcf.gz ~{outbase}.strelka.genomic.vcf.gz && \
+        cp ~{outbase}.strelka.strelka_work/results/variants/genome.S1.vcf.gz.tbi ~{outbase}.strelka.genomic.vcf.gz.tbi
+    >>>
 
     output {
-        File strelkaVCF = "${outbase}.strelka.variants.vcf.gz"
-        File strelkaTBI = "${outbase}.strelka.variants.vcf.gz.tbi"
-        File strelkaGenomicVCF = "${outbase}.strelka.genomic.vcf.gz"
-        File strelkaGenomicTBI = "${outbase}.strelka.genomic.vcf.gz.tbi"
+        File strelkaVCF = "~{outbase}.strelka.variants.vcf.gz"
+        File strelkaTBI = "~{outbase}.strelka.variants.vcf.gz.tbi"
+        File strelkaGenomicVCF = "~{outbase}.strelka.genomic.vcf.gz"
+        File strelkaGenomicTBI = "~{outbase}.strelka.genomic.vcf.gz.tbi"
     }
 
     runtime {
@@ -70,8 +70,8 @@ task haplotypecaller {
         Boolean gvcfMode = false
         String? haplotypecallerPassthroughOptions
 
-        String? pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
-        Int? maxPreemptAttempts = 3
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        Int maxPreemptAttempts = 3
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
         String gpuDriverVersion = "460.73.01"
@@ -89,7 +89,7 @@ task haplotypecaller {
 
     String outVCF = outbase + ".haplotypecaller" + (if gvcfMode then '.g' else '') + ".vcf"
 
-    command {
+    command <<<
         time tar xvf ~{inputRefTarball} && \
         time ~{pbPATH} haplotypecaller \
         ~{if gvcfMode then "--gvcf " else ""} \
@@ -100,7 +100,7 @@ task haplotypecaller {
         ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
-    }
+    >>>
 
     output {
         File haplotypecallerVCF = "~{outVCF}.gz"
@@ -132,7 +132,7 @@ task deepvariant {
         File? pbLicenseBin
         Boolean gvcfMode = false
 
-        String? pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
         Int maxPreemptAttempts = 3
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
@@ -151,22 +151,23 @@ task deepvariant {
 
     String outVCF = outbase + ".deepvariant" + (if gvcfMode then '.g' else '') + ".vcf"
 
-    command {
-        time tar xf ${inputRefTarball} && \
-        time ${pbPATH} deepvariant \
+    command <<<
+        time tar xf ~{inputRefTarball} && \
+        time ~{pbPATH} deepvariant \
         ~{if gvcfMode then "--gvcf " else ""} \
-        --ref ${ref} \
-        --in-bam ${inputBAM} \
+        --ref ~{ref} \
+        --in-bam ~{inputBAM} \
         --out-variants ~{outVCF} \
         ~{"--license-file " + pbLicenseBin} && \
         bgzip -@ ~{nThreads} ~{outVCF} && \
         tabix ~{outVCF}.gz
-    }
+    >>>
 
     output {
         File deepvariantVCF = "~{outVCF}.gz"
         File deepvariantTBI = "~{outVCF}.gz.tbi"
     }
+
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -188,28 +189,31 @@ task restrictVCFToSample {
         File inputVCF
         File inputTBI
         String sample
-        String? bcftoolsPath = "bcftools"
+        String bcftoolsPath = "bcftools"
 
-        String? bcftoolsDocker = "parabricks/3.7.0-1"
-        Int? maxPreemptAttempts = 3
+        String bcftoolsDocker = "parabricks/3.7.0-1"
+        Int maxPreemptAttempts = 3
         Int nThreads = 4
         Int gbRAM = 16
         Int diskGB = 0
         Int runtimeMinutes = 120
         String hpcQueue = "norm"
     }
+
     String outbase = basename(basename(inputVCF, ".gz"), ".vcf")
-    
+
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.5) + 65 else diskGB
 
-    command {
+    command <<<
         ~{bcftoolsPath} view --threads ~{nThreads} -O z -o ~{outbase}.~{sample}.vcf.gz -s ~{sample} ~{inputVCF} && \
         tabix ~{outbase}.~{sample}.vcf.gz
-    }
+    >>>
+
     output {
         File sampleVCF = "~{outbase}.~{sample}.vcf.gz"
         File sampleTBI = "~{outbase}.~{sample}.vcf.gz.tbi"
     }
+
     runtime {
         docker : "~{bcftoolsDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -230,22 +234,21 @@ task replaceVCFSampleName{
         String newName = ""
         String bcftoolsPath = "bcftools"
 
-        String? bcftoolsDocker = "parabricks/3.7.0-1"
+        String bcftoolsDocker = "parabricks/3.7.0-1"
         Int maxPreemptAttempts = 3
         Int nThreads = 3
         Int gbRAM = 15
         Int diskGB = 0
         Int runtimeMinutes = 60
         String hpcQueue = "norm"
-        Int maxPreemptAttempts = 3
-
     }
+
     String outbase = basename(basename(inputVCF, ".gz"), ".vcf")
     Array[String] samp_array = [newName]
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputVCF, "GB") * 2.5) + 50 else diskGB
 
-    command {
+    command <<<
         if [ -z "~{newName}" ]
         then
             mv ~{inputVCF} ~{outbase}.sample.vcf.gz && \
@@ -257,11 +260,13 @@ task replaceVCFSampleName{
             ~{inputVCF} && \
             tabix ~{outbase}.sample.vcf.gz
         fi
-    }
+    >>>
+
     output {
         File resampledVCF = "~{outbase}.sample.vcf.gz"
         File resampledTBI = "~{outbase}.sample.vcf.gz.tbi"
     }
+
     runtime {
         docker : "~{bcftoolsDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -287,7 +292,7 @@ task GLNexusJointGenotypeTrioGVCFs {
         String pbPATH
         File? pbLicenseBin
 
-        String? pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
         Int maxPreemptAttempts = 3
         Int nThreads = 12
         Int gbRAM = 120
@@ -316,7 +321,7 @@ task GLNexusJointGenotypeTrioGVCFs {
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputChildVCF, "GB")) + ceil(size(inputMotherVCF, "GB")) + ceil(size(inputFatherVCF, "GB")) + 65 else diskGB
 
-    command {
+    command <<<
         ~{pbPATH} glnexus \
         ~{"--license-file " + pbLicenseBin} \
         --glnexus-options="--config ~{config} --mem-gbytes ~{glnexusRAM} --threads ~{m_glnexusThreads}" \
@@ -327,11 +332,13 @@ task GLNexusJointGenotypeTrioGVCFs {
         bcftools view --threads ~{viewThreads} ~{outbase}.bcf | \
         bgzip -@ ~{m_compressThreads} -c > ~{outbase}.vcf.gz && \
         tabix ~{outbase}.vcf.gz
-    }
+    >>>
+
     output {
         File outputVCF = "~{outbase}.vcf.gz"
         File outputTBI = "~{outbase}.vcf.gz.tbi"
     }
+
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -358,7 +365,7 @@ task numberOfCallersFilter {
         File? pbLicenseBin
         Int minVotes = 3
 
-        String? pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
         Int maxPreemptAttempts = 3
         Int nThreads = 4
         Int gbRAM = 15
@@ -369,21 +376,22 @@ task numberOfCallersFilter {
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(deepvariantVCF, "GB")) + ceil(size(haplotypecallerVCF, "GB")) + ceil(size(strelkaVCF, "GB")) + 65 else diskGB
 
-    command {
+    command <<<
         ~{pbPATH} votebasedvcfmerger \
         ~{"--license-file " + pbLicenseBin} \
         --min-votes ~{minVotes} \
         --in-vcf deepvariant:~{deepvariantVCF} \
         --in-vcf haplotypecaller:~{haplotypecallerVCF} \
         --in-vcf strelka2:~{strelkaVCF} \
-        --out-dir `pwd`/~{sampleName}.vbvm && \
+        --out-dir "$(pwd)"/~{sampleName}.vbvm && \
         mv ~{sampleName}.vbvm/filteredVCF.vcf ~{sampleName}.intersection.vcf && \
         mv ~{sampleName}.vbvm/unionVCF.vcf ~{sampleName}.union.vcf &&
         bgzip ~{sampleName}.intersection.vcf && \
         tabix ~{sampleName}.intersection.vcf.gz && \
         bgzip ~{sampleName}.union.vcf && \
         tabix ~{sampleName}.union.vcf.gz
-    }
+    >>>
+
     runtime {
         docker : "~{pbDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -395,6 +403,7 @@ task numberOfCallersFilter {
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : maxPreemptAttempts
     }
+
     output {
         File intersectionVCF = "~{sampleName}.intersection.vcf.gz"
         File intersectionTBI = "~{sampleName}.intersection.vcf.gz.tbi"
@@ -411,8 +420,8 @@ task deNovoFilterNaive {
         String motherSampleName
         String fatherSampleName
         String filterScriptPath
-        
-        String? dnmFilterScriptDocker = "parabricks/3.7.0-1"
+
+        String dnmFilterScriptDocker = "parabricks/3.7.0-1"
         Int maxPreemptAttempts = 3
         Int nThreads = 3
         Int gbRAM = 14
@@ -420,12 +429,13 @@ task deNovoFilterNaive {
         Int runtimeMinutes = 100
         String hpcQueue = "norm"
     }
+
     String vcfName = basename(inputTrioVCF, ".gz")
     String outbase = basename(basename(inputTrioVCF, ".gz"), ".vcf")
 
     Int auto_diskGB = if diskGB == 0 then ceil(size(inputTrioVCF, "GB") * 3.2) + 65 else diskGB
 
-    command {
+    command <<<
         bgzip -c -d -@ ~{nThreads} ~{inputTrioVCF} > ~{vcfName} && \
         python ~{filterScriptPath} \
         --child ~{childSampleName} \
@@ -435,11 +445,13 @@ task deNovoFilterNaive {
         -o ~{outbase}.putative_dnms.vcf && \
         bgzip -@ ~{nThreads} ~{outbase}.putative_dnms.vcf && \
         tabix ~{outbase}.putative_dnms.vcf.gz
-    }
+    >>>
+
     output {
         File dnmVCF = "~{outbase}.putative_dnms.vcf.gz"
         File dnmTBI = "~{outbase}.putative_dnms.vcf.gz.tbi"
     }
+
     runtime {
         docker : "~{dnmFilterScriptDocker}"
         disks : "local-disk ~{auto_diskGB} SSD"
@@ -459,23 +471,23 @@ workflow ClaraParabricks_TrioDeNovo {
         File inputChildBAM
         File inputChildBAI
         File inputChildBQSR
-	    String childSampleName
+        String childSampleName
 
         ## Mother inputs
         File inputMotherBAM
         File inputMotherBAI
         File inputMotherBQSR
-	    String motherSampleName
-        
+        String motherSampleName
+
         ## Father inputs
         File inputFatherBAM
         File inputFatherBAI
         File inputFatherBQSR
-	    String fatherSampleName
+        String fatherSampleName
 
         ## Reference files in a tarball
         File refTarball
-        
+
         ## A path to a valid Parabricks license file,
         ## which must be on the same file system as the inputs.
         File? pbLicenseBin
@@ -492,9 +504,9 @@ workflow ClaraParabricks_TrioDeNovo {
         Int nGPU_DeepVariant = 4
         String gpuModel_DeepVariant = "nvidia-tesla-v100"
         String gpuDriverVersion_DeepVariant = "460.73.01"
-        Int? nThreads_DeepVariant = 32
-        Int? gbRAM_DeepVariant = 120
-        Int? diskGB_DeepVariant = 0
+        Int nThreads_DeepVariant = 32
+        Int gbRAM_DeepVariant = 120
+        Int diskGB_DeepVariant = 0
         Int runtimeMinutes_DeepVariant = 600
         String hpcQueue_DeepVariant = "gpu"
 
@@ -502,16 +514,16 @@ workflow ClaraParabricks_TrioDeNovo {
         Int nGPU_HaplotypeCaller = 4
         String gpuModel_HaplotypeCaller = "nvidia-tesla-v100"
         String gpuDriverVersion_HaplotypeCaller = "460.73.01"
-        Int? nThreads_HaplotypeCaller = 32
-        Int? gbRAM_HaplotypeCaller = 120
-        Int? diskGB_HaplotypeCaller = 0
+        Int nThreads_HaplotypeCaller = 32
+        Int gbRAM_HaplotypeCaller = 120
+        Int diskGB_HaplotypeCaller = 0
         Int runtimeMinutes_HaplotypeCaller = 600
         String hpcQueue_HaplotypeCaller = "gpu"
 
         ## Strelka Runtime Args
-        Int? nThreads_Strelka = 32
-        Int? gbRAM_Strelka = 120
-        Int? diskGB_Strelka = 0
+        Int nThreads_Strelka = 32
+        Int gbRAM_Strelka = 120
+        Int diskGB_Strelka = 0
         Int runtimeMinutes_Strelka = 600
         String hpcQueue_Strelka = "norm"
 
@@ -695,7 +707,7 @@ workflow ClaraParabricks_TrioDeNovo {
             runtimeMinutes=runtimeMinutes_DeepVariant
     }
 
-    ## Fix sample names for mother / father / child 
+    ## Fix sample names for mother / father / child
     call replaceVCFSampleName as dvSampleFix_CHILD{
         input:
             inputVCF=CHILD_DV.deepvariantVCF,
@@ -774,6 +786,7 @@ workflow ClaraParabricks_TrioDeNovo {
             diskGB=diskGB_GLNexus,
             hpcQueue=hpcQueue_GLNexus
     }
+
     ## de novo filter HaplotypeCaller-glnexus gVCF
     call deNovoFilterNaive as dnm_filter_HC {
         input:
@@ -784,6 +797,7 @@ workflow ClaraParabricks_TrioDeNovo {
             motherSampleName=motherSampleName,
             fatherSampleName=fatherSampleName
     }
+
     ## Keep only the child sample from the putative HC DNMs
     call restrictVCFToSample as keepSample_HC{
         input:
@@ -810,11 +824,10 @@ workflow ClaraParabricks_TrioDeNovo {
     }
 
     output {
-
-        ## DNM + VBVM intersection 
+        ## DNM + VBVM intersection
         File output_vbvm_intersection_vcf = vbvm_Child.intersectionVCF
         File output_vbvm_intersection_tbi = vbvm_Child.intersectionTBI
-        
+
         ## DNM + VBVM union
         File output_vbvm_union_vcf = vbvm_Child.unionVCF
         File output_vbvm_union_tbi = vbvm_Child.unionTBI
