@@ -70,7 +70,7 @@ task haplotypecaller {
         Boolean gvcfMode = false
         String? haplotypecallerPassthroughOptions
 
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
         Int maxPreemptAttempts = 3
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
@@ -365,7 +365,7 @@ task numberOfCallersFilter {
         File? pbLicenseBin
         Int minVotes = 3
 
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.0.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
         Int maxPreemptAttempts = 3
         Int nThreads = 4
         Int gbRAM = 15
