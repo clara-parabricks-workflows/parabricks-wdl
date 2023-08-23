@@ -1,7 +1,7 @@
 # Copyright 2021 NVIDIA CORPORATION & AFFILIATES
 version 1.0
 
-import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/long-read/fq2bam.wdl" as mm2
+import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/long-read/minimap2.wdl" as mm2
 
 
 workflow ClaraParabricks_PacBio_Germline {
