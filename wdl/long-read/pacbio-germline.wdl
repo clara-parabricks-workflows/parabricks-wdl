@@ -2,7 +2,7 @@
 version 1.0
 
 import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/long-read/minimap2.wdl" as mm2
-
+import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/long-read/deepvariant.wdl" as dv
 
 workflow ClaraParabricks_PacBio_Germline {
     input {
@@ -18,10 +18,24 @@ workflow ClaraParabricks_PacBio_Germline {
         Int maxPreemptAttempts = 3
     }
 
-    call mm2.pbmm2 {
+    call mm2.pbmm2 as minimap{
         input:
             inputFASTQ=inputFASTQ,
             inputReference=inputReference,
             sampleName=sampleName
     }
+
+    call dv.deepvariant as deepvariant{
+        input: 
+            inputBAM=minimap.outputBAM,
+            inputBAI=minimap.outputBAI,
+            inputReference=inputReference
+    }
+
+    output {
+        File outputVCF = deepvariant.deepvariantVCF
+        File outputBAM = minimap.outputBAM
+        File outputBAI = minimap.outputBAI
+    }
+
 }
