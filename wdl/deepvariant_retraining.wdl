@@ -1,5 +1,20 @@
 version 1.0
 
+struct RuntimeAttributes {
+    Int diskGB
+    Int nThreads
+    Int gbRAM
+    String hpcQueue
+    Int runtimeMinutes
+    String gpuDriverVersion
+    Int maxPreemptAttempts
+}
+
+struct GPUAttributes {
+    String gpuModel
+    Int nGPU
+}
+
 task make_examples {
 
     input {
@@ -9,24 +24,29 @@ task make_examples {
         File truth_vcf 
         File truth_vcf_index
         File truth_bed 
-        String examples 
+        String examples_name
         String region
 
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 24
-        Int gbRAM = 120
-        Int diskGB = 500
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-        Int maxPreemptAttempts = 3
+        RuntimeAttributes runtimeAttributes = {
+            "diskGB": 500,
+            "nThreads": 24,
+            "gbRAM": 120,
+            "hpcQueue": "gpu",
+            "runtimeMinutes": 600,
+            "gpuDriverVersion": "460.73.01",
+            "maxPreemptAttempts": 3
+        }
+
+        GPUAttributes gpuAttributes = {
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
+        }
     }
 
     String docker_image = "nvcr.io/nvidia/clara/deepvariant_train:4.1.0-1"
     String binary_path = "/usr/local/parabricks/binaries/bin/deepvariant"
     String outbase = basename(bam, ".bam")
-    String examples_basename = basename(examples, ".gz")
+    String examples_basename = basename(examples_name, ".gz")
 
     command {
         ~{binary_path} \
@@ -41,7 +61,7 @@ task make_examples {
         --mode training \
         --truth_variants ~{truth_vcf} \
         --confident_regions ~{truth_bed} \
-        --examples ~{examples} \
+        --examples ~{examples_name} \
         -z 4
     }
 
@@ -51,41 +71,47 @@ task make_examples {
 
     runtime {
         docker: "~{docker_image}"
-        disks : "local-disk ~{diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        disks : "local-disk ~{runtimeAttributes.diskGB} SSD"
+        cpu : runtimeAttributes.nThreads
+        memory : "~{runtimeAttributes.gbRAM} GB"
+        hpcMemory : runtimeAttributes.gbRAM
+        hpcQueue : "~{runtimeAttributes.hpcQueue}"
+        hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
+        gpuType : "~{gpuAttributes.gpuModel}"
+        gpuCount : gpuAttributes.nGPU
+        nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : maxPreemptAttempts
+        preemptible : runtimeAttributes.maxPreemptAttempts
     }
 }
 
 task shuffle_data {
 
     input {
-        Array[File] examples # The output of make_examples from the previous step 
-        String input_pattern_list
-        String output_pattern_prefix
-        String output_dataset_config
-        String output_dataset_name
+        Array[File] examples # The output of make_examples from the previous step
+        String output_dataset_name = "HG001"
+        String mode  # Must be either "training" or "validation"
 
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 24
-        Int gbRAM = 120
-        Int diskGB = 500
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-        Int maxPreemptAttempts = 3
+        RuntimeAttributes runtimeAttributes = {
+            "diskGB": 500,
+            "nThreads": 24,
+            "gbRAM": 120,
+            "hpcQueue": "gpu",
+            "runtimeMinutes": 600,
+            "gpuDriverVersion": "460.73.01",
+            "maxPreemptAttempts": 3
+        }
+
+        GPUAttributes gpuAttributes = {
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
+        }
     }
 
     String shuffle_data_script_link = "https://api.ngc.nvidia.com/v2/resources/nvidia/clara/parabricks_deepvariant_retraining_notebook/versions/4.0.0-1/files/parabricks_deepvariant_retraining_notebook.zip"
+    String input_pattern_list = mode + "_set_gpu.with_label.tfrecord-?????-of-00004.gz"
+    String output_pattern_prefix = mode + "_set_gpu.with_label.shuffled"
+    String output_dataset_config = mode + "_set_gpu.pbtxt"
 
     command {
         apt install -y wget && \
@@ -106,17 +132,17 @@ task shuffle_data {
 
     runtime {
         docker: "nvcr.io/nvidia/tensorflow:23.03-tf2-py3"
-        disks : "local-disk ~{diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        disks : "local-disk ~{runtimeAttributes.diskGB} SSD"
+        cpu : runtimeAttributes.nThreads
+        memory : "~{runtimeAttributes.gbRAM} GB"
+        hpcMemory : runtimeAttributes.gbRAM
+        hpcQueue : "~{runtimeAttributes.hpcQueue}"
+        hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
+        gpuType : "~{gpuAttributes.gpuModel}"
+        gpuCount : gpuAttributes.nGPU
+        nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : maxPreemptAttempts
+        preemptible : runtimeAttributes.maxPreemptAttempts
     }
 }
 
@@ -130,17 +156,22 @@ task training {
         Int number_of_steps = 5000
         Int batch_size = 32 
         Float learning_rate = 0.0005
-        Int save_interval_secs = 300 
+        Int save_interval_secs = 300
 
-        Int nGPU = 4
-        String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
-        Int nThreads = 24
-        Int gbRAM = 120
-        Int diskGB = 500
-        Int runtimeMinutes = 600
-        String hpcQueue = "gpu"
-        Int maxPreemptAttempts = 3
+        RuntimeAttributes runtimeAttributes = {
+            "diskGB": 500,
+            "nThreads": 24,
+            "gbRAM": 120,
+            "hpcQueue": "gpu",
+            "runtimeMinutes": 600,
+            "gpuDriverVersion": "460.73.01",
+            "maxPreemptAttempts": 3
+        }
+
+        GPUAttributes gpuAttributes = {
+            "gpuModel": "nvidia-tesla-t4",
+            "nGPU": 4,
+        }
     }
 
     String bin_version = "1.4.0"
@@ -174,17 +205,17 @@ task training {
 
     runtime {
         docker: "tensorflow/tensorflow"
-        disks : "local-disk ~{diskGB} SSD"
-        cpu : nThreads
-        memory : "~{gbRAM} GB"
-        hpcMemory : gbRAM
-        hpcQueue : "~{hpcQueue}"
-        hpcRuntimeMinutes : runtimeMinutes
-        gpuType : "~{gpuModel}"
-        gpuCount : nGPU
-        nvidiaDriverVersion : "~{gpuDriverVersion}"
+        disks : "local-disk ~{runtimeAttributes.diskGB} SSD"
+        cpu : runtimeAttributes.nThreads
+        memory : "~{runtimeAttributes.gbRAM} GB"
+        hpcMemory : runtimeAttributes.gbRAM
+        hpcQueue : "~{runtimeAttributes.hpcQueue}"
+        hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
+        gpuType : "~{gpuAttributes.gpuModel}"
+        gpuCount : gpuAttributes.nGPU
+        nvidiaDriverVersion : "~{runtimeAttributes.gpuDriverVersion}"
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : maxPreemptAttempts
+        preemptible : runtimeAttributes.maxPreemptAttempts
     }
 }
 
@@ -202,18 +233,8 @@ workflow DeepVariant_Retraining {
         String training_region
         String validation_region
 
-        String training_examples = "training_set_gpu.with_label.tfrecord.gz"
-        String validation_examples = "validation_set_gpu.with_label.tfrecord.gz"
-
-        # Shuffle Data 
-        String training_input_pattern_list = "training_set_gpu.with_label.tfrecord-?????-of-00004.gz"
-        String training_output_pattern_prefix = "training_set_gpu.with_label.shuffled"
-        String training_output_dataset_config = "training_set_gpu.pbtxt"
-        String training_output_dataset_name = "HG001"
-        String validation_input_pattern_list = "validation_set_gpu.with_label.tfrecord-?????-of-00004.gz"
-        String validation_output_pattern_prefix = "validation_set_gpu.with_label.shuffled"
-        String validation_output_dataset_config = "validation_set_gpu.pbtxt"
-        String validation_output_dataset_name = "HG001"
+        String training_examples_name = "training_set_gpu.with_label.tfrecord.gz"
+        String validation_examples_name = "validation_set_gpu.with_label.tfrecord.gz"
 
         # Training 
         Int number_of_steps = 5000
@@ -231,7 +252,7 @@ workflow DeepVariant_Retraining {
             truth_vcf=truth_vcf,
             truth_vcf_index=truth_vcf_index,
             truth_bed=truth_bed,
-            examples=training_examples,
+            examples_name=training_examples_name,
             region=training_region
     }
 
@@ -244,7 +265,7 @@ workflow DeepVariant_Retraining {
             truth_vcf=truth_vcf,
             truth_vcf_index=truth_vcf_index,
             truth_bed=truth_bed,
-            examples=validation_examples,
+            examples_name=validation_examples_name,
             region=validation_region
     }
 
@@ -252,29 +273,23 @@ workflow DeepVariant_Retraining {
     call shuffle_data as shuffle_data_train {
         input: 
             examples=make_examples_train.made_examples,
-            input_pattern_list=training_input_pattern_list,
-            output_pattern_prefix=training_output_pattern_prefix,
-            output_dataset_config=training_output_dataset_config,
-            output_dataset_name=training_output_dataset_name
+            mode="training"
     }
 
     ## Shuffle validation data 
     call shuffle_data as shuffle_data_val {
         input: 
             examples=make_examples_val.made_examples,
-            input_pattern_list=validation_input_pattern_list,
-            output_pattern_prefix=validation_output_pattern_prefix,
-            output_dataset_config=validation_output_dataset_config,
-            output_dataset_name=validation_output_dataset_name
+            mode="validation"
     }
 
     ## Run DeepVariant Retraining 
-    call training{
+    call training {
         input: 
             train_examples=shuffle_data_train.shuffled_examples,
             val_examples=shuffle_data_val.shuffled_examples,
-            training_output_dataset_config=training_output_dataset_config,
-            validation_output_dataset_config=validation_output_dataset_config,
+            training_output_dataset_config="training_set_gpu.pbtxt",
+            validation_output_dataset_config="validation_set_gpu.pbtxt",
             number_of_steps=number_of_steps,
             batch_size =batch_size,
             learning_rate=learning_rate,
