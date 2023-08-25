@@ -1,6 +1,8 @@
 version 1.0
 # Copyright 2023 NVIDIA CORPORATION & AFFILIATES
 
+import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/util/attributes.wdl" as attributes
+
 task pbmm2 {
     input {
         File inputFASTQ
@@ -67,13 +69,7 @@ task minimap2 {
         String mm2Preset = "map-ont"
         Int nThreads = 32
         Int mapThreads = 28
-
-        Int diskGB = 0
-        String minimapDocker = "erictdawson/minimap2"
-        Int gbRAM = 62
-        String hpcQueue = "norm"
-        Int runtimeMinutes = 240
-        Int maxPreemptAttempts = 3
+        RuntimeAttributes runtime_attributes
     }
 
     Int sort_threads = 4

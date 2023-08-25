@@ -1,6 +1,7 @@
 # Copyright 2021 NVIDIA CORPORATION & AFFILIATES
 version 1.0
 
+import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/util/attributes.wdl" as attributes
 import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/long-read/minimap2.wdl" as mm2
 import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/long-read/deepvariant.wdl" as dv
 
@@ -18,11 +19,21 @@ workflow ClaraParabricks_PacBio_Germline {
         Int maxPreemptAttempts = 3
     }
 
+    RuntimeAttributes mm2_runtime = {
+            "diskGB": diskGB,
+            "nThreads": nThreads,
+            "gbRAM": gbRAM,
+            "hpcQueue": hpcQueue,
+            "runtimeMinutes": RuntimeAttributes,
+            "maxPreemptAttempts": maxPreemptAttempts
+    }
+
     call mm2.pbmm2 as minimap{
         input:
             inputFASTQ=inputFASTQ,
             inputReference=inputReference,
-            sampleName=sampleName
+            sampleName=sampleName,
+            runtime_attributes = mm2_runtime
     }
 
     call dv.deepvariant as deepvariant{
