@@ -6,7 +6,7 @@ struct RuntimeAttributes {
     Int gbRAM
     String hpcQueue
     Int runtimeMinutes
-    Int maxPreemptAttempts = 3
+    Int maxPreemptAttempts
 }
 
 struct GPUAttributes {
