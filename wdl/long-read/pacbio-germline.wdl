@@ -13,6 +13,7 @@ workflow ClaraParabricks_PacBio_Germline {
 
         Int diskGB = 0
         String pbmm2Docker = "erictdawson/pbmm2"
+        Int nThreads = 64
         Int gbRAM = 62
         String hpcQueue = "norm"
         Int runtimeMinutes = 240
@@ -24,7 +25,7 @@ workflow ClaraParabricks_PacBio_Germline {
             "nThreads": nThreads,
             "gbRAM": gbRAM,
             "hpcQueue": hpcQueue,
-            "runtimeMinutes": RuntimeAttributes,
+            "runtimeMinutes": runtimeMinutes,
             "maxPreemptAttempts": maxPreemptAttempts
     }
 
