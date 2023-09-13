@@ -26,10 +26,12 @@ task pbmm2 {
     Int mm2_threads = if runtime_attributes.nThreads - sort_threads >= mapThreads then mapThreads else runtime_attributes.nThreads - sort_threads -1
     String outbase = basename(basename(basename(inputFASTQ, ".gz"), ".fq"), ".fastq")
     Int auto_diskGB = if runtime_attributes.diskGB == 0 then ceil(size(inputFASTQ, "GB") * 3.2) + ceil(size(inputReference, "GB") * 3) + 80 else runtime_attributes.diskGB
-
+    String ref = basename(inputReference)
     command <<<
+        cp ~{inputReference} ~{ref} && \
+        ~{"cp " + referenceIndex + " . &&"} \
         time pbmm2 align \
-            ~{inputReference} \
+            ~{ref} \
             ~{inputFASTQ} \
             ~{outbase}.bam \
             ~{"--preset " +  preset} \
@@ -84,8 +86,10 @@ task minimap2 {
 
     String outbase = basename(basename(basename(inputFASTQ, ".gz"), ".fq"), ".fastq")
     Int auto_diskGB = if runtime_attributes.diskGB == 0 then ceil(size(inputFASTQ, "GB") * 3.2) + ceil(size(inputReference, "GB") * 3) + 80 else runtime_attributes.diskGB
-
+    String ref = basename(inputReference)
     command <<<
+        cp ~{inputReference} ~{ref} && \
+        ~{"cp " + referenceIndex + " . &&"} \
         echo "Running minimap2 and samtools sort with ~{mm2_threads} mapping threads and ~{sort_threads} sorting threads." && \
         time minimap2 \
             ~{mm2Flags} \
@@ -93,10 +97,10 @@ task minimap2 {
             -t ~{mm2_threads} \
             -R "@RG\tSM:~{sampleName}\tID:~{sampleName}" \
             -ax ~{mm2Preset} \
-            ~{inputReference} \
+            ~{ref} \
             ~{inputFASTQ} | \
         samtools sort \
-            ~{"-m " sortRAM_per_thread + "G"}  \
+            ~{"-m " + sortRAM_per_thread + "G"}  \
             -@ ~{sort_threads} - \
             > ~{outbase}.bam && \
             samtools index ~{outbase}.bam
