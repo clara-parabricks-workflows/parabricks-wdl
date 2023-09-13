@@ -69,8 +69,7 @@ task minimap2 {
         String mm2Preset = "map-ont"
         Int mapThreads = 28
         Int sortThreads = 4
-        Int mapRAM = 64
-        Int sortRAM_per_thread = 6
+        Int sortRAM_per_thread = 6 # gigabytes
 
         String minimapDocker = "erictdawson/minimap2"
         RuntimeAttributes runtime_attributes
@@ -97,7 +96,7 @@ task minimap2 {
             ~{inputReference} \
             ~{inputFASTQ} | \
         samtools sort \
-            -m 4G \
+            ~{"-m " sortRAM_per_thread + "G"}  \
             -@ ~{sort_threads} - \
             > ~{outbase}.bam && \
             samtools index ~{outbase}.bam
