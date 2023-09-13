@@ -12,5 +12,5 @@ struct RuntimeAttributes {
 struct GPUAttributes {
     String gpuModel
     Int nGPU
-    String? gpuDriver
+    String? gpuDriverVersion
 }
