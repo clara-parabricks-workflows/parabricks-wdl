@@ -49,7 +49,7 @@ task pbmm2 {
 
     runtime {
         docker : "~{pbmm2Docker}"
-        disks : "local-disk ~{runtime_attributes.auto_diskGB} SSD"
+        disks : "local-disk ~{auto_diskGB} SSD"
         cpu : runtime_attributes.nThreads
         memory : "~{runtime_attributes.gbRAM} GB"
         hpcMemory : runtime_attributes.gbRAM
@@ -113,7 +113,7 @@ task minimap2 {
 
     runtime {
         docker : "~{minimapDocker}"
-        disks : "local-disk ~{runtime_attributes.auto_diskGB} SSD"
+        disks : "local-disk ~{auto_diskGB} SSD"
         cpu : runtime_attributes.nThreads
         memory : "~{runtime_attributes.gbRAM} GB"
         hpcMemory : runtime_attributes.gbRAM
