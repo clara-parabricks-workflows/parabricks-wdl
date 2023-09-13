@@ -14,8 +14,7 @@ task compressAndIndexVCF {
             "hpcQueue": "norm",
             "runtimeMinutes": 600,
             "gpuDriverVersion": "535.104.05",
-            "maxPreemptAttempts": 3,
-            "zones": ["us-central1-a", "us-central1-b", "us-central1-c"]
+            "maxPreemptAttempts": 3
         }
 
     }
@@ -23,7 +22,7 @@ task compressAndIndexVCF {
 
     String outbase = basename(inputVCF, ".vcf")
     command {
-        bgzip -d -@ 4 ~{inputVCF} > ~{outbase}.vcf.gz && \
+        bgzip -d ~{"-@ " + runtime_attributes.nThreads} ~{inputVCF} > ~{outbase}.vcf.gz && \
         tabix ~{outbase}.vcf.gz
     }
     output {
@@ -38,7 +37,7 @@ task compressAndIndexVCF {
         hpcMemory : runtimeAttributes.gbRAM
         hpcQueue : "~{runtimeAttributes.hpcQueue}"
         hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
-        zones : runtimeAttributes.zones
+        zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : runtimeAttributes.maxPreemptAttempts
     }
 }
