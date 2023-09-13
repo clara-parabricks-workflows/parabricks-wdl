@@ -7,7 +7,7 @@ task compressAndIndexVCF {
         File inputVCF
         String dockerImage = "erictdawson/bcftools"
 
-        RuntimeAttributes runtimeAttributes = {
+        RuntimeAttributes attributes = {
             "diskGB": 0,
             "nThreads": 4,
             "gbRAM": 11,
@@ -18,11 +18,11 @@ task compressAndIndexVCF {
         }
 
     }
-    Int auto_diskGB = if runtimeAttributes.diskGB == 0 then ceil(size(inputVCF, "GB") * 1.8) + 80 else runtimeAttributes.diskGB
+    Int auto_diskGB = if attributes.diskGB == 0 then ceil(size(inputVCF, "GB") * 1.8) + 80 else attributes.diskGB
 
     String outbase = basename(inputVCF, ".vcf")
     command {
-        bgzip -d ~{"-@ " + runtime_attributes.nThreads} ~{inputVCF} > ~{outbase}.vcf.gz && \
+        bgzip -d ~{"-@ " + attributes.nThreads} ~{inputVCF} > ~{outbase}.vcf.gz && \
         tabix ~{outbase}.vcf.gz
     }
     output {
@@ -32,12 +32,12 @@ task compressAndIndexVCF {
     runtime {
         docker : "~{dockerImage}"
         disks : "local-disk ~{auto_diskGB} SSD"
-        cpu : runtimeAttributes.nThreads
-        memory : "~{runtimeAttributes.gbRAM} GB"
-        hpcMemory : runtimeAttributes.gbRAM
-        hpcQueue : "~{runtimeAttributes.hpcQueue}"
-        hpcRuntimeMinutes : runtimeAttributes.runtimeMinutes
+        cpu : attributes.nThreads
+        memory : "~{attributes.gbRAM} GB"
+        hpcMemory : attributes.gbRAM
+        hpcQueue : "~{attributes.hpcQueue}"
+        hpcRuntimeMinutes : attributes.runtimeMinutes
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
-        preemptible : runtimeAttributes.maxPreemptAttempts
+        preemptible : attributes.maxPreemptAttempts
     }
 }
