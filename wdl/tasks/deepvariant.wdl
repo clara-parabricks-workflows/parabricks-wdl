@@ -42,7 +42,7 @@ task deepvariant {
     }
 
     output {
-        File deepvariantVCF = "~{outVCF}"
+        File outputVCF = "~{outVCF}"
     }
 
     runtime {
