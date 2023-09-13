@@ -12,7 +12,7 @@ task deepvariant {
         String? deepvariantFlags
         Boolean gvcfMode = false
 
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.1-1"
+        String pbDocker = "nvcr.io/nv-parabricks-dev/clara-parabricks:4.2.0-1.beta3"
 
         RuntimeAttributes runtime_attributes
         GPUAttributes gpu_attributes
