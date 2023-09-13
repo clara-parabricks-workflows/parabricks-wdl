@@ -67,21 +67,27 @@ task minimap2 {
         Boolean addMDTag = true
         String mm2Flags = "-Y "
         String mm2Preset = "map-ont"
-        Int nThreads = 32
         Int mapThreads = 28
+        Int sortThreads = 4
+        Int mapRAM = 64
+        Int sortRAM_per_thread = 6
 
         String minimapDocker = "erictdawson/minimap2"
         RuntimeAttributes runtime_attributes
     }
 
-    Int sort_threads = 4
-    ## Put a ceiling on mm2_threads so as not to oversubscribe our VM
+    ## Use at most 12 sort threads.
+    Int sort_threads = if sortThreads > 12 then 12 else sortThreads
+    ## Put a ceiling and a floor on mm2_threads so as not to oversubscribe or undersubscribe our VM
+    Int spare_threads = runtime_attributes.nThreads - mapThreads - sort_threads
     ## mm2_threads = min(mapThreads, nThreads - sort_threads - 1)
-    Int mm2_threads = if runtime_attributes.nThreads - sort_threads >= mapThreads then mapThreads else runtime_attributes.nThreads - sort_threads -1
+    Int mm2_threads = if spare_threads < 4 then mapThreads else runtime_attributes.nThreads - sort_threads - 1
+
     String outbase = basename(basename(basename(inputFASTQ, ".gz"), ".fq"), ".fastq")
     Int auto_diskGB = if runtime_attributes.diskGB == 0 then ceil(size(inputFASTQ, "GB") * 3.2) + ceil(size(inputReference, "GB") * 3) + 80 else runtime_attributes.diskGB
 
     command <<<
+        echo "Running minimap2 and samtools sort with ~{mm2_threads} mapping threads and ~{sort_threads} sorting threads." && \
         time minimap2 \
             ~{mm2Flags} \
             ~{if addMDTag then "--MD" else ""} \
