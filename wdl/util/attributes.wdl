@@ -7,7 +7,6 @@ struct RuntimeAttributes {
     String hpcQueue
     Int runtimeMinutes
     Int maxPreemptAttempts
-    Array[String] zones
 }
 
 struct GPUAttributes {
