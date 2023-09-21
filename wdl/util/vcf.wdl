@@ -13,7 +13,6 @@ task compressAndIndexVCF {
             "gbRAM": 11,
             "hpcQueue": "norm",
             "runtimeMinutes": 600,
-            "gpuDriverVersion": "535.104.05",
             "maxPreemptAttempts": 3
         }
 
@@ -22,7 +21,7 @@ task compressAndIndexVCF {
 
     String outbase = basename(inputVCF, ".vcf")
     command {
-        bgzip -d ~{"-@ " + attributes.nThreads} ~{inputVCF} > ~{outbase}.vcf.gz && \
+        bgzip -c ~{"-@ " + attributes.nThreads} ~{inputVCF} > ~{outbase}.vcf.gz && \
         tabix ~{outbase}.vcf.gz
     }
     output {
