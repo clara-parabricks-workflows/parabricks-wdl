@@ -21,16 +21,22 @@ task bam2fq {
     }
 
     String outbase = basename(inputBAM, ".bam")
+    Int multiplier = if defined(originalRefTarball) then 25 else 7
+    Int base_diskGB = if defined(originalRefTarball) then 1000 else 500
+    Int auto_diskGB = if diskGB == 0 then ceil(multiplier * size(inputBAM, "GB")) + base_diskGB else diskGB
 
-    Int auto_diskGB = if diskGB == 0 then ceil(5.0 * size(inputBAM, "GB")) + ceil(size(inputBAI, "GB")) + 100 else diskGB
-
+    String localTarball = basename(select_first([originalRefTarball]))
+    String refLocalization = if defined(originalRefTarball) then "mv " + originalRefTarball + " " + localTarball + " && " else ""
+    String refUnpack = if defined(originalRefTarball) then "tar xvf " + localTarball + " && " else ""
+    String refCall = if defined(originalRefTarball) then "--ref " + basename(localTarball, ".tar") else ""
     command <<<
-        ~{"tar xvf " + originalRefTarball + " && "}\
+        ~{refLocalization} \
+        ~{refUnpack} \
         time ~{pbPATH} bam2fq \
             --in-bam ~{inputBAM} \
             --out-prefix ~{outbase} \
             ~{"--license-file " + pbLicenseBin} \
-            ~{"--ref " + ref} \
+            ~{refCall}
     >>>
 
     output {
