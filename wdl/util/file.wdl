@@ -22,9 +22,12 @@ task getDirectorySize {
 
     Int auto_diskGB = if (attributes.diskGB == 0) then 5 else attributes.diskGB
 
-    command {
+    command <<<
+        set -e 
+        # Authenticate with gcloud (assuming you've provided GOOGLE_APPLICATION_CREDENTIALS)
+        gcloud auth activate-service-account --key-file=$(echo $GOOGLE_APPLICATION_CREDENTIALS)
         gsutil ls -l -r ~{dirPath} | tail -n 1 | grep -o "[0-9]* bytes" | cut -f 1 -d " " 
-    }
+    >>>
     runtime {
         docker : "~{dockerImage}"
         disks : "local-disk ~{auto_diskGB} SSD"
