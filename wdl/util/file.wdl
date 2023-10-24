@@ -3,30 +3,12 @@ version 1.0
 import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-wdl/long-read/wdl/util/attributes.wdl" as attributes
 
 
-## Return the sample(s) present within a BAM file
-task getXAMSamples {
+## Return the size of a directory in Google Cloud Storage
+
+task getDirectorySize {
     input {
-        File inputBAM
-        File inputBAI
-    }
-    command {
-        samtools samples ~{inputBAM}
-    }
-    output {
-        Int numSamples = ""
-        Array[String] samples = ""
-    }
-    runtime {
-
-    }
-}
-
-
-task indexBAM {
-    input {
-        File inputBAM
-        String dockerImage = "erictdawson/samtools"
-
+        String dirPath
+        String dockerImage = "google/cloud-sdk"
         RuntimeAttributes attributes = {
             "diskGB": 0,
             "nThreads": 4,
@@ -37,14 +19,11 @@ task indexBAM {
         }
 
     }
-    Int auto_diskGB = if attributes.diskGB == 0 then ceil(size(inputBAM, "GB") * 1.3) + 80 else attributes.diskGB
 
-    String outbase = basename(inputBAM)
+    Int auto_diskGB = if (attributes.diskGB == 0) then 5 else attributes.diskGB
+
     command {
-        samtools index ~{"-@ " + attributes.nThreads} ~{inputBAM} ~{outbase}.bai
-    }
-    output {
-        File outputBAI = "~{outbase}.bai"
+        gsutil ls -l -r ~{dirPath} | tail -n 1 | grep -o "[0-9]* bytes" | cut -f 1 -d " " 
     }
     runtime {
         docker : "~{dockerImage}"
@@ -56,5 +35,8 @@ task indexBAM {
         hpcRuntimeMinutes : attributes.runtimeMinutes
         zones : ["us-central1-a", "us-central1-b", "us-central1-c"]
         preemptible : attributes.maxPreemptAttempts
+    }
+    output {
+        Int totalBytes = read_int(stdout())
     }
 }
