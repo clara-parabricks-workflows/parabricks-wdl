@@ -6,7 +6,8 @@ import "https://raw.githubusercontent.com/clara-parabricks-workflows/parabricks-
 ## Merge a collection of BAM files into a single BAM file.
 task mergeBAMs {
     input {
-        Array[File] inputBAMFiles
+        Array[File] inputBAMs
+        Array[File] inputBAIs
         String sampleName
         String dockerImage = "erictdawson/samtools"
         String readGroup_libraryName = "LIB1"
@@ -23,12 +24,12 @@ task mergeBAMs {
             "maxPreemptAttempts": 3
         }
     }
-    Int auto_diskGB = if attributes.diskGB == 0 then ceil(size(inputBAMFiles, "GB") * 3.0) + 80 else attributes.diskGB
+    Int auto_diskGB = if attributes.diskGB == 0 then ceil(size(inputBAMs, "GB") * 3.0) + 80 else attributes.diskGB
 
     String rgID = if sampleName == "SAMPLE" then readGroup_ID else sampleName + "-" + readGroup_ID
     command {
         set -e
-        samtools merge -@ ~{attributes.nThreads - 1} -r "@RG\tID:~{rgID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{sampleName}\tPU:~{readGroup_PU}" -o ~{sampleName}.merged.bam ~{sep = " " inputBAMFiles} && \
+        samtools merge -@ ~{attributes.nThreads - 1} -r "@RG\tID:~{rgID}\tLB:~{readGroup_libraryName}\tPL:~{readGroup_platformName}\tSM:~{sampleName}\tPU:~{readGroup_PU}" -o ~{sampleName}.merged.bam ~{sep = " " inputBAMs} && \
         samtools index ~{sampleName}.merged.bam
     }
     output {
