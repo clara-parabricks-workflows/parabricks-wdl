@@ -14,7 +14,7 @@ task make_examples {
 
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 24
         Int gbRAM = 120
         Int diskGB = 500
@@ -23,7 +23,7 @@ task make_examples {
         Int maxPreemptAttempts = 3
     }
 
-    String docker_image = "nvcr.io/nvidia/clara/deepvariant_train:4.1.0-1"
+    String docker_image = "nvcr.io/nvidia/clara/deepvariant_train:4.3.0-1"
     String binary_path = "/usr/local/parabricks/binaries/bin/deepvariant"
     String outbase = basename(bam, ".bam")
     String examples_basename = basename(examples, ".gz")
@@ -76,7 +76,7 @@ task shuffle_data {
 
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 24
         Int gbRAM = 120
         Int diskGB = 500
@@ -134,7 +134,7 @@ task training {
 
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 24
         Int gbRAM = 120
         Int diskGB = 500

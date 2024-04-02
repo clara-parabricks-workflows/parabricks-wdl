@@ -9,7 +9,7 @@ task mutect2_prepon {
         String? pbDocker
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0
@@ -59,10 +59,10 @@ workflow ClaraParabricks_Somatic {
         File ponTBI
         String pbPATH = "pbrun"
         File? pbLicenseBin
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 32
         Int gbRAM = 120
         Int diskGB = 0

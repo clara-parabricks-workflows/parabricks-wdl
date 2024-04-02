@@ -17,7 +17,7 @@ task haplotypecaller {
         String? pbDocker
         Int nGPU = 2
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 24
         Int gbRAM = 120
         Int diskGB = 0
@@ -86,7 +86,7 @@ task deepvariant {
         Boolean gvcfMode = false
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 24
         Int gbRAM = 120
         Int diskGB = 0
@@ -144,7 +144,7 @@ workflow ClaraParabricks_Germline {
         String pbPATH = "pbrun"
 
         File? pbLicenseBin
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
 
         Boolean runDeepVariant = true
         Boolean runHaplotypeCaller = true
@@ -157,7 +157,7 @@ workflow ClaraParabricks_Germline {
         ## DeepVariant Runtime Args
         Int nGPU_DeepVariant = 4
         String gpuModel_DeepVariant = "nvidia-tesla-t4"
-        String gpuDriverVersion_DeepVariant = "460.73.01"
+        String gpuDriverVersion_DeepVariant = "525.60.13"
         Int nThreads_DeepVariant = 24
         Int gbRAM_DeepVariant = 120
         Int diskGB_DeepVariant = 0
@@ -168,7 +168,7 @@ workflow ClaraParabricks_Germline {
         String? haplotypecallerPassthroughOptions
         Int nGPU_HaplotypeCaller = 2
         String gpuModel_HaplotypeCaller = "nvidia-tesla-t4"
-        String gpuDriverVersion_HaplotypeCaller = "460.73.01"
+        String gpuDriverVersion_HaplotypeCaller = "525.60.13"
         Int nThreads_HaplotypeCaller = 24
         Int gbRAM_HaplotypeCaller = 120
         Int diskGB_HaplotypeCaller = 0
