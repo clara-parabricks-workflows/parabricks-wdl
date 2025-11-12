@@ -20,11 +20,11 @@ task fq2bam {
         Boolean low_memory = true
 
         String pbPATH = "pbrun"
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
         String tmpDir = "tmp_fq2bam"
         Int nGPU = 4
         String gpuModel = "nvidia-tesla-t4"
-        String gpuDriverVersion = "460.73.01"
+        String gpuDriverVersion = "525.60.13"
         Int nThreads = 32
         Int gbRAM = 180
         Int diskGB = 0
@@ -43,6 +43,8 @@ task fq2bam {
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
 
+    String low_memory_arg = if low_memory then "--low-memory" else ""
+
     command <<<
         set -e
         set -x
@@ -57,7 +59,8 @@ task fq2bam {
         --ref ~{ref} \
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
         --out-bam ~{outbase}.pb.bam \
-        ~{"--license-file " + pbLicenseBin}
+        ~{"--license-file " + pbLicenseBin} \
+        ~{low_memory_arg}
     >>>
 
     output {
@@ -98,7 +101,7 @@ workflow ClaraParabricks_fq2bam {
         Boolean low_memory = true
         File? pbLicenseBin
         String pbPATH = "pbrun"
-        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.1.0-1"
+        String pbDocker = "nvcr.io/nvidia/clara/clara-parabricks:4.3.0-1"
         String tmpDir = "tmp_fq2bam"
         String gpuModel = "nvidia-tesla-t4"
         Int nGPU = 4
