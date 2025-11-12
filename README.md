@@ -42,9 +42,9 @@ To download Cromwell and WOMTool, the following commands should work:
 
 ```bash
 ## Update the version as needed
-export version=81
+export version=91
 wget https://github.com/broadinstitute/cromwell/releases/download/${version}/cromwell-${version}.jar
-https://github.com/broadinstitute/cromwell/releases/download/${version}/womtool-${version}.jar
+wget https://github.com/broadinstitute/cromwell/releases/download/${version}/womtool-${version}.jar
 ```
 
 ## Download test data or bring your own
@@ -57,7 +57,6 @@ cd test_data
 wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/hiseqx/wgs_pcr_free/30x/HG002.hiseqx.pcr-free.30x.R1.fastq.gz
 wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/hiseqx/wgs_pcr_free/30x/HG002.hiseqx.pcr-free.30x.R2.fastq.gz
 ```
-
 
 ## Run your first workflow
 There are example JSON input slugs in the `example_inputs` directory. To run your first workflow, you can edit the minimal inputs file (`fq2bam.minimalInputs.json`). If you want
