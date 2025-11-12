@@ -43,6 +43,8 @@ task fq2bam {
     String ref = basename(inputRefTarball, ".tar")
     String outbase = basename(basename(basename(basename(inputFASTQ_1, ".gz"), ".fastq"), ".fq"), "_1")
 
+    String low_memory_arg = if low_memory then "--low-memory" else ""
+
     command <<<
         set -e
         set -x
@@ -57,7 +59,8 @@ task fq2bam {
         --ref ~{ref} \
         ~{"--knownSites " + inputKnownSitesVCF + " --out-recal-file " + outbase + ".pb.BQSR-REPORT.txt"} \
         --out-bam ~{outbase}.pb.bam \
-        ~{"--license-file " + pbLicenseBin}
+        ~{"--license-file " + pbLicenseBin} \
+        ~{low_memory_arg}
     >>>
 
     output {
