@@ -169,7 +169,7 @@ task training {
     }
 
     output {
-        Array[File] training_dir = glob("~{training_dir}/*")
+        Array[File] training_dir_out = glob("~{training_dir}/*")
     }
 
     runtime {
@@ -282,7 +282,7 @@ workflow DeepVariant_Retraining {
     }
 
     output {
-        Array[File] training_dir=training.training_dir
+        Array[File] training_dir=training.training_dir_out
     }
 
     meta {

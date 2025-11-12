@@ -10,7 +10,7 @@ task haplotypecaller {
         File? intervalFile
         Boolean gvcfMode = false
         Boolean useBestPractices = false
-        String haplotypecallerPassthroughOptions = ""
+        String? haplotypecallerPassthroughOptions = ""
         String annotationArgs = ""
 
         File? pbLicenseBin
