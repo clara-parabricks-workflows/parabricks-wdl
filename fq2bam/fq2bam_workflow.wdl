@@ -72,7 +72,7 @@ workflow fq2bam_workflow {
     }
 
     parameter_meta {
-        reads: "Sample sheet of FASTQ files to align"
+        reads: "Array of FASTQ files to align"
         fasta: "Reference genome FASTA file"
         interval_file: "Optional interval file for targeted regions (can be used multiple times)"
         known_sites: "Optional array of known variant sites for BQSR (can be used multiple times)"
