@@ -1,0 +1,19 @@
+minimap2_workflow:
+  - name: single-ended
+    inputs:
+      reads_fq:
+        - data/minimap2_sample.fastq.gz
+      fasta:
+        - ref/minimap2_ref.fasta
+      output_fmt: 
+        - "bam"
+      prefix:
+        - "test"
+      memory:
+        - 30
+      num_gpus:
+        - 1
+      num_cpus:
+        - 8
+      container:
+        - "nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1"

@@ -56,7 +56,7 @@ task minimap2 {
 
         pbrun \
             minimap2 \
-            --ref $(basename ~{ref.fasta}) \
+            --ref "$(basename ~{ref.fasta})" \
             ~{in_reads_command} \
             --out-bam ~{prefix}.~{extension_bam} \
             ~{known_sites_command} \
@@ -94,19 +94,19 @@ task minimap2 {
     }
 
     parameter_meta {
-        reads_fq: "Input FASTQ file(s) for alignment"
-        reads_bam: "Input BAM file(s) for alignment"
-        index: "Pre-built minimap2 index file"
-        ref: "Reference genome files"
-        interval_file: "Optional interval file(s) to restrict alignment regions"
-        known_sites: "Optional known sites file(s) for base recalibration"
-        output_fmt: "Output format, either 'bam' or 'cram'"
-        prefix: "Prefix for output files"
-        args: "Additional command line arguments to pass to minimap2"
-        memory: "Amount of memory to allocate to the task (in MB)"
-        num_gpus: "Number of GPUs to allocate to the task"
-        num_cpus: "Number of CPU cores to allocate to the task"
-        container: "Docker container image with Parabricks installed"
+        reads_fq: {description: "Input FASTQ file for alignment", category: "optional"}
+        reads_bam: {description: "Input BAM file for alignment", category: "optional"}
+        index: {description: "Pre-built minimap2 index file", category: "optional"}
+        ref: {description: "Reference genome files (FASTA, index, and BWA index)", category: "required"}
+        interval_file: {description: "Optional interval file for targeted regions (can be used multiple times)", category: "optional"}
+        known_sites: {description: "Optional array of known variant sites for BQSR (can be used multiple times)", category: "optional"}
+        output_fmt: {description: "Output format: 'bam' or 'cram'", category: "required"}
+        prefix: {description: "Prefix for output files", category: "required"}
+        args: {description: "Optional additional arguments for pbrun", category: "optional"}
+        memory: {description: "Memory in GB", category: "required"}
+        num_gpus: {description: "Number of GPUs to use", category: "required"}
+        num_cpus: {description: "Number of CPU threads", category: "required"}
+        container: {description: "Container image URI", category: "required"}
     }
 
 }
