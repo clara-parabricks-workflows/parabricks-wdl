@@ -1,11 +1,11 @@
 version 1.2
 
-import "../fq2bammeth.wdl" as fq2bammeth
-import "../../shared/bwameth_index.wdl" as bwameth_index
+import "fq2bammeth.wdl" as fq2bammeth
+import "../shared/bwameth_index.wdl" as bwameth_index
 
-workflow fq2bammeth_test {
+workflow fq2bammeth_workflow {
     input {
-        File sample_sheet
+        Array[File] reads
         File fasta
         Array[File]? interval_file
         Array[File]? known_sites
@@ -24,10 +24,10 @@ workflow fq2bammeth_test {
     }
 
     call fq2bammeth.fq2bammeth {
-        reads = read_lines(sample_sheet),
+        reads = reads,
         ref = ReferenceFiles { 
             fasta: fasta, 
-            bwa_index: bwameth_index.indexFiles 
+            bwa_index: bwameth_index.index_files 
         },
         interval_file = interval_file,
         known_sites = known_sites,
@@ -58,7 +58,7 @@ workflow fq2bammeth_test {
     }
 
     parameter_meta {
-        sample_sheet: "Path to a sample sheet containing FASTQ file paths"
+        reads: "Array of FASTQ files to align"
         fasta: "Reference genome FASTA file"
         interval_file: "Optional interval files to restrict alignment"
         known_sites: "Optional known sites files for methylation calling"
