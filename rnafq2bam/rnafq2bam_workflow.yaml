@@ -1,0 +1,29 @@
+rnafq2bam_workflow:
+  - name: single-ended
+    inputs:
+      reads:
+        - [data/rnafq2bam_sample.fastq.gz]
+      fasta:
+        - ref/rnafq2bam_ref.fa
+      gtf: 
+        - ref/rnafq2bam_gtf.gtf
+      output_fmt: 
+        - "bam"
+      single_ended: 
+        - true
+      qc_metrics: 
+        - false
+      duplicate_metrics:
+        - false
+      prefix:
+        - "test"
+      args: 
+        - ["--read-files-command zcat"]
+      memory:
+        - 30
+      num_gpus:
+        - 1
+      num_cpus:
+        - 8
+      container:
+        - "nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1"
