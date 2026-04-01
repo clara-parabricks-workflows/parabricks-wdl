@@ -1,14 +1,10 @@
-fq2bammeth_workflow:
+haplotypecaller_workflow:
   - name: single-ended
     inputs:
-      reads:
-        - [data/fq2bammeth_sample.fastq.gz]
+      bam:
+        - data/haplotypecaller_sample.bam
       fasta:
-        - ref/fq2bammeth_ref.fa
-      output_fmt:
-        - "bam"
-      single_ended:
-        - true
+        - ref/haplotypecaller_ref.fasta
       prefix:
         - "test"
       memory:
