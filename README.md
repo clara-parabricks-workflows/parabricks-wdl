@@ -1,25 +1,36 @@
 # Parabricks WDL
 
-This is a repository of WDL workflow files for popular Parabricks tools. 
+This is a repository of WDL workflow files for popular Parabricks tools.
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Full Tutorial](#full-tutorial)
+  - [Install Sprocket](#install-sprocket)
+  - [Run the tests](#run-the-tests)
+- [Future Work](#future-work)
 
 ## Quick Start 
 
-Install Sprocket
-
 ```
+# Clone the repo and cd into directory 
+git clone https://github.com/clara-parabricks-workflows/Parabricks-WDL-Workflows.git
+cd parabricks-wdl
+
+# Install Sprocket
 curl https://sh.rustup.rs -sSf | sh
 cargo install sprocket --locked
-```
 
-Download data and run all tests 
+# Download all the test data 
+make 
 
-```
-make
+# Run the full test suite  
+sprocket dev test
 ```
 
 ## Full Tutorial 
 
-### Installing Sprocket 
+### Install Sprocket 
 
 Install [Rust](https://rust-lang.org/) using [rustup](https://rustup.rs/). This will also install [Cargo](https://doc.rust-lang.org/cargo/), the Rust package manager 
 
@@ -35,17 +46,21 @@ cargo install sprocket --locked
 
 Hint: If OpenSSL issues arise, then users may need to run `sudo apt install libssl-dev`
 
-### Running the tests 
+### Run the tests 
 
-Download data and run all tests 
+This repo uses the Sprocket unit testing framework. See the [documentation](https://sprocket.bio/subcommands/test.html) for more information. 
 
-`make` 
+To run the full test suite use: 
 
-Download data and run individual tests (Ex. fq2bam) 
+```
+sprocket dev test
+```
 
-`make fq2bam` 
+To run a specific test specify the root directory with `-w` and provide the directory name. See the `fq2bam` example below: 
 
-**Note**: There is a known issue with fq2bammeth (resolving index files) that will be resolved in the next release of Parabricks. 
+```
+sprocket dev test -w . fq2bam
+```
 
 ## Future Work 
 
