@@ -2,9 +2,9 @@ fq2bam_workflow:
   - name: single-ended
     inputs:
       reads:
-        - [data/sample_1.fq.gz]
+        - [data/fq2bam_sample.fastq.gz]
       fasta:
-        - ref/genome.fasta
+        - ref/fq2bam_ref.fa
       output_fmt:
         - "bam"
       single_ended:
@@ -22,4 +22,4 @@ fq2bam_workflow:
       num_cpus:
         - 8
       container:
-        - "nvcr.io/nvidia/clara/clara-parabricks:4.6.0-2"
+        - "nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1"
