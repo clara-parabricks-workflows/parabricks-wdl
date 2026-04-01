@@ -46,6 +46,20 @@ cargo install sprocket --locked
 
 Hint: If OpenSSL issues arise, then users may need to run `sudo apt install libssl-dev`
 
+### Download the test data 
+
+To download all the test data run: 
+
+```
+make
+```
+
+To download data just for one test, just append the directory name: 
+
+```
+make fq2bam
+```
+
 ### Run the tests 
 
 This repo uses the Sprocket unit testing framework. See the [documentation](https://sprocket.bio/subcommands/test.html) for more information. 
