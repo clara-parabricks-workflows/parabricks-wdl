@@ -12,8 +12,8 @@ workflow fq2bam_workflow {
         Array[File]? known_sites
         String output_fmt
         Boolean single_ended
-        Boolean qc_metrics_bool
-        Boolean duplicate_metrics_bool
+        Boolean qc_metrics
+        Boolean duplicate_metrics
         String prefix
         Array[String]? args
         Int memory
@@ -41,8 +41,8 @@ workflow fq2bam_workflow {
         known_sites = known_sites, 
         output_fmt = output_fmt, 
         single_ended = single_ended, 
-        qc_metrics_bool = qc_metrics_bool,
-        duplicate_metrics_bool = duplicate_metrics_bool,
+        qc_metrics = qc_metrics,
+        duplicate_metrics = duplicate_metrics,
         prefix = prefix,
         args = args, 
         memory = memory, 
@@ -55,8 +55,8 @@ workflow fq2bam_workflow {
         File bam = fq2bam.bam
         File bai = fq2bam.bai
         File? bqsr_table = fq2bam.bqsr_table
-        Directory? qc_metrics = fq2bam.qc_metrics
-        File? duplicate_metrics = fq2bam.duplicate_metrics
+        Directory? qc_metrics_path = fq2bam.qc_metrics_path
+        File? duplicate_metrics_path = fq2bam.duplicate_metrics_path
     }
 
     meta {
@@ -66,8 +66,8 @@ workflow fq2bam_workflow {
             bam: "Aligned BAM/CRAM file",
             bai: "Index file for the BAM/CRAM",
             bqsr_table: "Optional BQSR table if known sites are provided",
-            qc_metrics: "Optional QC metrics directory if specified in args",
-            duplicate_metrics: "Optional duplicate metrics file if specified in args"
+            qc_metrics_path: "Optional QC metrics directory if specified in args",
+            duplicate_metrics_path: "Optional duplicate metrics file if specified in args"
         }
     }
 
@@ -78,8 +78,8 @@ workflow fq2bam_workflow {
         known_sites: "Optional array of known variant sites for BQSR (can be used multiple times)"
         output_fmt: "Output format: 'bam' or 'cram'"
         single_ended: "Whether reads are single-ended"
-        qc_metrics_bool: "Boolean indicating if QC metrics should be generated"
-        duplicate_metrics_bool: "Boolean indicating if duplicate metrics should be generated"
+        qc_metrics: "Boolean indicating if QC metrics should be generated"
+        duplicate_metrics: "Boolean indicating if duplicate metrics should be generated"
         prefix: "Prefix for output files"
         args: "Optional additional arguments for pbrun"
         memory: "Memory requirement (in GB) for the task"

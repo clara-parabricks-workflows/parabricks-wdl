@@ -10,8 +10,8 @@ task fq2bam {
         Array[File]? known_sites
         String output_fmt
         Boolean single_ended
-        Boolean qc_metrics_bool
-        Boolean duplicate_metrics_bool
+        Boolean qc_metrics
+        Boolean duplicate_metrics
         String prefix
         Array[String]? args
         Int memory
@@ -40,11 +40,11 @@ task fq2bam {
         sep(" ", prefix("--in-se-fq ", reads))
         else "--in-fq ${sep(" ", reads)}"
 
-    String qc_metrics_command = if qc_metrics_bool then 
+    String qc_metrics_command = if qc_metrics then 
         "--out-qc-metrics-dir ${prefix}_qc_metrics"
         else ""
 
-    String duplicate_metrics_command = if duplicate_metrics_bool then 
+    String duplicate_metrics_command = if duplicate_metrics then 
         "--out-duplicate-metrics ${prefix}.duplicate-metrics.txt"
         else ""
 
@@ -52,15 +52,15 @@ task fq2bam {
         set -e
 
         # Make sure the reference and index files are in the task's working directory
-        ln -s ~{ref.fasta} $(basename ~{ref.fasta})
-        ln -s ~{ref.fasta_fai} $(basename ~{ref.fasta_fai})
+        ln -s ~{ref.fasta} "$(basename ~{ref.fasta})"
+        ln -s ~{ref.fasta_fai} "$(basename ~{ref.fasta_fai})"
         for bwa_file in ~{sep(" ", ref.bwa_index)}; do
-            ln -s "$bwa_file" $(basename "$bwa_file")
+            ln -s "$bwa_file" "$(basename "$bwa_file")"
         done
 
         pbrun \
             fq2bam \
-            --ref $(basename ~{ref.fasta}) \
+            --ref "$(basename ~{ref.fasta})" \
             ~{in_fq_command} \
             --out-bam ~{prefix}.~{extension_bam} \
             ~{known_sites_command} \
@@ -78,8 +78,8 @@ task fq2bam {
         File bam = "${prefix}.${extension_bam}"
         File bai = "${prefix}.${extension_bam}.${extension_bam_index}"
         File? bqsr_table = if defined(known_sites) then "${prefix}.table" else None
-        Directory? qc_metrics = if qc_metrics_bool then "${prefix}_qc_metrics" else None
-        File? duplicate_metrics = if duplicate_metrics_bool then "${prefix}.duplicate-metrics.txt" else None
+        Directory? qc_metrics_path = if qc_metrics then "${prefix}_qc_metrics" else None
+        File? duplicate_metrics_path = if duplicate_metrics then "${prefix}.duplicate-metrics.txt" else None
     }
 
     requirements {
@@ -100,23 +100,25 @@ task fq2bam {
             bam: "Aligned BAM/CRAM file",
             bai: "Index file for the BAM/CRAM",
             bqsr_table: "Optional BQSR table if known sites are provided",
-            qc_metrics: "Optional QC metrics directory if specified in args",
-            duplicate_metrics: "Optional duplicate metrics file if specified in args"
+            qc_metrics_path: "Optional QC metrics directory if specified in args",
+            duplicate_metrics_path: "Optional duplicate metrics file if specified in args"
         }
     }
 
     parameter_meta {
         reads: {description: "Array of FASTQ files to align", category: "required"}
-        ref: "Struct containing Reference files (fasta, fasta.fai, bwa_index)"
-        interval_file: "Optional interval file for targeted regions (can be used multiple times)"
-        known_sites: "Optional array of known variant sites for BQSR (can be used multiple times)"
-        output_fmt: "Output format: 'bam' or 'cram'"
-        single_ended: "Whether reads are single-ended"
-        prefix: "Prefix for output files"
-        args: "Optional additional arguments for pbrun"
-        memory: "Memory in GB"
-        num_gpus: "Number of GPUs to use"
-        num_cpus: "Number of CPU threads"
-        container: "Container image URI"
+        ref: {description: "Struct containing Reference files (fasta, fasta.fai, bwa_index)", category: "required"}
+        interval_file: {description: "Optional interval file for targeted regions (can be used multiple times)", category: "optional"}
+        known_sites: {description: "Optional array of known variant sites for BQSR (can be used multiple times)", category: "optional"}
+        output_fmt: {description: "Output format: 'bam' or 'cram'", category: "required"}
+        single_ended: {description: "Whether reads are single-ended", category: "required"}
+        qc_metrics: {description: "Whether to generate QC metrics", category: "required"}
+        duplicate_metrics: {description: "Whether to generate duplicate metrics", category: "required"}
+        prefix: {description: "Prefix for output files", category: "required"}
+        args: {description: "Optional additional arguments for pbrun", category: "optional"}
+        memory: {description: "Memory in GB", category: "required"}
+        num_gpus: {description: "Number of GPUs to use", category: "required"}
+        num_cpus: {description: "Number of CPU threads", category: "required"}
+        container: {description: "Container image URI", category: "required"}
     }
 }

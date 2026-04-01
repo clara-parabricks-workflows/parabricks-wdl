@@ -9,9 +9,9 @@ fq2bam_workflow:
         - "bam"
       single_ended:
         - true
-      qc_metrics_bool:
+      qc_metrics:
         - false
-      duplicate_metrics_bool:
+      duplicate_metrics:
         - false
       prefix:
         - "test"
