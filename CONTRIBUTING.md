@@ -27,10 +27,4 @@ Please open an issue and use the `Feature Request` tag.
 Please open an issue and use the `Question` tag.
 
 # Commits and Pull Requests
-Clara Parabricks members should: 
-
-1. Start commits with a tag in the format `[tag]` indicating the directory containing modified files (e.g., one of `wdl`, `config`, or `example_inputs`).
-
-2. If a specific file / workflow is modified, use a second descriptive tag to indicate which one (e.g., `[wdl] [fq2bam]`).
-
-3. Every commit should contain a useful, descriptive commit message (e.g., `[wdl] [fq2bam] Update the runtime arguments to match the updated specification.`)
+Please use [semantic commit messages](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716). 
