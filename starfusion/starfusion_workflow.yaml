@@ -1,0 +1,35 @@
+starfusion_workflow:
+  - name: single-ended
+    inputs:
+      reads:
+        - [data/starfusion_sample.fastq.gz]
+      fasta:
+        - ref/starfusion_ref.fa
+      gtf: 
+        - ref/starfusion_gtf.gtf
+      output_fmt: 
+        - "bam"
+      single_ended: 
+        - true
+      qc_metrics: 
+        - false
+      duplicate_metrics:
+        - false
+      prefix:
+        - "test"
+      fusion_annot_lib:
+        - ref/starfusion_CTAT_HumanFusionLib.mini.dat.gz
+      pfam_db:
+        - "current"
+      dfam_db:
+        - "human"
+      annot_filter_url:
+        - ref/starfusion.annotfilterrule.pm
+      memory:
+        - 192
+      num_gpus:
+        - 2
+      num_cpus:
+        - 16
+      container:
+        - "nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1"

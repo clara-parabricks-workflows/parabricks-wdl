@@ -63,7 +63,7 @@ task rnafq2bam {
         File bai = "${prefix}.${extension_bam}.${extension_bam_index}"
         Directory? qc_metrics_path = if qc_metrics then "${prefix}_qc_metrics" else None
         File? duplicate_metrics_path = if duplicate_metrics then "${prefix}.duplicate-metrics.txt" else None
-        File? junction = "*.out.junction"
+        File? junction = "Chimeric.out.junction"
     }
 
     requirements {
