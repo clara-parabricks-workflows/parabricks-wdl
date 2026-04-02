@@ -42,7 +42,7 @@ task deepvariant {
 
         pbrun \
             deepvariant \
-            --ref $(basename ~{ref.fasta}) \
+            --ref "$(basename ~{ref.fasta})" \
             --in-bam ~{bam} \
             --out-variants "~{prefix}.vcf" \
             ~{interval_file_command} \
@@ -72,29 +72,25 @@ task deepvariant {
     meta {
         author: "Gary Burnett (gburnett@nvidia.com)"
         description: "The NVIDIA Parabricks GPU accelerated version of DeepVariant"
+        outputs: {
+            vcf: "Output VCF file containing called variants",
+            gvcf: "Optional output GVCF file containing variant and non-variant sites (only generated if --emit-ref-confidence is used)"
+        }
     }
 
     parameter_meta {
         # inputs
-        reads: {description: "Array of FASTQ files to align", category: "required"}
-        bwaIndex: "Reference genome FASTA file"
-        interval_file: "Optional interval file for targeted regions (can be used multiple times)"
-        known_sites: "Optional array of known variant sites for BQSR (can be used multiple times)"
-        output_fmt: "Output format: 'bam' or 'cram'"
-        single_ended: "Whether reads are single-ended"
-        prefix: "Prefix for output files"
-        args: "Optional additional arguments for pbrun"
-        memory: "Memory requirement (in GB) for the task"
-        num_gpus: "Number of GPUs to use"
-        num_cpus: "Number of CPU threads"
-        container: "Container image URI"
-
-        # outputs
-        bam: "Aligned BAM/CRAM file"
-        bai: "Index file for the BAM/CRAM"
-        bqsr_table: "Optional BQSR table if known sites are provided"
-        qc_metrics: "Optional QC metrics directory if specified in args"
-        duplicate_metrics: "Optional duplicate metrics file if specified in args"
+        bam: {description: "Input BAM file to call variants on", category: "required"}
+        ref: {description: "Reference genome files (FASTA, index, and BWA index)", category: "required"}
+        interval_file: {description: "Optional interval file for targeted regions (can be used multiple times)", category: "optional"}
+        pb_model_file: {description: "Optional custom Parabricks DeepVariant model file", category: "optional"}
+        proposed_variants: {description: "Optional file of proposed variants", category: "optional"}
+        prefix: {description: "Prefix for output files", category: "required"}
+        args: {description: "Optional additional arguments for pbrun", category: "optional"}
+        memory: {description: "Memory in GB", category: "required"}
+        num_gpus: {description: "Number of GPUs to use", category: "required"}
+        num_cpus: {description: "Number of CPU threads", category: "required"}
+        container: {description: "Container image URI", category: "required"}
     }
 
 }

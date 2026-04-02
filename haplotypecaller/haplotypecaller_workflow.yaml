@@ -1,0 +1,17 @@
+haplotypecaller_workflow:
+  - name: single-ended
+    inputs:
+      bam:
+        - data/haplotypecaller_sample.bam
+      fasta:
+        - ref/haplotypecaller_ref.fasta
+      prefix:
+        - "test"
+      memory:
+        - 30
+      num_gpus:
+        - 1
+      num_cpus:
+        - 8
+      container:
+        - "nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1"

@@ -72,7 +72,7 @@ task mutectcaller {
 
         pbrun \
             mutectcaller \
-            --ref $(basename ~{ref.fasta}) \
+            --ref "$(basename ~{ref.fasta})" \
             --in-tumor-bam ~{tumor_bam} \
             --tumor-name ~{tumor_name} \
             ~{tumor_recal_command} \
@@ -114,23 +114,23 @@ task mutectcaller {
     }
     
     parameter_meta {
-        ref: "Reference genome files"
-        tumor_bam: "Input tumor BAM file"
-        tumor_name: "Name of the tumor sample"
-        tumor_recal: "Input tumor recalibration file"
-        normal_bam: "Input normal BAM file"
-        normal_name: "Name of the normal sample"
-        normal_recal: "Input normal recalibration file"
-        interval_file: "Optional interval files to restrict analysis"
-        pon: "Panel of normals file"
-        mutect_germline_resource: "Mutect germline resource file"
-        mutect_f1r2_tar_gz: "Mutect F1R2 tar.gz file"
-        mutect_alleles: "Mutect alleles file"
-        prefix: "Prefix for output files"
-        args: "Additional command line arguments to pass to mutectcaller"
-        memory: "Memory requirement (in GB) for the task"
-        num_gpus: "Number of GPUs to allocate to the task"
-        num_cpus: "Number of CPU cores to allocate to the task"
-        container: "Docker container image to use for the task"
+        ref: {description: "Reference genome files (FASTA, index, and BWA index)", category: "required"}
+        tumor_bam: {description: "Input tumor BAM file", category: "required"}
+        tumor_name: {description: "Name of the tumor sample", category: "required"}
+        tumor_recal: {description: "Optional tumor BQSR recalibration table", category: "optional"}
+        normal_bam: {description: "Optional normal BAM file", category: "optional"}
+        normal_name: {description: "Optional name of the normal sample", category: "optional"}
+        normal_recal: {description: "Optional normal BQSR recalibration table", category: "optional"}
+        interval_file: {description: "Optional interval file for targeted regions (can be used multiple times)", category: "optional"}
+        pon: {description: "Optional panel of normals VCF file", category: "optional"}
+        mutect_germline_resource: {description: "Optional Mutect2 germline resource VCF file", category: "optional"}
+        mutect_f1r2_tar_gz: {description: "Optional Mutect2 F1R2 tar.gz file for orientation bias modeling", category: "optional"}
+        mutect_alleles: {description: "Optional alleles VCF file to force-genotype", category: "optional"}
+        prefix: {description: "Prefix for output files", category: "required"}
+        args: {description: "Optional additional arguments for pbrun", category: "optional"}
+        memory: {description: "Memory in GB", category: "required"}
+        num_gpus: {description: "Number of GPUs to use", category: "required"}
+        num_cpus: {description: "Number of CPU threads", category: "required"}
+        container: {description: "Container image URI", category: "required"}
     }
 }

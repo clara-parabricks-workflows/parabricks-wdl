@@ -44,7 +44,7 @@ task fq2bammeth {
 
         pbrun \
             fq2bam_meth \
-            --ref $(basename ~{ref.fasta}) \
+            --ref "$(basename ~{ref.fasta})" \
             ~{in_fq_command} \
             --out-bam ~{prefix}.~{extension_bam} \
             ~{known_sites_command} \
@@ -75,21 +75,25 @@ task fq2bammeth {
     meta {
         author: "Gary Burnett (gburnett@nvidia.com)"
         description: "Converts FASTQ to methylation-aware BAM/CRAM using Parabricks fq2bammeth"
+        outputs: {
+            bam: "Aligned methylation-aware BAM/CRAM file", 
+            bai: "BAM/CRAM index file",
+            meth_metrics: "Methylation metrics file (if requested)"
+        }
     }
 
     parameter_meta {
         reads: {description: "Array of FASTQ files to align", category: "required"}
-        bwaIndex: "Reference genome FASTA file"
-        interval_file: "Optional interval file for targeted regions"
-        known_sites: "Optional known sites for BQSR"
-        output_fmt: "Output format: 'bam' or 'cram'"
-        single_ended: "Whether reads are single-ended"
-        prefix: "Prefix for output files"
-        args: "Optional additional arguments for pbrun"
-        memory: "Memory requirement (in GB) for the task"
-        num_gpus: "Number of GPUs to use"
-        num_cpus: "Number of CPU threads"
-        container: "Container image URI"
-        bam: "Aligned BAM/CRAM file"
+        ref: {description: "Reference genome files (FASTA, index, and BWA index)", category: "required"}
+        interval_file: {description: "Optional interval file for targeted regions (can be used multiple times)", category: "optional"}
+        known_sites: {description: "Optional array of known variant sites for BQSR (can be used multiple times)", category: "optional"}
+        output_fmt: {description: "Output format: 'bam' or 'cram'", category: "required"}
+        single_ended: {description: "Whether reads are single-ended", category: "required"}
+        prefix: {description: "Prefix for output files", category: "required"}
+        args: {description: "Optional additional arguments for pbrun", category: "optional"}
+        memory: {description: "Memory in GB", category: "required"}
+        num_gpus: {description: "Number of GPUs to use", category: "required"}
+        num_cpus: {description: "Number of CPU threads", category: "required"}
+        container: {description: "Container image URI", category: "required"}
     }
 }

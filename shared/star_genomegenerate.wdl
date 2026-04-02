@@ -14,13 +14,13 @@ task star_genomegenerate {
     command <<<
         set -e
 
-        mkdir -p ~{genome_lib_dir_name}
+        mkdir -p "~{genome_lib_dir_name}"
         STAR --runMode genomeGenerate \
-             --genomeDir ~{genome_lib_dir_name} \
-             --genomeFastaFiles ~{fasta} \
+             --genomeDir "~{genome_lib_dir_name}" \
+             --genomeFastaFiles "~{fasta}" \
              --runThreadN ~{num_cpus} \
-             ~{if defined(gtf) then "--sjdbGTFfile " + gtf else ""} \
-             ~{sep(" ", select_first([args, []]))}
+             "~{if defined(gtf) then "--sjdbGTFfile " + gtf else ""}" \
+             "~{sep(" ", select_first([args, []]))}"
 
     >>>
 

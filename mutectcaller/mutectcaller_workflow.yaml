@@ -1,0 +1,19 @@
+mutectcaller_workflow:
+  - name: single-ended
+    inputs:
+      tumor_bam:
+        - data/mutectcaller_sample.bam
+      fasta:
+        - ref/mutectcaller_ref.fasta
+      tumor_name: 
+        - "tumour"
+      prefix:
+        - "test"
+      memory:
+        - 30
+      num_gpus:
+        - 1
+      num_cpus:
+        - 8
+      container:
+        - "nvcr.io/nvidia/clara/clara-parabricks:4.7.0-1"

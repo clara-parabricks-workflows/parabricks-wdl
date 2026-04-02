@@ -37,7 +37,7 @@ task haplotypecaller {
 
         pbrun \
             haplotypecaller \
-            --ref $(basename ~{ref.fasta}) \
+            --ref "$(basename ~{ref.fasta})" \
             --in-bam ~{bam} \
             --out-variants "~{prefix}.vcf" \
             ~{interval_file_command} \
@@ -71,16 +71,16 @@ task haplotypecaller {
     }
 
     parameter_meta {
-        bam: "The input BAM file"
-        bwaIndex: "Reference genome FASTA file"
-        interval_file: "Optional interval file for targeted regions (can be used multiple times)"
-        known_sites: "Optional array of known variant sites for BQSR (can be used multiple times)"
-        prefix: "Prefix for output files"
-        args: "Optional additional arguments for pbrun"
-        memory: "Memory requirement (in GB) for the task"
-        num_gpus: "Number of GPUs to use"
-        num_cpus: "Number of CPU threads"
-        container: "Container image URI"
+        bam: {description: "Input BAM file to call variants on", category: "required"}
+        ref: {description: "Reference genome files (FASTA, index, and BWA index)", category: "required"}
+        interval_file: {description: "Optional interval file for targeted regions (can be used multiple times)", category: "optional"}
+        known_sites: {description: "Optional array of known variant sites for BQSR (can be used multiple times)", category: "optional"}
+        prefix: {description: "Prefix for output files", category: "required"}
+        args: {description: "Optional additional arguments for pbrun", category: "optional"}
+        memory: {description: "Memory in GB", category: "required"}
+        num_gpus: {description: "Number of GPUs to use", category: "required"}
+        num_cpus: {description: "Number of CPU threads", category: "required"}
+        container: {description: "Container image URI", category: "required"}
     }
 
 }

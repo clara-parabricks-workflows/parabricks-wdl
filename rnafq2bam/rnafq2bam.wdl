@@ -9,8 +9,8 @@ task rnafq2bam {
         Directory genome_lib_dir
         String output_fmt
         Boolean single_ended
-        Boolean qc_metrics_bool
-        Boolean duplicate_metrics_bool
+        Boolean qc_metrics
+        Boolean duplicate_metrics
         String prefix
         Array[String]? args
         Int memory
@@ -26,11 +26,11 @@ task rnafq2bam {
         sep(" ", prefix("--in-se-fq ", reads))
         else "--in-fq ${sep(" ", reads)}"
 
-    String qc_metrics_command = if qc_metrics_bool then 
+    String qc_metrics_command = if qc_metrics then 
         "--out-qc-metrics-dir ${prefix}_qc_metrics"
         else ""
 
-    String duplicate_metrics_command = if duplicate_metrics_bool then 
+    String duplicate_metrics_command = if duplicate_metrics then 
         "--out-duplicate-metrics ${prefix}.duplicate-metrics.txt"
         else ""
 
@@ -46,7 +46,7 @@ task rnafq2bam {
 
         pbrun \
             rna_fq2bam \
-            --ref $(basename ~{ref.fasta}) \
+            --ref "$(basename ~{ref.fasta})" \
             ~{in_fq_command} \
             --genome-lib-dir ~{genome_lib_dir} \
             ~{qc_metrics_command} \
@@ -61,9 +61,9 @@ task rnafq2bam {
     output {
         File bam = "${prefix}.${extension_bam}"
         File bai = "${prefix}.${extension_bam}.${extension_bam_index}"
-        Directory? qc_metrics = if qc_metrics_bool then "${prefix}_qc_metrics" else None
-        File? duplicate_metrics = if duplicate_metrics_bool then "${prefix}.duplicate-metrics.txt" else None
-        File? junction = "*.out.junction"
+        Directory? qc_metrics_path = if qc_metrics then "${prefix}_qc_metrics" else None
+        File? duplicate_metrics_path = if duplicate_metrics then "${prefix}.duplicate-metrics.txt" else None
+        File? junction = "Chimeric.out.junction"
     }
 
     requirements {
@@ -83,8 +83,8 @@ task rnafq2bam {
         outputs: {
             bam: "BAM file output",
             bai: "BAM index file output",
-            qc_metrics: "Directory containing quality control metrics if enabled",
-            duplicate_metrics: "File containing duplicate metrics if enabled",
+            qc_metrics_path: "Directory containing quality control metrics if enabled",
+            duplicate_metrics_path: "File containing duplicate metrics if enabled",
             junction: "File containing junction information"
         }
     }
@@ -95,8 +95,8 @@ task rnafq2bam {
         genome_lib_dir: "Directory containing genome libraries"
         output_fmt: "Output file format (bam or cram)"
         single_ended: "Flag indicating if the input reads are single-ended"
-        qc_metrics_bool: "Flag indicating if quality control metrics should be generated"
-        duplicate_metrics_bool: "Flag indicating if duplicate metrics should be generated"
+        qc_metrics: "Flag indicating if quality control metrics should be generated"
+        duplicate_metrics: "Flag indicating if duplicate metrics should be generated"
         prefix: "Prefix for the output files"
         args: "Additional arguments for the rnafq2bam command"
         memory: "Memory requirement (in GB) for the task"

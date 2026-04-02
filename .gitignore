@@ -1,2 +1,4 @@
 data
 runs
+test/fixtures
+out

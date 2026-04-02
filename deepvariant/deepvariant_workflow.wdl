@@ -1,10 +1,10 @@
 version 1.2
 
-import "../deepvariant.wdl" as deepvariant
-import "../../shared/bwa_index.wdl" as bwa_index
-import "../../shared/samtools_faidx.wdl" as samtools_faidx
+import "deepvariant.wdl" as deepvariant
+import "../shared/bwa_index.wdl" as bwa_index
+import "../shared/samtools_faidx.wdl" as samtools_faidx
 
-workflow deepvariant_test {
+workflow deepvariant_workflow {
 
     input {
         File bam

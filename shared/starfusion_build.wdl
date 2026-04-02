@@ -16,13 +16,13 @@ task starfusion_build {
     }
 
     command <<<
-        prep_genome_lib.pl \
-            --genome_fa ~{fasta} \
-            --gtf ~{gtf} \
-            --dfam_db ~{dfam_db} \
-            --pfam_db ~{pfam_db} \
-            --fusion_annot_lib ~{fusion_annot_lib} \
-            --annot_filter_rule ~{annot_filter_url} \
+            prep_genome_lib.pl \
+            --genome_fa "~{fasta}" \
+            --gtf "~{gtf}" \
+            --dfam_db "~{dfam_db}" \
+            --pfam_db "~{pfam_db}" \
+            --fusion_annot_lib "~{fusion_annot_lib}" \
+            --annot_filter_rule "~{annot_filter_url}" \
             --CPU ~{num_cpus} \
             --output_dir ~{genome_lib_dir_name} \
             ~{sep(" ", select_first([args, []]))}

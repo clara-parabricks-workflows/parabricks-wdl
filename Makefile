@@ -10,11 +10,10 @@ all: run-all
 run-all: $(SUBDIR_NAMES)
 
 $(SUBDIR_NAMES):
-	@echo "Downloading sample files for $@..."
-	@if [ -f $(ROOT_DIR)/$@/tests/$(DOWNLOAD_DATA_SCRIPT) ]; then \
-		cd $(ROOT_DIR)/$@/tests && \
-		bash $(DOWNLOAD_DATA_SCRIPT) && \
-		sprocket run test.wdl params.json; \
+	@echo "Downloading test files for $@..."
+	@if [ -f $(ROOT_DIR)/$@/$(DOWNLOAD_DATA_SCRIPT) ]; then \
+		cd $(ROOT_DIR)/$@ && \
+		bash $(DOWNLOAD_DATA_SCRIPT); \
 	fi
 
 clean: 

@@ -1,5 +1,7 @@
 version 1.2
 
+# This is necessary to make sure the reference files are all in the same directory 
+
 struct ReferenceFiles {
     File fasta
     File? fasta_fai

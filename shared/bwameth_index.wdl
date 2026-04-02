@@ -18,7 +18,7 @@ task bwameth_index {
         # Create or update a symlink in the task working dir and index that
         ln -sf "~{fasta}" "~{local}"
 
-        bwameth.py index ~{local} ~{sep(" ", select_first([args, []]))}
+        bwameth.py index "~{local}" ~{sep(" ", select_first([args, []]))}
     >>>
 
     output {
@@ -28,7 +28,7 @@ task bwameth_index {
         File bwt = "${local}.bwameth.c2t.bwt"
         File pac = "${local}.bwameth.c2t.pac"
         File sa  = "${local}.bwameth.c2t.sa"
-        Array[File] indexFiles = [fasta_c2t, amb, ann, bwt, pac, sa]
+        Array[File] index_files = [fasta_c2t, amb, ann, bwt, pac, sa]
     }
 
     requirements {
@@ -41,13 +41,13 @@ task bwameth_index {
         author: "Gary Burnett (gburnett@nvidia.com)"
         description: "Creates index files for use with bwa-meth or BWA" 
         outputs: {
-            fasta: "BWA-meth indexed FASTA file",
+            fasta_c2t: "BWA-meth indexed FASTA file",
             amb: "BWA-meth .amb index file",
             ann: "BWA-meth .ann index file",
             bwt: "BWA-meth .bwt index file",
             pac: "BWA-meth .pac index file",
             sa: "BWA-meth .sa index file",
-            indexFiles: "Array of BWA-meth index files"
+            index_files: "Array of BWA-meth index files"
         }
     }
 

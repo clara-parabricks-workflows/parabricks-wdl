@@ -17,10 +17,16 @@ task starfusion {
 
         pbrun \
             starfusion \
-            --chimeric-junction ~{chimeric_junction} \
-            --genome-lib-dir ~{genome_lib_dir} \
-            --output-dir ~{prefix} \
+            --chimeric-junction "~{chimeric_junction}" \
+            --genome-lib-dir "~{genome_lib_dir}" \
+            --output-dir "~{prefix}" \
             ~{sep(" ", select_first([args, []]))}
+
+        # Dereference symlinks created by STAR-Fusion so sprocket's sandbox
+        # does not reject links pointing outside the work directory.
+        find "~{prefix}" -type l | while read link; do
+            cp --dereference "$link" "$link.deref" && mv "$link.deref" "$link"
+        done
     >>>
 
     output {
@@ -47,14 +53,14 @@ task starfusion {
     }
 
     parameter_meta {
-        chimeric_junction: "Path to the chimeric junction file"
-        genome_lib_dir: "Path to the genome library directory"
-        prefix: "Prefix for the output directory"
-        args: "Additional arguments for StarFusion"
-        memory: "Memory requirement (in GB) for the task"
-        num_gpus: "Number of GPUs required for the task"
-        num_cpus: "Number of CPUs required for the task"
-        container: "Docker container to use for the task"
+        chimeric_junction: {description: "Chimeric junction file from STAR alignment", category: "required"}
+        genome_lib_dir: {description: "STAR-Fusion genome library directory", category: "required"}
+        prefix: {description: "Prefix for output files", category: "required"}
+        args: {description: "Optional additional arguments for pbrun", category: "optional"}
+        memory: {description: "Memory in GB", category: "required"}
+        num_gpus: {description: "Number of GPUs to use", category: "required"}
+        num_cpus: {description: "Number of CPU threads", category: "required"}
+        container: {description: "Container image URI", category: "required"}
     }
 
 }
