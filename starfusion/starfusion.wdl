@@ -36,7 +36,7 @@ task starfusion {
     requirements {
         docker: container
         cpu: num_cpus
-        memory: memory
+        memory: "~{memory} GB"
         gpu: true
     }
 

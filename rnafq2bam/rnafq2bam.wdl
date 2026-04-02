@@ -69,7 +69,7 @@ task rnafq2bam {
     requirements {
         docker: container
         cpu: num_cpus
-        memory: memory
+        memory: "~{memory} GB"
         gpu: true
     }
 
@@ -99,7 +99,7 @@ task rnafq2bam {
         duplicate_metrics: "Flag indicating if duplicate metrics should be generated"
         prefix: "Prefix for the output files"
         args: "Additional arguments for the rnafq2bam command"
-        memory: "Memory requirement for the task"
+        memory: "Memory requirement (in GB) for the task"
         num_gpus: "Number of GPUs required for the task"
         num_cpus: "Number of CPUs required for the task"
         container: "Docker container to use for the task"
